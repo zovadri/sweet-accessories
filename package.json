@@ -2,6 +2,7 @@
   "name": "sweet-accessories",
   "version": "1.0.0",
   "description": "Sweet Accessories - متجر الإكسسوارات النسائية",
+  "private": true,
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
