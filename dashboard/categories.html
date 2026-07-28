@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إدارة الأقسام | Sweet Accessories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">Sweet <span>Accessories</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard/"><i class="fas fa-home"></i> الرئيسية</a>
+        <a href="/dashboard/products.html"><i class="fas fa-box"></i> المنتجات</a>
+        <a href="/dashboard/categories.html" class="active"><i class="fas fa-tags"></i> الأقسام</a>
+        <a href="/dashboard/banners.html"><i class="fas fa-images"></i> البنرات</a>
+        <a href="/dashboard/reviews.html"><i class="fas fa-star"></i> التقييمات</a>
+        <a href="/dashboard/settings.html"><i class="fas fa-cog"></i> الإعدادات</a>
+        <a href="#" onclick="handleLogout()" class="logout-link"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-title">
+          <h1>الأقسام</h1>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-primary" onclick="openCategoryModal()"><i class="fas fa-plus"></i> إضافة قسم</button>
+        </div>
+      </header>
+
+      <div class="content-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>الصورة</th>
+                <th>الاسم</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="categoriesTable">
+              <tr><td colspan="3" style="text-align:center;color:#999;">جاري التحميل...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="categoryModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="catModalTitle">إضافة قسم جديد</h3>
+        <span class="modal-close" onclick="closeCategoryModal()">&times;</span>
+      </div>
+      <form id="categoryForm" onsubmit="saveCategory(event)">
+        <input type="hidden" id="categoryId">
+        <div class="form-group">
+          <label>اسم القسم</label>
+          <input type="text" id="catName" required>
+        </div>
+        <div class="form-group">
+          <label>صورة القسم</label>
+          <input type="file" id="catImage" accept="image/*">
+          <div id="catImagePreview" style="margin-top:0.5rem;"></div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="saveCatBtn">حفظ</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="/dashboard/js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+      loadCategories();
+    });
+
+    function loadCategories() {
+      const db = firebase.firestore();
+      db.collection('categories').orderBy('name').onSnapshot(snap => {
+        const tbody = document.getElementById('categoriesTable');
+        if (snap.empty) {
+          tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#999;">لا توجد أقسام</td></tr>';
+          return;
+        }
+        tbody.innerHTML = snap.docs.map(d => {
+          const c = d.data(); const id = d.id;
+          return `<tr>
+            <td><img src="${c.image || 'https://via.placeholder.com/50'}" alt="${c.name}" class="table-thumb"></td>
+            <td>${c.name}</td>
+            <td class="actions-cell">
+              <button class="btn-action btn-edit" onclick="editCategory('${id}')" title="تعديل"><i class="fas fa-edit"></i></button>
+              <button class="btn-action btn-delete" onclick="deleteCategory('${id}')" title="حذف"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>`;
+        }).join('');
+      });
+    }
+
+    function openCategoryModal(data) {
+      document.getElementById('categoryModal').style.display = 'flex';
+      if (data) {
+        document.getElementById('catModalTitle').textContent = 'تعديل القسم';
+        document.getElementById('categoryId').value = data.id;
+        document.getElementById('catName').value = data.name;
+        if (data.image) {
+          document.getElementById('catImagePreview').innerHTML = `<img src="${data.image}" style="max-width:100px;border-radius:8px;">`;
+        }
+      } else {
+        document.getElementById('catModalTitle').textContent = 'إضافة قسم جديد';
+        document.getElementById('categoryForm').reset();
+        document.getElementById('categoryId').value = '';
+        document.getElementById('catImagePreview').innerHTML = '';
+      }
+    }
+
+    function closeCategoryModal() {
+      document.getElementById('categoryModal').style.display = 'none';
+    }
+
+    function editCategory(id) {
+      firebase.firestore().collection('categories').doc(id).get().then(doc => {
+        if (doc.exists) openCategoryModal({ id: doc.id, ...doc.data() });
+      });
+    }
+
+    function deleteCategory(id) {
+      if (confirm('هل أنت متأكد من حذف هذا القسم؟')) {
+        firebase.firestore().collection('categories').doc(id).delete();
+      }
+    }
+
+    function saveCategory(e) {
+      e.preventDefault();
+      const btn = document.getElementById('saveCatBtn');
+      btn.disabled = true; btn.textContent = 'جاري الحفظ...';
+
+      const db = firebase.firestore();
+      const id = document.getElementById('categoryId').value;
+      const name = document.getElementById('catName').value;
+      const file = document.getElementById('catImage').files[0];
+
+      const data = { name };
+
+      if (file) {
+        const storageRef = firebase.storage().ref(`categories/${Date.now()}_${file.name}`);
+        storageRef.put(file).then(snap => snap.ref.getDownloadURL()).then(url => {
+          data.image = url;
+          saveCategoryData(db, id, data, btn);
+        });
+      } else {
+        saveCategoryData(db, id, data, btn);
+      }
+    }
+
+    function saveCategoryData(db, id, data, btn) {
+      const ref = id ? db.collection('categories').doc(id).update(data) : db.collection('categories').add(data);
+      ref.then(() => {
+        closeCategoryModal();
+        btn.disabled = false; btn.textContent = 'حفظ';
+      });
+    }
+  </script>
+</body>
+</html>

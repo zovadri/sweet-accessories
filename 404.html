@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - الصفحة غير موجودة | Sweet Accessories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    :root {
+      --primary: #F8D9E5;
+      --secondary: #8B0D32;
+      --accent: #EBA9BF;
+      --bg: #FFFFFF;
+      --bg-section: #FFF5F8;
+      --text: #2E2E2E;
+    }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .error-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    .error-page h1 {
+      font-size: 8rem;
+      color: var(--secondary);
+      margin: 0;
+      line-height: 1;
+      font-weight: 700;
+    }
+    .error-page h2 {
+      font-size: 1.8rem;
+      color: var(--text);
+      margin: 1rem 0 0.5rem;
+    }
+    .error-page p {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+    .btn-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 2rem;
+      background: var(--secondary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-family: 'Cairo', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .btn-home:hover { background: #a0103e; }
+    header, footer { display: none; }
+  </style>
+</head>
+<body>
+  <div class="error-page">
+    <h1>404</h1>
+    <h2>عذراً، الصفحة غير موجودة</h2>
+    <p>الصفحة التي تبحث عنها قد تكون محذوفة أو تم نقلها</p>
+    <a href="/" class="btn-home"><i class="fas fa-home"></i> العودة إلى الرئيسية</a>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الإعدادات | Sweet Accessories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">Sweet <span>Accessories</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard/"><i class="fas fa-home"></i> الرئيسية</a>
+        <a href="/dashboard/products.html"><i class="fas fa-box"></i> المنتجات</a>
+        <a href="/dashboard/categories.html"><i class="fas fa-tags"></i> الأقسام</a>
+        <a href="/dashboard/banners.html"><i class="fas fa-images"></i> البنرات</a>
+        <a href="/dashboard/reviews.html"><i class="fas fa-star"></i> التقييمات</a>
+        <a href="/dashboard/settings.html" class="active"><i class="fas fa-cog"></i> الإعدادات</a>
+        <a href="#" onclick="handleLogout()" class="logout-link"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-title">
+          <h1>الإعدادات</h1>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> حفظ الإعدادات</button>
+        </div>
+      </header>
+
+      <div class="content-body">
+        <form id="settingsForm" onsubmit="saveSettings(event)">
+          <div class="settings-grid">
+            <div class="settings-card">
+              <h3><i class="fas fa-image"></i> الشعار والرمز</h3>
+              <div class="form-group">
+                <label>شعار الموقع (Logo)</label>
+                <input type="file" id="siteLogo" accept="image/*">
+                <div id="siteLogoPreview" style="margin-top:0.5rem;"></div>
+              </div>
+              <div class="form-group">
+                <label>أيقونة الموقع (Favicon)</label>
+                <input type="file" id="siteFavicon" accept="image/*">
+                <div id="siteFaviconPreview" style="margin-top:0.5rem;"></div>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <h3><i class="fas fa-phone"></i> معلومات التواصل</h3>
+              <div class="form-group">
+                <label>رقم الواتساب</label>
+                <input type="text" id="whatsappNumber" placeholder="966500000000">
+              </div>
+              <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="siteEmail" placeholder="info@sweet-accessories.com">
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <h3><i class="fas fa-globe"></i> روابط التواصل الاجتماعي</h3>
+              <div class="form-group">
+                <label>انستغرام</label>
+                <input type="text" id="socialInstagram" placeholder="https://instagram.com/...">
+              </div>
+              <div class="form-group">
+                <label>سناب شات</label>
+                <input type="text" id="socialSnapchat" placeholder="https://snapchat.com/...">
+              </div>
+              <div class="form-group">
+                <label>تويتر / X</label>
+                <input type="text" id="socialTwitter" placeholder="https://twitter.com/...">
+              </div>
+              <div class="form-group">
+                <label>تيليجرام</label>
+                <input type="text" id="socialTelegram" placeholder="https://t.me/...">
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <h3><i class="fas fa-map-marker-alt"></i> العنوان والوصف</h3>
+              <div class="form-group">
+                <label>عنوان المتجر</label>
+                <textarea id="storeAddress" rows="2" placeholder="المملكة العربية السعودية، الرياض"></textarea>
+              </div>
+              <div class="form-group">
+                <label>وصف المتجر</label>
+                <textarea id="storeDescription" rows="3" placeholder="متجر الإكسسوارات النسائية بأحدث التصاميم"></textarea>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <h3><i class="fas fa-bullhorn"></i> شريط الإعلانات</h3>
+              <div class="form-group">
+                <label>نص الإعلان</label>
+                <input type="text" id="announcementText" placeholder="🎉 شحن مجاني للطلبات فوق 500 جنيه">
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>لون الخلفية</label>
+                  <input type="color" id="announcementBg" value="#8B0D32">
+                </div>
+                <div class="form-group">
+                  <label>لون النص</label>
+                  <input type="color" id="announcementColor" value="#FFFFFF">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>
+                  <input type="checkbox" id="announcementActive" checked> إظهار شريط الإعلانات
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <h3><i class="fas fa-palette"></i> ألوان الموقع</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>اللون الأساسي</label>
+                  <input type="color" id="colorPrimary" value="#F8D9E5">
+                </div>
+                <div class="form-group">
+                  <label>اللون الثانوي</label>
+                  <input type="color" id="colorSecondary" value="#8B0D32">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>لون التمييز</label>
+                  <input type="color" id="colorAccent" value="#EBA9BF">
+                </div>
+                <div class="form-group">
+                  <label>لون الخلفية</label>
+                  <input type="color" id="colorBg" value="#FFFFFF">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align:center;margin-top:2rem;">
+            <button type="submit" class="btn btn-primary" style="padding:0.8rem 3rem;font-size:1.1rem;"><i class="fas fa-save"></i> حفظ جميع الإعدادات</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="/dashboard/js/dashboard.js"></script>
+  <script>
+    let settingsDocId = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+      loadSettings();
+    });
+
+    function loadSettings() {
+      const db = firebase.firestore();
+      db.collection('settings').limit(1).onSnapshot(snap => {
+        if (!snap.empty) {
+          const doc = snap.docs[0];
+          settingsDocId = doc.id;
+          const s = doc.data();
+          if (s.whatsapp) document.getElementById('whatsappNumber').value = s.whatsapp;
+          if (s.email) document.getElementById('siteEmail').value = s.email;
+          if (s.instagram) document.getElementById('socialInstagram').value = s.instagram;
+          if (s.snapchat) document.getElementById('socialSnapchat').value = s.snapchat;
+          if (s.twitter) document.getElementById('socialTwitter').value = s.twitter;
+          if (s.telegram) document.getElementById('socialTelegram').value = s.telegram;
+          if (s.address) document.getElementById('storeAddress').value = s.address;
+          if (s.description) document.getElementById('storeDescription').value = s.description;
+          if (s.announcement) {
+            if (s.announcement.text) document.getElementById('announcementText').value = s.announcement.text;
+            if (s.announcement.bg) document.getElementById('announcementBg').value = s.announcement.bg;
+            if (s.announcement.color) document.getElementById('announcementColor').value = s.announcement.color;
+            document.getElementById('announcementActive').checked = s.announcement.active !== false;
+          }
+          if (s.colors) {
+            if (s.colors.primary) document.getElementById('colorPrimary').value = s.colors.primary;
+            if (s.colors.secondary) document.getElementById('colorSecondary').value = s.colors.secondary;
+            if (s.colors.accent) document.getElementById('colorAccent').value = s.colors.accent;
+            if (s.colors.bg) document.getElementById('colorBg').value = s.colors.bg;
+          }
+          if (s.logo) {
+            document.getElementById('siteLogoPreview').innerHTML = `<img src="${s.logo}" style="max-width:120px;border-radius:8px;">`;
+          }
+          if (s.favicon) {
+            document.getElementById('siteFaviconPreview').innerHTML = `<img src="${s.favicon}" style="max-width:32px;border-radius:4px;">`;
+          }
+        }
+      });
+    }
+
+    function saveSettings(e) {
+      if (e) e.preventDefault();
+      const btn = e ? e.target.querySelector('button[type="submit"]') : null;
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...'; }
+
+      const db = firebase.firestore();
+      const data = {
+        whatsapp: document.getElementById('whatsappNumber').value,
+        email: document.getElementById('siteEmail').value,
+        instagram: document.getElementById('socialInstagram').value,
+        snapchat: document.getElementById('socialSnapchat').value,
+        twitter: document.getElementById('socialTwitter').value,
+        telegram: document.getElementById('socialTelegram').value,
+        address: document.getElementById('storeAddress').value,
+        description: document.getElementById('storeDescription').value,
+        announcement: {
+          text: document.getElementById('announcementText').value,
+          bg: document.getElementById('announcementBg').value,
+          color: document.getElementById('announcementColor').value,
+          active: document.getElementById('announcementActive').checked
+        },
+        colors: {
+          primary: document.getElementById('colorPrimary').value,
+          secondary: document.getElementById('colorSecondary').value,
+          accent: document.getElementById('colorAccent').value,
+          bg: document.getElementById('colorBg').value
+        }
+      };
+
+      const promises = [];
+
+      const logoFile = document.getElementById('siteLogo').files[0];
+      if (logoFile) {
+        const ref = firebase.storage().ref(`settings/logo_${Date.now()}_${logoFile.name}`);
+        promises.push(ref.put(logoFile).then(s => s.ref.getDownloadURL()).then(url => { data.logo = url; }));
+      }
+
+      const faviconFile = document.getElementById('siteFavicon').files[0];
+      if (faviconFile) {
+        const ref = firebase.storage().ref(`settings/favicon_${Date.now()}_${faviconFile.name}`);
+        promises.push(ref.put(faviconFile).then(s => s.ref.getDownloadURL()).then(url => { data.favicon = url; }));
+      }
+
+      Promise.all(promises).then(() => {
+        if (settingsDocId) {
+          return db.collection('settings').doc(settingsDocId).update(data);
+        } else {
+          return db.collection('settings').add(data).then(ref => { settingsDocId = ref.id; });
+        }
+      }).then(() => {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> حفظ جميع الإعدادات'; }
+        alert('تم حفظ الإعدادات بنجاح');
+      }).catch(err => {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> حفظ جميع الإعدادات'; }
+        alert('حدث خطأ أثناء الحفظ: ' + err.message);
+      });
+    }
+  </script>
+</body>
+</html>

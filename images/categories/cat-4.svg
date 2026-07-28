@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" rx="15" fill="#8B0D32"/>
+  <!-- شنط - Bags -->
+  <path d="M65,110 L65,80 Q65,60 100,60 Q135,60 135,80 L135,110 Z" fill="#FFF5F8" stroke="#FFF" stroke-width="2"/>
+  <path d="M80,60 Q80,45 100,40 Q120,45 120,60" fill="none" stroke="#FFF" stroke-width="2"/>
+  <rect x="90" y="70" width="20" height="25" rx="4" fill="none" stroke="#8B0D32" stroke-width="1.5"/>
+  <path d="M85,110 L85,130 Q85,140 100,140 Q115,140 115,130 L115,110" fill="none" stroke="#EBA9BF" stroke-width="2"/>
+  <text x="100" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#FFF" font-weight="bold">شنط</text>
+</svg>

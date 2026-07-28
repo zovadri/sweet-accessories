@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الأسئلة الشائعة | Sweet Accessories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    :root { --primary:#F8D9E5; --secondary:#8B0D32; --accent:#EBA9BF; --bg:#FFFFFF; --bg-section:#FFF5F8; --text:#2E2E2E; }
+    body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
+    .page-header { background: var(--secondary); color: #fff; padding: 3rem 0; text-align: center; }
+    .page-header h1 { margin: 0; font-size: 2rem; }
+    .page-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+    .faq-item { border: 1px solid #eee; border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
+    .faq-question {
+      padding: 1.2rem 1.5rem;
+      background: var(--bg-section);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: background 0.3s;
+    }
+    .faq-question:hover { background: var(--primary); }
+    .faq-question i { transition: transform 0.3s; color: var(--secondary); }
+    .faq-question.active i { transform: rotate(180deg); }
+    .faq-answer {
+      padding: 0 1.5rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      color: #555;
+      line-height: 1.8;
+    }
+    .faq-answer.open { padding: 1.2rem 1.5rem; max-height: 500px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-inner">
+      <a href="/" class="logo">Sweet Accessories</a>
+      <nav>
+        <a href="/">الرئيسية</a>
+        <a href="/products">المنتجات</a>
+        <a href="/about">من نحن</a>
+        <a href="/contact">اتصل بنا</a>
+      </nav>
+      <div class="header-actions">
+        <a href="/cart" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <section class="page-header">
+    <div class="container"><h1>الأسئلة الشائعة</h1></div>
+  </section>
+
+  <section class="page-content">
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>ما هي طرق الدفع المتاحة؟</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">نقبل الدفع عند الاستلام (نقداً أو بطاقة بنكية)، والدفع عبر البطاقات الائتمانية (فيزا وماستركارد)، والتحويل البنكي، وApple Pay.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>كم تستغرق مدة التوصيل؟</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">مدة التوصيل تعتمد على منطقتك: الشحن القياسي 3-5 أيام عمل، والشحن السريع 1-2 يوم عمل. للطلبات فوق 200 ريال الشحن مجاني.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>هل يمكنني إرجاع المنتج؟</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">نعم، يمكنك إرجاع المنتج خلال 14 يوماً من تاريخ الاستلام بشرط أن يكون بحالته الأصلية مع العبوة والفاتورة. راجع سياسة الاسترجاع للمزيد من التفاصيل.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>هل تتوفر لديكم خدمة التوصيل الدولي؟</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">نعم، نوفر التوصيل الدولي لبعض الدول. يرجى التواصل مع خدمة العملاء للاستفسار عن الدول المشمولة ورسوم الشحن.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>كيف يمكنني تتبع طلبي؟</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">بعد شحن الطلب، ستصلك رسالة نصية ورابط إلكتروني يمكنك من خلاله تتبع شحنتك في أي وقت.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>هل المنتجات أصلية؟</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">جميع منتجاتنا أصلية ومختارة بعناية من أفضل الموردين. نضمن جودة الخامات والتصنيع.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>هل يمكنني تغيير طلبي بعد تأكيده؟</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">يمكن تعديل الطلب خلال ساعة من تأكيده. بعد ذلك، قد يكون الطلب دخل مرحلة التجهيز ولا يمكن تعديله. يرجى التواصل معنا فوراً.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        <span>هل توجد عروض أو خصومات؟</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="faq-answer">نعم، نقدم عروضاً وخصومات دورية على مدار العام. تابعنا على وسائل التواصل الاجتماعي ليصلك كل جديد.</div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-col">
+        <h3>Sweet Accessories</h3>
+        <p>متجر الإكسسوارات النسائية بأحدث التصاميم وأجود الخامات.</p>
+      </div>
+      <div class="footer-col">
+        <h3>روابط سريعة</h3>
+        <a href="/about">من نحن</a>
+        <a href="/products">المنتجات</a>
+        <a href="/contact">اتصل بنا</a>
+      </div>
+      <div class="footer-col">
+        <h3>سياسات</h3>
+        <a href="/privacy-policy">سياسة الخصوصية</a>
+        <a href="/return-policy">سياسة الاسترجاع</a>
+        <a href="/terms">شروط الاستخدام</a>
+        <a href="/shipping">الشحن والتوصيل</a>
+      </div>
+      <div class="footer-col">
+        <h3>تواصل معنا</h3>
+        <p><i class="fas fa-phone"></i> +966 50 000 0000</p>
+        <p><i class="fas fa-envelope"></i> info@sweet-accessories.com</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-snapchat"></i></a>
+          <a href="#"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container"><p>&copy; 2025 Sweet Accessories. جميع الحقوق محفوظة.</p></div>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/966500000000" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+  <button class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal-content">
+      <span class="search-close" onclick="document.getElementById('searchModal').style.display='none'">&times;</span>
+      <input type="text" id="searchInput" placeholder="ابحث عن منتج..." />
+    </div>
+  </div>
+
+  <script>
+    function toggleFaq(el) {
+      el.classList.toggle('active');
+      const answer = el.nextElementSibling;
+      answer.classList.toggle('open');
+    }
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>

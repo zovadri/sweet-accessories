@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" rx="15" fill="#EBA9BF"/>
+  <!-- ساعات - Watches -->
+  <circle cx="100" cy="85" r="30" fill="#FFF5F8" stroke="#8B0D32" stroke-width="2"/>
+  <circle cx="100" cy="85" r="25" fill="none" stroke="#8B0D32" stroke-width="1"/>
+  <line x1="100" y1="85" x2="100" y2="65" stroke="#8B0D32" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="100" y1="85" x2="112" y2="85" stroke="#8B0D32" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="100" cy="85" r="2" fill="#8B0D32"/>
+  <rect x="95" y="115" width="10" height="8" rx="2" fill="#8B0D32"/>
+  <text x="100" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#8B0D32" font-weight="bold">ساعات</text>
+</svg>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إدارة المنتجات | Sweet Accessories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">Sweet <span>Accessories</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard/"><i class="fas fa-home"></i> الرئيسية</a>
+        <a href="/dashboard/products.html" class="active"><i class="fas fa-box"></i> المنتجات</a>
+        <a href="/dashboard/categories.html"><i class="fas fa-tags"></i> الأقسام</a>
+        <a href="/dashboard/banners.html"><i class="fas fa-images"></i> البنرات</a>
+        <a href="/dashboard/reviews.html"><i class="fas fa-star"></i> التقييمات</a>
+        <a href="/dashboard/settings.html"><i class="fas fa-cog"></i> الإعدادات</a>
+        <a href="#" onclick="handleLogout()" class="logout-link"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-title">
+          <h1>المنتجات</h1>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-primary" onclick="openProductModal()"><i class="fas fa-plus"></i> إضافة منتج</button>
+        </div>
+      </header>
+
+      <div class="content-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>الصورة</th>
+                <th>الاسم</th>
+                <th>السعر</th>
+                <th>القسم</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="productsTable">
+              <tr><td colspan="6" style="text-align:center;color:#999;">جاري التحميل...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">إضافة منتج جديد</h3>
+        <span class="modal-close" onclick="closeProductModal()">&times;</span>
+      </div>
+      <form id="productForm" onsubmit="saveProduct(event)">
+        <input type="hidden" id="productId">
+        <div class="form-group">
+          <label>اسم المنتج</label>
+          <input type="text" id="prodName" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>السعر بعد الخصم (ر.س)</label>
+            <input type="number" id="prodPrice" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label>السعر قبل الخصم (ر.س)</label>
+            <input type="number" id="prodOldPrice" step="0.01" placeholder="اتركه فارغاً إن لم يكن هناك خصم">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>نسبة الخصم (%)</label>
+            <input type="number" id="prodDiscount" step="1" min="0" max="100" placeholder="تلقائي أو يدوي">
+          </div>
+          <div class="form-group">
+            <label>القسم</label>
+            <select id="prodCategory" required></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>وصف المنتج</label>
+          <textarea id="prodDesc" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>صورة المنتج</label>
+          <input type="file" id="prodImage" accept="image/*" multiple>
+          <div id="prodImagePreview" style="margin-top:0.5rem;display:flex;gap:8px;flex-wrap:wrap;"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label><input type="checkbox" id="prodActive" checked> منتج نشط</label>
+          </div>
+          <div class="form-group">
+            <label><input type="checkbox" id="prodFeatured"> منتج مميز</label>
+          </div>
+          <div class="form-group">
+            <label><input type="checkbox" id="prodBestseller"> الأكثر مبيعًا</label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="saveProductBtn">حفظ</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="/dashboard/js/dashboard.js"></script>
+  <script>
+    let editId = null;
+    let categoriesMap = {};
+
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+      loadCategoriesDropdown();
+      loadProducts();
+    });
+
+    function loadCategoriesDropdown() {
+      const db = firebase.firestore();
+      db.collection('categories').onSnapshot(snap => {
+        const sel = document.getElementById('prodCategory');
+        sel.innerHTML = '<option value="">اختر القسم</option>';
+        categoriesMap = {};
+        snap.forEach(d => {
+          const c = d.data();
+          categoriesMap[d.id] = c.name;
+          sel.innerHTML += `<option value="${d.id}">${c.name}</option>`;
+        });
+      });
+    }
+
+    function loadProducts() {
+      const db = firebase.firestore();
+      db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snap => {
+        const tbody = document.getElementById('productsTable');
+        if (snap.empty) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;">لا توجد منتجات</td></tr>';
+          return;
+        }
+        tbody.innerHTML = snap.docs.map(d => {
+          const p = d.data(); const id = d.id;
+          const img = p.images && p.images.length ? p.images[0] : (p.image || 'https://via.placeholder.com/50');
+          const priceDisplay = p.oldPrice ? `<span style="text-decoration:line-through;color:#999;font-size:0.8rem">${p.oldPrice}</span> ${p.price}` : `${p.price}`;
+          return `<tr>
+            <td><img src="${img}" alt="${p.name}" class="table-thumb"></td>
+            <td>${p.name}</td>
+            <td>${priceDisplay} ر.س</td>
+            <td>${p.categoryName || '-'}</td>
+            <td><span class="badge ${p.active !== false ? 'badge-active' : 'badge-inactive'}">${p.active !== false ? 'نشط' : 'غير نشط'}</span></td>
+            <td class="actions-cell">
+              <button class="btn-action btn-edit" onclick="editProduct('${id}')" title="تعديل"><i class="fas fa-edit"></i></button>
+              <button class="btn-action btn-delete" onclick="deleteProduct('${id}')" title="حذف"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>`;
+        }).join('');
+      });
+    }
+
+    function openProductModal(data) {
+      document.getElementById('productModal').style.display = 'flex';
+      if (data) {
+        document.getElementById('modalTitle').textContent = 'تعديل المنتج';
+        document.getElementById('productId').value = data.id;
+        document.getElementById('prodName').value = data.name || '';
+        document.getElementById('prodPrice').value = data.price || '';
+        document.getElementById('prodOldPrice').value = data.oldPrice || '';
+        document.getElementById('prodDiscount').value = data.discount || '';
+        document.getElementById('prodCategory').value = data.category || '';
+        document.getElementById('prodDesc').value = data.desc || '';
+        document.getElementById('prodActive').checked = data.active !== false;
+        document.getElementById('prodFeatured').checked = data.featured === true;
+        document.getElementById('prodBestseller').checked = data.bestseller === true;
+        const preview = document.getElementById('prodImagePreview');
+        preview.innerHTML = '';
+        if (data.images && data.images.length) {
+          data.images.forEach(url => {
+            preview.innerHTML += `<img src="${url}" style="width:80px;height:80px;border-radius:8px;object-fit:cover;border:2px solid #eee;">`;
+          });
+        } else if (data.image) {
+          preview.innerHTML = `<img src="${data.image}" style="width:80px;height:80px;border-radius:8px;object-fit:cover;">`;
+        }
+      } else {
+        document.getElementById('modalTitle').textContent = 'إضافة منتج جديد';
+        document.getElementById('productForm').reset();
+        document.getElementById('productId').value = '';
+        document.getElementById('prodImagePreview').innerHTML = '';
+      }
+    }
+
+    function closeProductModal() {
+      document.getElementById('productModal').style.display = 'none';
+    }
+
+    function editProduct(id) {
+      firebase.firestore().collection('products').doc(id).get().then(doc => {
+        if (doc.exists) openProductModal({ id: doc.id, ...doc.data() });
+      });
+    }
+
+    function deleteProduct(id) {
+      if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+        firebase.firestore().collection('products').doc(id).delete();
+      }
+    }
+
+    function saveProduct(e) {
+      e.preventDefault();
+      const btn = document.getElementById('saveProductBtn');
+      btn.disabled = true; btn.textContent = 'جاري الحفظ...';
+
+      const db = firebase.firestore();
+      const id = document.getElementById('productId').value;
+      const name = document.getElementById('prodName').value;
+      const price = parseFloat(document.getElementById('prodPrice').value) || 0;
+      const oldPrice = parseFloat(document.getElementById('prodOldPrice').value) || 0;
+      let discount = parseInt(document.getElementById('prodDiscount').value) || 0;
+      const category = document.getElementById('prodCategory').value;
+      const categoryName = categoriesMap[category] || '';
+      const desc = document.getElementById('prodDesc').value;
+      const active = document.getElementById('prodActive').checked;
+      const featured = document.getElementById('prodFeatured').checked;
+      const bestseller = document.getElementById('prodBestseller').checked;
+
+      if (!discount && oldPrice > price) {
+        discount = Math.round((1 - price / oldPrice) * 100);
+      }
+
+      const data = { name, price, oldPrice, discount, category, categoryName, desc, active, featured, bestseller, updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+
+      const files = document.getElementById('prodImage').files;
+      if (files.length > 0) {
+        const urls = [];
+        let completed = 0;
+        for (let i = 0; i < files.length; i++) {
+          const ref = firebase.storage().ref(`products/${Date.now()}_${files[i].name}`);
+          ref.put(files[i]).then(snap => snap.ref.getDownloadURL()).then(url => {
+            urls.push(url);
+            completed++;
+            if (completed === files.length) {
+              data.images = urls;
+              data.image = urls[0];
+              saveProductData(db, id, data, btn);
+            }
+          });
+        }
+      } else {
+        saveProductData(db, id, data, btn);
+      }
+    }
+
+    function saveProductData(db, id, data, btn) {
+      if (id) {
+        db.collection('products').doc(id).update(data).then(() => {
+          closeProductModal();
+          btn.disabled = false; btn.textContent = 'حفظ';
+        });
+      } else {
+        data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+        db.collection('products').add(data).then(() => {
+          closeProductModal();
+          btn.disabled = false; btn.textContent = 'حفظ';
+        });
+      }
+    }
+  </script>
+</body>
+</html>

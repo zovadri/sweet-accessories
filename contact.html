@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تواصل معنا - Sweet Accessories</title>
+  <meta name="description" content="تواصل معنا - Sweet Accessories">
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="header" id="header">
+  <div class="container">
+    <a href="/" class="logo">
+      <img src="/images/logo.jpeg" alt="Sweet Accessories" width="45" height="45">
+      <span>Sweet Accessories</span>
+    </a>
+    <nav class="nav">
+      <a href="/">الرئيسية</a>
+      <a href="/products.html">المنتجات</a>
+      <a href="/about.html">من نحن</a>
+      <a href="/contact.html" class="active">تواصل معنا</a>
+    </nav>
+    <div class="header-actions">
+      <button onclick="Search.open()" aria-label="بحث" title="بحث (Ctrl+K)">🔍</button>
+      <button onclick="window.location.href='/favorites.html'" aria-label="المفضلة">❤️</button>
+      <button onclick="window.location.href='/cart.html'" aria-label="السلة" style="position:relative">
+        🛒
+        <span class="badge cart-badge" style="display:none">0</span>
+      </button>
+      <button class="mobile-menu-btn" aria-label="القائمة">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu">
+  <a href="/">الرئيسية</a>
+  <a href="/products.html">المنتجات</a>
+  <a href="/about.html">من نحن</a>
+  <a href="/contact.html">تواصل معنا</a>
+  <a href="/favorites.html">المفضلة</a>
+  <a href="/cart.html">السلة</a>
+</div>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+  <div class="container">
+    <a href="/">الرئيسية</a>
+    <span>/</span>
+    <span>تواصل معنا</span>
+  </div>
+</div>
+
+<!-- Page Header -->
+<section class="page-header">
+  <div class="container">
+    <h1>تواصل معنا</h1>
+    <p>نحن هنا لمساعدتك - تواصلي معنا بأي من الطرق التالية</p>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section class="section">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <a href="https://wa.me/2010XXXXXXXX" target="_blank" class="contact-item">
+          <div class="icon">💬</div>
+          <div class="info">
+            <h4>واتساب</h4>
+            <p>+2010XXXXXXXX - تواصلي معنا مباشرة</p>
+          </div>
+        </a>
+        <a href="#" target="_blank" class="contact-item">
+          <div class="icon">📘</div>
+          <div class="info">
+            <h4>فيسبوك</h4>
+            <p>Sweet Accessories - تابعينا على فيسبوك</p>
+          </div>
+        </a>
+        <a href="#" target="_blank" class="contact-item">
+          <div class="icon">📸</div>
+          <div class="info">
+            <h4>إنستجرام</h4>
+            <p>@sweet_accessories - تابعينا على إنستجرام</p>
+          </div>
+        </a>
+        <a href="#" target="_blank" class="contact-item">
+          <div class="icon">🎵</div>
+          <div class="info">
+            <h4>تيك توك</h4>
+            <p>Sweet Accessories - تابعينا على تيك توك</p>
+          </div>
+        </a>
+        <a href="mailto:info@sweet-accessories.com" class="contact-item">
+          <div class="icon">📧</div>
+          <div class="info">
+            <h4>البريد الإلكتروني</h4>
+            <p>info@sweet-accessories.com</p>
+          </div>
+        </a>
+      </div>
+      <div>
+        <div class="checkout-form" style="margin-bottom:25px">
+          <h3>أرسلي رسالة</h3>
+          <form onsubmit="event.preventDefault();window.open('https://wa.me/2010XXXXXXXX?text='+encodeURIComponent('👋 مرحباً Sweet Accessories\n\nالاسم: '+document.getElementById('contactName').value+'\nالبريد: '+document.getElementById('contactEmail').value+'\n\nالرسالة:\n'+document.getElementById('contactMessage').value),'_blank')">
+            <div class="form-group">
+              <label for="contactName">الاسم</label>
+              <input type="text" id="contactName" placeholder="اسمك الكريم" required>
+            </div>
+            <div class="form-group">
+              <label for="contactEmail">البريد الإلكتروني</label>
+              <input type="email" id="contactEmail" placeholder="بريدك الإلكتروني">
+            </div>
+            <div class="form-group">
+              <label for="contactMessage">الرسالة</label>
+              <textarea id="contactMessage" placeholder="اكتبي رسالتك هنا..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg" style="width:100%">📨 إرسال عبر واتساب</button>
+          </form>
+        </div>
+        <div style="width:100%;height:300px;border-radius:var(--radius-lg);overflow:hidden;background:var(--bg-section);display:flex;align-items:center;justify-content:center;color:var(--text-lighter)">
+          <div style="text-align:center">
+            <div style="font-size:3rem;margin-bottom:15px">📍</div>
+            <p style="font-weight:600">خريطة الموقع</p>
+            <p style="font-size:0.9rem">القاهرة، مصر</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Sweet Accessories</h4>
+        <p>متجرك المفضل للإكسسوارات النسائية الفاخرة. نقدم تشكيلة واسعة من المنتجات عالية الجودة بأسعار مناسبة.</p>
+        <div class="footer-social">
+          <a href="#" target="_blank" aria-label="فيسبوك">📘</a>
+          <a href="#" target="_blank" aria-label="إنستجرام">📸</a>
+          <a href="#" target="_blank" aria-label="تيك توك">🎵</a>
+          <a href="#" target="_blank" aria-label="تويتر">🐦</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>روابط سريعة</h4>
+        <ul>
+          <li><a href="/about.html">من نحن</a></li>
+          <li><a href="/products.html">المنتجات</a></li>
+          <li><a href="/contact.html">تواصل معنا</a></li>
+          <li><a href="/faq.html">الأسئلة الشائعة</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>سياسات</h4>
+        <ul>
+          <li><a href="/privacy-policy.html">سياسة الخصوصية</a></li>
+          <li><a href="/return-policy.html">سياسة الاسترجاع</a></li>
+          <li><a href="/shipping.html">الشحن والتوصيل</a></li>
+          <li><a href="/terms.html">شروط الاستخدام</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>تواصل معنا</h4>
+        <ul>
+          <li><a href="https://wa.me/2010XXXXXXXX">📱 واتساب</a></li>
+          <li><a href="mailto:info@sweet-accessories.com">📧 info@sweet-accessories.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 Sweet Accessories. جميع الحقوق محفوظة. تصميم وتطوير
+    </div>
+  </div>
+</footer>
+
+<!-- WhatsApp Float -->
+<a href="https://wa.me/2010XXXXXXXX" class="whatsapp-float" target="_blank" aria-label="واتساب">💬</a>
+
+<!-- Search -->
+<div class="search-overlay" onclick="Search.close()"></div>
+<div class="search-modal">
+  <input type="text" placeholder="ابحث عن منتج..." autocomplete="off">
+  <div class="search-results"></div>
+</div>
+
+<!-- Scroll to Top -->
+<button class="scroll-top" aria-label="أعلى الصفحة">⬆</button>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="/js/firebase-config.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

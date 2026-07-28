@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#F8D9E5"/>
+  <rect x="50" y="50" width="300" height="300" rx="10" fill="#EBA9BF" stroke="#8B0D32" stroke-width="2"/>
+  <line x1="100" y1="100" x2="300" y2="300" stroke="#8B0D32" stroke-width="3" opacity="0.5"/>
+  <line x1="300" y1="100" x2="100" y2="300" stroke="#8B0D32" stroke-width="3" opacity="0.5"/>
+  <text x="200" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#8B0D32" font-weight="bold">No Image</text>
+  <text x="200" y="225" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#8B0D32">400 x 400</text>
+</svg>

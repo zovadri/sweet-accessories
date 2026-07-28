@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إدارة البنرات | Sweet Accessories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">Sweet <span>Accessories</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard/"><i class="fas fa-home"></i> الرئيسية</a>
+        <a href="/dashboard/products.html"><i class="fas fa-box"></i> المنتجات</a>
+        <a href="/dashboard/categories.html"><i class="fas fa-tags"></i> الأقسام</a>
+        <a href="/dashboard/banners.html" class="active"><i class="fas fa-images"></i> البنرات</a>
+        <a href="/dashboard/reviews.html"><i class="fas fa-star"></i> التقييمات</a>
+        <a href="/dashboard/settings.html"><i class="fas fa-cog"></i> الإعدادات</a>
+        <a href="#" onclick="handleLogout()" class="logout-link"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-title">
+          <h1>البنرات</h1>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-primary" onclick="openBannerModal()"><i class="fas fa-plus"></i> إضافة بانر</button>
+        </div>
+      </header>
+
+      <div class="content-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>الصورة</th>
+                <th>العنوان</th>
+                <th>النص</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="bannersTable">
+              <tr><td colspan="5" style="text-align:center;color:#999;">جاري التحميل...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="bannerModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="bannerModalTitle">إضافة بانر جديد</h3>
+        <span class="modal-close" onclick="closeBannerModal()">&times;</span>
+      </div>
+      <form id="bannerForm" onsubmit="saveBanner(event)">
+        <input type="hidden" id="bannerId">
+        <div class="form-group">
+          <label>عنوان البانر</label>
+          <input type="text" id="bannerTitle" required>
+        </div>
+        <div class="form-group">
+          <label>النص</label>
+          <input type="text" id="bannerText">
+        </div>
+        <div class="form-group">
+          <label>رابط الزر</label>
+          <input type="text" id="bannerLink" placeholder="/products">
+        </div>
+        <div class="form-group">
+          <label>صورة البانر</label>
+          <input type="file" id="bannerImage" accept="image/*">
+          <div id="bannerImagePreview" style="margin-top:0.5rem;"></div>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="bannerActive" checked> بانر نشط
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary" id="saveBannerBtn">حفظ</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="/dashboard/js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+      loadBanners();
+    });
+
+    function loadBanners() {
+      firebase.firestore().collection('banners').onSnapshot(snap => {
+        const tbody = document.getElementById('bannersTable');
+        if (snap.empty) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">لا توجد بنرات</td></tr>';
+          return;
+        }
+        tbody.innerHTML = snap.docs.map(d => {
+          const b = d.data(); const id = d.id;
+          return `<tr>
+            <td><img src="${b.image || 'https://via.placeholder.com/80x40'}" alt="${b.title}" class="table-thumb" style="width:80px;height:40px;object-fit:cover;"></td>
+            <td>${b.title}</td>
+            <td>${b.text || '-'}</td>
+            <td><span class="badge ${b.active ? 'badge-active' : 'badge-inactive'}">${b.active ? 'نشط' : 'غير نشط'}</span></td>
+            <td class="actions-cell">
+              <button class="btn-action btn-edit" onclick="editBanner('${id}')" title="تعديل"><i class="fas fa-edit"></i></button>
+              <button class="btn-action btn-delete" onclick="deleteBanner('${id}')" title="حذف"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>`;
+        }).join('');
+      });
+    }
+
+    function openBannerModal(data) {
+      document.getElementById('bannerModal').style.display = 'flex';
+      if (data) {
+        document.getElementById('bannerModalTitle').textContent = 'تعديل البانر';
+        document.getElementById('bannerId').value = data.id;
+        document.getElementById('bannerTitle').value = data.title;
+        document.getElementById('bannerText').value = data.text || '';
+        document.getElementById('bannerLink').value = data.link || '';
+        document.getElementById('bannerActive').checked = data.active !== false;
+        if (data.image) {
+          document.getElementById('bannerImagePreview').innerHTML = `<img src="${data.image}" style="max-width:150px;border-radius:8px;">`;
+        }
+      } else {
+        document.getElementById('bannerModalTitle').textContent = 'إضافة بانر جديد';
+        document.getElementById('bannerForm').reset();
+        document.getElementById('bannerId').value = '';
+        document.getElementById('bannerImagePreview').innerHTML = '';
+      }
+    }
+
+    function closeBannerModal() {
+      document.getElementById('bannerModal').style.display = 'none';
+    }
+
+    function editBanner(id) {
+      firebase.firestore().collection('banners').doc(id).get().then(doc => {
+        if (doc.exists) openBannerModal({ id: doc.id, ...doc.data() });
+      });
+    }
+
+    function deleteBanner(id) {
+      if (confirm('هل أنت متأكد من حذف هذا البانر؟')) {
+        firebase.firestore().collection('banners').doc(id).delete();
+      }
+    }
+
+    function saveBanner(e) {
+      e.preventDefault();
+      const btn = document.getElementById('saveBannerBtn');
+      btn.disabled = true; btn.textContent = 'جاري الحفظ...';
+
+      const db = firebase.firestore();
+      const id = document.getElementById('bannerId').value;
+      const title = document.getElementById('bannerTitle').value;
+      const text = document.getElementById('bannerText').value;
+      const link = document.getElementById('bannerLink').value;
+      const active = document.getElementById('bannerActive').checked;
+      const file = document.getElementById('bannerImage').files[0];
+
+      const data = { title, text, link, active };
+
+      if (file) {
+        const storageRef = firebase.storage().ref(`banners/${Date.now()}_${file.name}`);
+        storageRef.put(file).then(snap => snap.ref.getDownloadURL()).then(url => {
+          data.image = url;
+          saveBannerData(db, id, data, btn);
+        });
+      } else {
+        saveBannerData(db, id, data, btn);
+      }
+    }
+
+    function saveBannerData(db, id, data, btn) {
+      const ref = id ? db.collection('banners').doc(id).update(data) : db.collection('banners').add(data);
+      ref.then(() => {
+        closeBannerModal();
+        btn.disabled = false; btn.textContent = 'حفظ';
+      });
+    }
+  </script>
+</body>
+</html>

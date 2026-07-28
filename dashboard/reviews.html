@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إدارة التقييمات | Sweet Accessories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">Sweet <span>Accessories</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard/"><i class="fas fa-home"></i> الرئيسية</a>
+        <a href="/dashboard/products.html"><i class="fas fa-box"></i> المنتجات</a>
+        <a href="/dashboard/categories.html"><i class="fas fa-tags"></i> الأقسام</a>
+        <a href="/dashboard/banners.html"><i class="fas fa-images"></i> البنرات</a>
+        <a href="/dashboard/reviews.html" class="active"><i class="fas fa-star"></i> التقييمات</a>
+        <a href="/dashboard/settings.html"><i class="fas fa-cog"></i> الإعدادات</a>
+        <a href="#" onclick="handleLogout()" class="logout-link"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-title">
+          <h1>التقييمات</h1>
+        </div>
+      </header>
+
+      <div class="content-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>العميل</th>
+                <th>التقييم</th>
+                <th>التعليق</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="reviewsTable">
+              <tr><td colspan="5" style="text-align:center;color:#999;">جاري التحميل...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="/dashboard/js/dashboard.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+      loadReviews();
+    });
+
+    function loadReviews() {
+      firebase.firestore().collection('reviews').orderBy('createdAt', 'desc').onSnapshot(snap => {
+        const tbody = document.getElementById('reviewsTable');
+        if (snap.empty) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">لا توجد تقييمات</td></tr>';
+          return;
+        }
+        tbody.innerHTML = snap.docs.map(d => {
+          const r = d.data(); const id = d.id;
+          const stars = Array(5).fill('').map((_, i) => `<i class="fas fa-star" style="color:${i < r.rating ? '#f59e0b' : '#ddd'};"></i>`).join('');
+          return `<tr>
+            <td><strong>${r.name || 'زائر'}</strong><br><small style="color:#999;">${r.email || ''}</small></td>
+            <td>${stars}</td>
+            <td style="max-width:300px;">${r.comment || '-'}</td>
+            <td><span class="badge ${r.approved ? 'badge-active' : 'badge-inactive'}" id="status_${id}">${r.approved ? 'مقبول' : 'معلق'}</span></td>
+            <td class="actions-cell">
+              <button class="btn-action btn-edit" onclick="toggleReview('${id}', ${!r.approved})" title="${r.approved ? 'إلغاء الموافقة' : 'موافقة'}"><i class="fas ${r.approved ? 'fa-times' : 'fa-check'}"></i></button>
+              <button class="btn-action btn-delete" onclick="deleteReview('${id}')" title="حذف"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>`;
+        }).join('');
+      });
+    }
+
+    function toggleReview(id, approve) {
+      firebase.firestore().collection('reviews').doc(id).update({ approved: approve });
+    }
+
+    function deleteReview(id) {
+      if (confirm('هل أنت متأكد من حذف هذا التقييم؟')) {
+        firebase.firestore().collection('reviews').doc(id).delete();
+      }
+    }
+  </script>
+</body>
+</html>

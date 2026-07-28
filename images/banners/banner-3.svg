@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400">
+  <defs>
+    <linearGradient id="b3" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8B0D32"/>
+      <stop offset="100%" stop-color="#EBA9BF"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="400" fill="url(#b3)"/>
+  <rect x="40" y="40" width="1120" height="320" rx="20" fill="none" stroke="#F8D9E5" stroke-width="2" opacity="0.4"/>
+  <text x="600" y="170" text-anchor="middle" font-family="Georgia, serif" font-size="44" fill="#FFF" font-weight="bold">Special Offer</text>
+  <text x="600" y="215" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#F8D9E5">عرض خاص: اشتري 2 واحصلي على 1 مجاناً</text>
+  <text x="600" y="260" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#FFF5F8" opacity="0.9">لفترة محدودة - لا تفوّتي الفرصة</text>
+  <g fill="#FFF" opacity="0.1">
+    <circle cx="120" cy="350" r="60"/>
+    <circle cx="1080" cy="50" r="45"/>
+    <circle cx="100" cy="60" r="20"/>
+    <circle cx="1100" cy="340" r="30"/>
+  </g>
+</svg>

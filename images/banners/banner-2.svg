@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400">
+  <defs>
+    <linearGradient id="b2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFF5F8"/>
+      <stop offset="50%" stop-color="#F8D9E5"/>
+      <stop offset="100%" stop-color="#EBA9BF"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="400" fill="url(#b2)"/>
+  <rect x="40" y="40" width="1120" height="320" rx="20" fill="none" stroke="#8B0D32" stroke-width="2" opacity="0.3"/>
+  <text x="600" y="180" text-anchor="middle" font-family="Georgia, serif" font-size="48" fill="#8B0D32" font-weight="bold">New Arrivals</text>
+  <text x="600" y="235" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#8B0D32">تشكيلة الخريف والشتاء</text>
+  <text x="600" y="275" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#8B0D32" opacity="0.7">تسوّق الآن واستمتع بشحن مجاني</text>
+  <g fill="#8B0D32" opacity="0.08">
+    <polygon points="200,80 220,120 260,125 230,150 238,195 200,175 162,195 170,150 140,125 180,120"/>
+    <polygon points="1000,250 1015,280 1050,285 1025,305 1030,340 1000,320 970,340 975,305 950,285 985,280"/>
+  </g>
+</svg>

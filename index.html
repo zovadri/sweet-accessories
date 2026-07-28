@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sweet Accessories - متجر الإكسسوارات النسائية</title>
+  <meta name="description" content="Sweet Accessories - متجر متخصص في بيع الإكسسوارات النسائية بأعلى جودة وأفضل الأسعار. توك، خواتم، سلاسل، شنط، وأكثر.">
+  <meta name="keywords" content="اكسسوارات, نسائية, توك, خواتم, سلاسل, شنط, هدايا, موضة">
+  <meta property="og:title" content="Sweet Accessories - متجر الإكسسوارات النسائية">
+  <meta property="og:description" content="أجمل الإكسسوارات النسائية بأفضل الأسعار">
+  <meta property="og:image" content="/images/og-image.jpg">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="/images/logo.jpeg" as="image">
+  <link rel="preload" href="/css/style.css" as="style">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="header" id="header">
+  <div class="container">
+    <a href="/" class="logo">
+      <img src="/images/logo.jpeg" alt="Sweet Accessories" width="45" height="45">
+      <span>Sweet Accessories</span>
+    </a>
+    <nav class="nav">
+      <a href="/" class="active">الرئيسية</a>
+      <a href="/products.html">المنتجات</a>
+      <a href="/about.html">من نحن</a>
+      <a href="/contact.html">تواصل معنا</a>
+    </nav>
+    <div class="header-actions">
+      <button onclick="Search.open()" aria-label="بحث" title="بحث (Ctrl+K)">🔍</button>
+      <button onclick="window.location.href='/favorites.html'" aria-label="المفضلة">❤️</button>
+      <button onclick="window.location.href='/cart.html'" aria-label="السلة" style="position:relative">
+        🛒
+        <span class="badge cart-badge" style="display:none">0</span>
+      </button>
+      <button class="mobile-menu-btn" aria-label="القائمة">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Announcement Bar -->
+<div id="announcementBar" class="announcement-bar" style="display:none"></div>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu">
+  <a href="/">الرئيسية</a>
+  <a href="/products.html">جميع المنتجات</a>
+  <div style="padding:0 20px;margin:5px 0;font-size:0.85rem;color:var(--secondary);font-weight:700">الأقسام</div>
+  <a href="/products.html?category=سلاسل" style="font-size:0.9rem;padding:8px 25px">📿 سلاسل</a>
+  <a href="/products.html?category=اسورة" style="font-size:0.9rem;padding:8px 25px">💍 اسورة</a>
+  <a href="/products.html?category=انسيالات" style="font-size:0.9rem;padding:8px 25px">✨ انسيالات</a>
+  <a href="/products.html?category=خواتم" style="font-size:0.9rem;padding:8px 25px">💍 خواتم</a>
+  <a href="/products.html?category=اطقم" style="font-size:0.9rem;padding:8px 25px">👑 اطقم</a>
+  <a href="/products.html?category=طرح" style="font-size:0.9rem;padding:8px 25px">🧣 طرح</a>
+  <a href="/products.html?category=ساعات" style="font-size:0.9rem;padding:8px 25px">⌚ ساعات</a>
+  <div style="border-top:1px solid var(--primary);margin:10px 20px"></div>
+  <a href="/about.html">من نحن</a>
+  <a href="/contact.html">تواصل معنا</a>
+  <a href="/favorites.html">المفضلة</a>
+  <a href="/cart.html">السلة</a>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content fade-in-up">
+      <h1>أجمل الإكسسوارات <br>لأجمل اللحظات</h1>
+      <p>اكتشفي أحدث صيحات الموضة والإكسسوارات النسائية الفاخرة. تشكيلتنا مختارة بعناية لتمنحك إطلالة استثنائية في كل مناسبة.</p>
+      <div class="hero-buttons">
+        <a href="/products.html" class="btn btn-primary btn-lg">🛍️ تسوق الآن</a>
+        <a href="/products.html?sort=bestseller" class="btn btn-outline btn-lg">🏆 الأكثر مبيعًا</a>
+      </div>
+    </div>
+    <div class="hero-image fade-in">
+      <div class="hero-logo-wrap">
+        <img src="/images/logo.jpeg" alt="Sweet Accessories" loading="eager" class="hero-logo-img">
+        <div class="hero-logo-glow"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Categories -->
+<section class="section section-alt animate-on-scroll" id="categories">
+  <div class="container">
+    <div class="section-title">
+      <h2>الأقسام</h2>
+      <p>تصفحي حسب القسم الذي تفضلينه</p>
+    </div>
+    <div class="categories-grid stagger-children"></div>
+  </div>
+</section>
+
+<!-- New Arrivals -->
+<section class="section animate-on-scroll">
+  <div class="container">
+    <div class="section-title">
+      <h2>🆕 أحدث المنتجات</h2>
+      <p>أحدث ما وصلنا من تشكيلات</p>
+    </div>
+    <div class="products-grid" data-type="new"></div>
+  </div>
+</section>
+
+<!-- Best Sellers -->
+<section class="section section-alt animate-on-scroll">
+  <div class="container">
+    <div class="section-title">
+      <h2>🏆 الأكثر مبيعًا</h2>
+      <p>المنتجات الأكثر طلبًا من عملائنا</p>
+    </div>
+    <div class="products-grid" data-type="bestseller"></div>
+  </div>
+</section>
+
+<!-- Featured -->
+<section class="section animate-on-scroll">
+  <div class="container">
+    <div class="section-title">
+      <h2>✨ منتجات مختارة</h2>
+      <p>تشكيلة مميزة اخترناها لك</p>
+    </div>
+    <div class="products-grid" data-type="featured"></div>
+  </div>
+</section>
+
+<!-- Offers -->
+<section class="section section-alt animate-on-scroll">
+  <div class="container">
+    <div class="section-title">
+      <h2>🎉 العروض</h2>
+      <p>خصومات مميزة لفترة محدودة</p>
+    </div>
+    <div class="countdown">
+      <div class="item"><span class="num countdown-days">00</span><span class="label">يوم</span></div>
+      <div class="item"><span class="num countdown-hours">00</span><span class="label">ساعة</span></div>
+      <div class="item"><span class="num countdown-mins">00</span><span class="label">دقيقة</span></div>
+      <div class="item"><span class="num countdown-secs">00</span><span class="label">ثانية</span></div>
+    </div>
+    <div class="products-grid" data-type="offers" style="margin-top:30px"></div>
+  </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="section animate-on-scroll">
+  <div class="container">
+    <div class="section-title">
+      <h2>لماذا Sweet Accessories؟</h2>
+      <p>نقدم لك أفضل تجربة تسوق</p>
+    </div>
+    <div class="features-grid stagger-children">
+      <div class="feature-card">
+        <div class="icon">💎</div>
+        <h4>خامات ممتازة</h4>
+        <p>نستخدم أجود الخامات لضمان أعلى جودة لمنتجاتنا</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">💰</div>
+        <h4>أسعار مناسبة</h4>
+        <p>أفضل الأسعار التنافسية مع الحفاظ على الجودة العالية</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🚚</div>
+        <h4>شحن سريع</h4>
+        <p>توصيل سريع وآمن لجميع المحافظات</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">💁</div>
+        <h4>خدمة عملاء</h4>
+        <p>فريق دعم متاح لمساعدتك على مدار الساعة</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">✅</div>
+        <h4>جودة مضمونة</h4>
+        <p>جميع منتجاتنا مضمونة ومختارة بعناية</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Reviews -->
+<section class="section section-alt animate-on-scroll">
+  <div class="container">
+    <div class="section-title">
+      <h2>⭐ آراء العملاء</h2>
+      <p>ماذا قالوا عنا</p>
+    </div>
+    <div class="reviews-grid stagger-children"></div>
+  </div>
+</section>
+
+<!-- Instagram Gallery -->
+<section class="section animate-on-scroll">
+  <div class="container">
+    <div class="section-title">
+      <h2>📸 معرض الصور</h2>
+      <p>تابعينا على إنستجرام @sweet_accessories</p>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item"><img src="/images/gallery/1.svg" alt="" loading="lazy"><div class="overlay">📷</div></div>
+      <div class="gallery-item"><img src="/images/gallery/2.svg" alt="" loading="lazy"><div class="overlay">📷</div></div>
+      <div class="gallery-item"><img src="/images/gallery/3.svg" alt="" loading="lazy"><div class="overlay">📷</div></div>
+      <div class="gallery-item"><img src="/images/gallery/4.svg" alt="" loading="lazy"><div class="overlay">📷</div></div>
+      <div class="gallery-item"><img src="/images/gallery/5.svg" alt="" loading="lazy"><div class="overlay">📷</div></div>
+      <div class="gallery-item"><img src="/images/gallery/6.svg" alt="" loading="lazy"><div class="overlay">📷</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Sweet Accessories</h4>
+        <p>متجرك المفضل للإكسسوارات النسائية الفاخرة. نقدم تشكيلة واسعة من المنتجات عالية الجودة بأسعار مناسبة.</p>
+        <div class="footer-social">
+          <a href="#" target="_blank" aria-label="فيسبوك">📘</a>
+          <a href="#" target="_blank" aria-label="إنستجرام">📸</a>
+          <a href="#" target="_blank" aria-label="تيك توك">🎵</a>
+          <a href="#" target="_blank" aria-label="تويتر">🐦</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>روابط سريعة</h4>
+        <ul>
+          <li><a href="/about.html">من نحن</a></li>
+          <li><a href="/products.html">المنتجات</a></li>
+          <li><a href="/contact.html">تواصل معنا</a></li>
+          <li><a href="/faq.html">الأسئلة الشائعة</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>سياسات</h4>
+        <ul>
+          <li><a href="/privacy-policy.html">سياسة الخصوصية</a></li>
+          <li><a href="/return-policy.html">سياسة الاسترجاع</a></li>
+          <li><a href="/shipping.html">الشحن والتوصيل</a></li>
+          <li><a href="/terms.html">شروط الاستخدام</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>تواصل معنا</h4>
+        <ul>
+          <li><a href="https://wa.me/2010XXXXXXXX">📱 واتساب</a></li>
+          <li><a href="mailto:info@sweet-accessories.com">📧 info@sweet-accessories.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 Sweet Accessories. جميع الحقوق محفوظة. تصميم وتطوير
+    </div>
+  </div>
+</footer>
+
+<!-- WhatsApp Float -->
+<a href="https://wa.me/2010XXXXXXXX" class="whatsapp-float" target="_blank" aria-label="واتساب" data-whatsapp>💬</a>
+
+<!-- Search -->
+<div class="search-overlay" onclick="Search.close()"></div>
+<div class="search-modal">
+  <input type="text" placeholder="ابحث عن منتج..." autocomplete="off">
+  <div class="search-results"></div>
+</div>
+
+<!-- Welcome Popup -->
+<div class="welcome-popup">
+  <div class="content" style="position:relative">
+    <button class="close-btn close-popup" style="position:absolute;top:10px;left:10px;width:36px;height:36px;border-radius:50%;background:var(--bg-section);display:flex;align-items:center;justify-content:center;font-size:1.2rem;border:none;cursor:pointer">✕</button>
+    <div class="icon">🎉</div>
+    <h2>مرحباً بك في Sweet Accessories!</h2>
+    <p>أجمل الإكسسوارات النسائية بأفضل الأسعار. استمتعي بتجربة تسوق فريدة!</p>
+    <a href="/products.html" class="btn btn-primary" onclick="this.closest('.welcome-popup').classList.remove('open');document.body.style.overflow=''">🛍️ ابدأي التسوق</a>
+  </div>
+</div>
+
+<!-- Scroll to Top -->
+<button class="scroll-top" aria-label="أعلى الصفحة">⬆</button>
+
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script defer src="/js/firebase-config.js"></script>
+<script defer src="/js/main.js"></script>
+</body>
+</html>

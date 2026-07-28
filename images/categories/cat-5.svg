@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" rx="15" fill="#F8D9E5"/>
+  <!-- Hair accessories -->
+  <path d="M50,90 Q100,60 150,90 Q145,100 140,95 Q130,105 120,100 Q110,110 100,105 Q90,110 80,100 Q70,105 60,95 Q55,100 50,90 Z" fill="#8B0D32" opacity="0.8"/>
+  <ellipse cx="100" cy="85" rx="35" ry="10" fill="#FFF" opacity="0.6"/>
+  <circle cx="100" cy="80" r="12" fill="#EBA9BF" stroke="#FFF" stroke-width="2"/>
+  <circle cx="100" cy="80" r="5" fill="#8B0D32"/>
+  <text x="100" y="155" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#8B0D32" font-weight="bold">أكسسوارات</text>
+  <text x="100" y="168" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#8B0D32">شعر</text>
+</svg>

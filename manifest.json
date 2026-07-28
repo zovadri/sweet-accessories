@@ -1,0 +1,14 @@
+{
+  "name": "Sweet Accessories",
+  "short_name": "Sweet Acc",
+  "description": "متجر الإكسسوارات النسائية",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF5F8",
+  "theme_color": "#8B0D32",
+  "orientation": "portrait-primary",
+  "icons": [
+    {"src": "/images/favicon.svg", "sizes": "192x192", "type": "image/svg+xml"},
+    {"src": "/images/favicon.svg", "sizes": "512x512", "type": "image/svg+xml"}
+  ]
+}
