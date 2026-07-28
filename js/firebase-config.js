@@ -1,5 +1,15 @@
+// ═══════════════════════════════════════════════════════════
+// Firebase Configuration
+// ═══════════════════════════════════════════════════════════
+// 1. اذهب إلى https://console.firebase.google.com
+// 2. أنشئ مشروع جديد او استخدم مشروع موجود
+// 3. اذهب إلى Project Settings > General > Your apps > Web
+// 4. انسخ الكود اللي فيه apiKey, authDomain, projectId, ...
+// 5. حط القيم هنا بدل "YOUR_..."
+// ═══════════════════════════════════════════════════════════
+
 const firebaseConfig = {
-  apiId: "YOUR_API_ID",
+  apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
   projectId: "YOUR_PROJECT_ID",
   storageBucket: "YOUR_PROJECT.appspot.com",
@@ -12,6 +22,33 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const storage = firebase.storage();
 const auth = firebase.auth();
+
+// ═══════════════════════════════════════════════════════════
+// Firestore Security Rules (حطها في Firebase Console)
+// ═══════════════════════════════════════════════════════════
+// rules_version = '2';
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//     match /{document=**} {
+//       allow read: if true;
+//       allow write: if request.auth != null;
+//     }
+//   }
+// }
+// ═══════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════
+// Storage Rules (حطها في Firebase Console > Storage)
+// ═══════════════════════════════════════════════════════════
+// service firebase.storage {
+//   match /b/{bucket}/o {
+//     match /{allPaths=**} {
+//       allow read: if true;
+//       allow write: if request.auth != null;
+//     }
+//   }
+// }
+// ═══════════════════════════════════════════════════════════
 
 const CACHE_DURATION = 5 * 60 * 1000;
 
