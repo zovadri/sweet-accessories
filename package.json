@@ -3,8 +3,17 @@
   "version": "1.0.0",
   "description": "Sweet Accessories - متجر الإكسسوارات النسائية",
   "private": true,
-  "main": "server.js",
   "scripts": {
     "start": "node server.js"
-  }
+  },
+  "dependencies": {
+    "cookie": "^1.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zovadri/sweet-accessories.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
 }
