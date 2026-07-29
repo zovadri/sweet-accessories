@@ -521,7 +521,6 @@ const ProductsPage = {
       console.error('Products page error:', e);
     }
   }
-  }
 };
 
 const Checkout = {
