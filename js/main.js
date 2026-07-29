@@ -402,7 +402,7 @@ const Reviews = {
       if (snap.empty) { track.innerHTML = ''; return; }
       const items = snap.docs.map(d => d.data());
       track.innerHTML = items.map(r => {
-        const stars = Array(5).fill('').map((_, i) => `<i class="fas fa-star${i < r.rating ? '' : ' active'}"></i>`).join('');
+        const stars = Array(5).fill('').map((_, i) => `<i class="${i < r.rating ? 'fas' : 'far'} fa-star"></i>`).join('');
         const img = r.images?.[0] || r.image;
         const avatar = img ? `<img src="${img}" class="review-img">` : `<div class="review-img-placeholder">${r.name?.[0] || '?'}</div>`;
         const extraImgs = r.images && r.images.length > 1 ? `<div class="review-images">${r.images.slice(1, 4).map(u => `<img src="${u}">`).join('')}</div>` : '';

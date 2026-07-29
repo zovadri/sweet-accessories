@@ -1422,10 +1422,11 @@ input,textarea,select{font-family:inherit;outline:none;border:none}
   margin-bottom: 12px;
 }
 .review-card .review-stars i {
-  color: #f59e0b;
   margin: 0 2px;
   font-size: 1.1rem;
 }
+.review-card .review-stars .fa-star { color: #f59e0b; }
+.review-card .review-stars .far.fa-star { color: #ddd; }
 .review-card .review-text {
   color: var(--text);
   font-size: 1.05rem;
