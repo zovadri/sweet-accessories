@@ -76,9 +76,36 @@ const Cart = {
     const item = items.find(i => i.id === id && i.color === color && i.size === size);
     if (item) { item.quantity = Math.max(1, qty); this.save(items); }
   },
-  clear() { this.save([]); },
+  coupon: null,
+  clear() { this.coupon = null; this.save([]); },
   getTotal() { return this.get().reduce((sum, i) => sum + (i.price * i.quantity), 0); },
   getCount() { return this.get().reduce((sum, i) => sum + i.quantity, 0); },
+  getDiscount() {
+    if (!this.coupon) return 0;
+    const subtotal = this.getTotal();
+    if (this.coupon.minOrder && subtotal < this.coupon.minOrder) return 0;
+    return this.coupon.type === 'fixed' ? this.coupon.value : Math.round(subtotal * this.coupon.value / 100);
+  },
+  async applyCoupon() {
+    const input = document.getElementById('couponInput');
+    if (!input) return;
+    const code = input.value.trim().toUpperCase();
+    if (!code) { Cart.showToast('أدخل كود الخصم', 'error'); return; }
+    try {
+      const snap = await db.collection('coupons').where('code', '==', code).get();
+      if (snap.empty) { Cart.showToast('كود خصم غير صالح', 'error'); return; }
+      const doc = snap.docs[0];
+      const c = doc.data();
+      if (!c.active) { Cart.showToast('كود الخصم غير نشط', 'error'); return; }
+      if (c.expiry && new Date(c.expiry) < new Date()) { Cart.showToast('انتهت صلاحية الكود', 'error'); return; }
+      if (c.maxUses && c.uses >= c.maxUses) { Cart.showToast('تم استنفاذ عدد استخدامات الكود', 'error'); return; }
+      const subtotal = Cart.getTotal();
+      if (c.minOrder && subtotal < c.minOrder) { Cart.showToast(`أقل قيمة للطلب ${c.minOrder} جنيه`, 'error'); return; }
+      Cart.coupon = { code: c.code, type: c.type, value: c.value, id: doc.id, uses: c.uses || 0, maxUses: c.maxUses, minOrder: c.minOrder };
+      Cart.updateSummary();
+      Cart.showToast(`تم تطبيق الخصم!`, 'success');
+    } catch(e) { Cart.showToast('خطأ في التحقق من الكود', 'error'); }
+  },
   updateBadge() {
     document.querySelectorAll('.cart-badge').forEach(el => {
       el.textContent = this.getCount();
@@ -122,8 +149,8 @@ const Cart = {
   updateSummary(checkout) {
     const totalEl = document.querySelector('.cart-total');
     if (!totalEl) return;
-    const items = this.get();
     const subtotal = this.getTotal();
+    const discount = this.getDiscount();
     let shipping;
     if (checkout) {
       const gov = document.querySelector('#checkoutGovernorate')?.value;
@@ -131,9 +158,12 @@ const Cart = {
     } else {
       shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : SITE_CONFIG.shipping;
     }
+    const afterDiscount = subtotal - discount;
     document.querySelector('.cart-subtotal').textContent = `${subtotal} ${SITE_CONFIG.currency}`;
     document.querySelector('.cart-shipping').textContent = shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`;
-    totalEl.textContent = `${subtotal + shipping} ${SITE_CONFIG.currency}`;
+    const discEl = document.querySelector('.cart-discount');
+    if (discEl) discEl.textContent = discount > 0 ? `-${discount} ${SITE_CONFIG.currency}` : '0';
+    totalEl.textContent = `${Math.max(0, afterDiscount + shipping)} ${SITE_CONFIG.currency}`;
   },
   showToast(msg, type = 'info') {
     const toast = document.createElement('div');
@@ -326,6 +356,8 @@ const UI = {
     const badges = [];
     if (p.discount) badges.push(`<span class="badge badge-sale">-${p.discount}%</span>`);
     if (p.bestseller) badges.push('<span class="badge badge-bestseller">الأكثر مبيعًا</span>');
+    const outOfStock = p.stock !== undefined && p.stock === 0;
+    if (outOfStock) badges.push('<span class="badge badge-lowstock">نفذ من المخزون</span>');
     return `
       <div class="product-card">
         <div class="image-wrap">
@@ -346,7 +378,7 @@ const UI = {
           </div>
         </div>
         <div style="padding:0 20px 20px">
-          <button class="add-cart" onclick="Cart.add({id:&quot;${p.id}&quot;,name:&quot;${p.name?.replace(/"/g,"\\\"")}&quot;,price:${p.price},image:&quot;${p.images?.[0]||''}&quot;},this)">🛒 إضافة للسلة</button>
+          ${outOfStock ? '<button class="add-cart" style="background:#eee;color:#999;cursor:not-allowed" disabled>نفذ من المخزون</button>' : `<button class="add-cart" onclick="Cart.add({id:&quot;${p.id}&quot;,name:&quot;${p.name?.replace(/"/g,"\\\"")}&quot;,price:${p.price},image:&quot;${p.images?.[0]||''}&quot;},this)">🛒 إضافة للسلة</button>`}
         </div>
       </div>`;
   },
@@ -378,6 +410,7 @@ const ProductDetail = {
     const discount = product.oldPrice ? Math.round((1 - product.price / product.oldPrice) * 100) : 0;
     const colors = product.colors && product.colors.length ? product.colors : null;
     const sizes = product.sizes && product.sizes.length ? product.sizes : null;
+    const outOfStock = product.stock !== undefined && product.stock === 0;
     container.innerHTML = `
       <div class="product-gallery">
         <div class="main-image" id="mainImage">
@@ -393,13 +426,13 @@ const ProductDetail = {
           ${product.oldPrice ? `<span class="old-price">${product.oldPrice} ${SITE_CONFIG.currency}</span><span class="discount">-${discount}%</span>` : ''}
         </div>
         <div class="meta">
-          <div class="item">📦 الحالة: ${product.available !== false ? 'متوفر' : 'غير متوفر'}</div>
+          <div class="item">📦 الحالة: ${outOfStock ? '<span style="color:#b91c1c;font-weight:700;">غير متوفر</span>' : '<span style="color:#047857;font-weight:700;">متوفر</span>'}</div>
         </div>
         ${colors ? `<div class="options"><label>اللون:</label><div class="color-options">${colors.map((c, i) => `<span class="color-swatch${i===0?' active':''}" style="background:${c.hex||'#ccc'}" data-color="${c.name||c}" onclick="ProductDetail.selectColor(this,'${c.name||c}')" title="${c.name||c}"></span>`).join('')}</div></div>` : ''}
         ${sizes ? `<div class="options"><label>المقاس:</label><div class="size-options">${sizes.map((s, i) => `<span class="size-opt${i===0?' active':''}" onclick="ProductDetail.selectSize(this,'${s}')">${s}</span>`).join('')}</div></div>` : ''}
         <div class="options"><label>الكمية:</label><div class="qty-selector"><button onclick="ProductDetail.qty(-1)">−</button><span id="productQty">1</span><button onclick="ProductDetail.qty(1)">+</button></div></div>
         <div class="actions">
-          <button class="btn btn-primary btn-lg" onclick="ProductDetail.addToCart('${product.id}')" id="addToCartBtn" ${product.available === false ? 'disabled' : ''}>🛒 إضافة للسلة</button>
+          <button class="btn btn-primary btn-lg" onclick="ProductDetail.addToCart('${product.id}')" id="addToCartBtn" ${outOfStock ? 'disabled style="background:#ccc;cursor:not-allowed"' : ''}>${outOfStock ? 'نفذ من المخزون' : '🛒 إضافة للسلة'}</button>
         </div>
         <div class="description">
           <h3>الوصف</h3>
@@ -538,23 +571,43 @@ const Checkout = {
       return;
     }
     const subtotal = Cart.getTotal();
+    const discount = Cart.getDiscount();
     const shippingCost = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : getShippingCost(governorate);
-    const total = subtotal + shippingCost;
+    const afterDiscount = subtotal - discount;
+    const total = Math.max(0, afterDiscount + shippingCost);
+    let orderId;
     const orderData = {
       customer: { name, phone, governorate, city, address, notes },
       items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, color: i.color || '', size: i.size || '', image: i.image || '' })),
       subtotal,
+      discount,
       shipping: shippingCost,
       total,
       status: 'جديد',
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
-    try { await db.collection('orders').add(orderData); } catch(e) { console.error('Order save error:', e); }
+    if (Cart.coupon) orderData.couponCode = Cart.coupon.code;
+    try {
+      const ref = await db.collection('orders').add(orderData);
+      orderId = ref.id;
+      for (const item of cart) {
+        const prodSnap = await db.collection('products').doc(item.id).get();
+        if (prodSnap.exists) {
+          const prod = prodSnap.data();
+          if (prod.stock !== undefined) {
+            await db.collection('products').doc(item.id).update({ stock: Math.max(0, prod.stock - item.quantity) });
+          }
+        }
+      }
+      if (Cart.coupon && Cart.coupon.id) {
+        await db.collection('coupons').doc(Cart.coupon.id).update({ uses: (Cart.coupon.uses || 0) + 1 });
+      }
+    } catch(e) { console.error('Order save error:', e); }
     let productsList = cart.map(i => `• ${i.name} ×${i.quantity}${i.color ? ` (${i.color})` : ''}${i.size ? ` (${i.size})` : ''}`).join('\n');
-    const message = `🛍️ طلب جديد من ${SITE_CONFIG.name}\n\n👤 الاسم: ${name}\n📱 الهاتف: ${phone}\n📍 المحافظة: ${governorate}\n🏙️ المدينة: ${city}\n🏠 العنوان: ${address}\n${notes ? `📝 ملاحظات: ${notes}\n` : ''}\n📦 المنتجات:\n${productsList}\n\n💰 الإجمالي: ${total} ${SITE_CONFIG.currency}\n🚚 الشحن: ${shippingCost === 0 ? 'مجاني' : shippingCost + ' ' + SITE_CONFIG.currency}`;
+    const message = `🛍️ طلب جديد من ${SITE_CONFIG.name}\n\n👤 الاسم: ${name}\n📱 الهاتف: ${phone}\n📍 المحافظة: ${governorate}\n🏙️ المدينة: ${city}\n🏠 العنوان: ${address}\n${notes ? `📝 ملاحظات: ${notes}\n` : ''}\n📦 المنتجات:\n${productsList}\n${discount > 0 ? `\n🏷️ الخصم: -${discount} ${SITE_CONFIG.currency}\n` : ''}\n💰 الإجمالي: ${total} ${SITE_CONFIG.currency}\n🚚 الشحن: ${shippingCost === 0 ? 'مجاني' : shippingCost + ' ' + SITE_CONFIG.currency}`;
     window.open(`https://wa.me/${SITE_CONFIG.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
     Cart.clear();
-    Cart.showToast('تم إرسال الطلب! سيتم التواصل معك قريباً', 'success');
+    window.location.href = `/order-confirmation.html?id=${orderId}`;
   }
 };
 

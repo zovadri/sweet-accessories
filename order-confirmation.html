@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تأكيد الطلب | Sweet Accessories</title>
+  <meta name="description" content="تم تأكيد طلبك - Sweet Accessories">
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .confirmation { text-align: center; padding: 80px 20px 60px; max-width: 600px; margin: 0 auto; }
+    .confirmation .icon { font-size: 5rem; margin-bottom: 20px; }
+    .confirmation h1 { color: var(--secondary); font-size: 2rem; margin-bottom: 10px; }
+    .confirmation p { color: var(--text-light); font-size: 1.1rem; line-height: 1.8; margin-bottom: 8px; }
+    .confirmation .order-id { background: var(--bg-section); padding: 15px; border-radius: 12px; margin: 20px 0; font-size: 1.1rem; }
+    .confirmation .order-id span { font-weight: 800; color: var(--secondary); direction: ltr; display: inline-block; }
+    .confirmation .actions { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+    .confirmation .whatsapp-btn { background: #25D366; color: white; }
+    .confirmation .whatsapp-btn:hover { background: #1da851; }
+  </style>
+</head>
+<body>
+  <header class="header" id="header">
+    <div class="container">
+      <a href="/" class="logo">
+        <img src="/images/logo.jpeg" alt="Sweet Accessories" width="45" height="45">
+        <span>Sweet Accessories</span>
+      </a>
+      <nav class="nav">
+        <a href="/">الرئيسية</a>
+        <a href="/products.html">المنتجات</a>
+        <a href="/about.html">من نحن</a>
+        <a href="/contact.html">تواصل معنا</a>
+      </nav>
+      <div class="header-actions">
+        <button onclick="window.location.href='/cart.html'" aria-label="السلة" style="position:relative">
+          🛒
+          <span class="badge cart-badge">0</span>
+        </button>
+        <button class="mobile-menu-btn" aria-label="القائمة">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="confirmation">
+    <div class="icon">✅</div>
+    <h1>تم تأكيد طلبك!</h1>
+    <p>شكراً لتسوقك مع Sweet Accessories 💕</p>
+    <p style="font-size:0.95rem;color:#999;">هنتواصل معاك قريباً عشان نأكد التفاصيل</p>
+    <div class="order-id" id="orderIdContainer">
+      رقم الطلب: <span id="orderId">-</span>
+    </div>
+    <p style="font-size:0.9rem;color:#999;">احتفظ برقم الطلب للتواصل مع خدمة العملاء</p>
+    <div class="actions">
+      <a href="https://wa.me/201022222222" class="btn whatsapp-btn btn-lg" target="_blank">💬 تواصل معانا واتساب</a>
+      <a href="/products.html" class="btn btn-primary btn-lg">🛍️ متابعة التسوق</a>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Sweet Accessories</h4>
+          <p>متجرك المفضل للإكسسوارات النسائية الفاخرة. نقدم تشكيلة واسعة من المنتجات عالية الجودة بأسعار مناسبة.</p>
+          <div class="footer-social">
+            <a href="#" target="_blank" aria-label="فيسبوك">📘</a>
+            <a href="#" target="_blank" aria-label="إنستجرام">📸</a>
+            <a href="#" target="_blank" aria-label="تيك توك">🎵</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>روابط سريعة</h4>
+          <ul>
+            <li><a href="/about.html">من نحن</a></li>
+            <li><a href="/products.html">المنتجات</a></li>
+            <li><a href="/contact.html">تواصل معنا</a></li>
+            <li><a href="/faq.html">الأسئلة الشائعة</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>سياسات</h4>
+          <ul>
+            <li><a href="/privacy-policy.html">سياسة الخصوصية</a></li>
+            <li><a href="/return-policy.html">سياسة الاسترجاع</a></li>
+            <li><a href="/shipping.html">الشحن والتوصيل</a></li>
+            <li><a href="/terms.html">شروط الاستخدام</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>تواصل معنا</h4>
+          <ul>
+            <li><a href="https://wa.me/201022222222" target="_blank">📱 واتساب</a></li>
+            <li><a href="mailto:info@sweet-accessories.com">📧 البريد الإلكتروني</a></li>
+            <li><a href="#" target="_blank">📘 فيسبوك</a></li>
+            <li><a href="#" target="_blank">📸 انستغرام</a></li>
+            <li><a href="#" target="_blank">🎵 تيك توك</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Sweet Accessories. جميع الحقوق محفوظة.
+      </div>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/201022222222" class="whatsapp-float" target="_blank" aria-label="واتساب">💬</a>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get('id');
+    if (orderId) {
+      document.getElementById('orderId').textContent = orderId;
+    } else {
+      document.getElementById('orderIdContainer').style.display = 'none';
+    }
+  </script>
+  <script src="/js/main.js"></script>
+</body>
+</html>
