@@ -13,9 +13,7 @@
 <div style="background:white;border-radius:24px;padding:40px 30px;width:92%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;">
   <div style="font-size:1.8rem;font-weight:800;color:#8B0D32;margin-bottom:3px;">Sweet <span style="color:#EBA9BF;">Accessories</span></div>
   <p style="font-size:1rem;color:#6b7280;margin:0 0 25px;">لوحة التحكم</p>
-
   <div id="errorMsg" style="display:none;background:#fef2f2;color:#dc2626;padding:12px;border-radius:12px;margin-bottom:15px;font-size:0.9rem;"></div>
-
   <form id="loginForm">
     <div style="text-align:right;margin-bottom:15px;">
       <label style="display:block;font-weight:600;margin-bottom:5px;font-size:0.9rem;">البريد الإلكتروني</label>
@@ -27,12 +25,21 @@
     </div>
     <button type="submit" id="loginBtn" style="width:100%;padding:13px;background:linear-gradient(135deg,#8B0D32,#a0103e);color:white;border:none;border-radius:12px;font-size:1rem;font-family:'Cairo',sans-serif;font-weight:700;cursor:pointer;">تسجيل الدخول</button>
   </form>
+  <button id="registerBtn" style="width:100%;padding:11px;background:transparent;color:#8B0D32;border:2px solid #8B0D32;border-radius:12px;font-size:0.85rem;font-family:'Cairo',sans-serif;font-weight:600;cursor:pointer;margin-top:8px;">إنشاء حساب الأدمن (Firebase)</button>
+  <p style="font-size:0.75rem;color:#9ca3af;margin-top:10px;">أو سجل دخول محلي: admin@sweet-accessories.com / admin123</p>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="/js/firebase-config.js"></script>
 <script>
-// Simple local login - no Firebase dependency
 var ADMIN_EMAIL = 'admin@sweet-accessories.com';
 var ADMIN_PASSWORD = 'admin123';
+
+function localLogin(email, password) {
+  return email === ADMIN_EMAIL && password === ADMIN_PASSWORD;
+}
 
 document.getElementById('loginForm').addEventListener('submit', function(e) {
   e.preventDefault();
@@ -40,17 +47,75 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
   var password = document.getElementById('password').value;
   var btn = document.getElementById('loginBtn');
   var errEl = document.getElementById('errorMsg');
+  btn.disabled = true; btn.textContent = 'جاري...';
+  errEl.style.display = 'none';
 
-  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-    btn.disabled = true;
-    btn.textContent = 'جاري تسجيل الدخول...';
-    localStorage.setItem('sweet_admin_local', 'true');
-    localStorage.setItem('sweet_admin_email', email);
-    window.location.href = '/dashboard/';
+  // Try Firebase first, fall back to local
+  if (typeof auth !== 'undefined') {
+    auth.signInWithEmailAndPassword(email, password)
+      .then(function() {
+        window.location.href = '/dashboard/';
+      })
+      .catch(function(error) {
+        if (error.code === 'auth/network-request-failed' || error.message.indexOf('network') > -1) {
+          if (localLogin(email, password)) {
+            localStorage.setItem('sweet_admin_local', 'true');
+            window.location.href = '/dashboard/';
+          } else {
+            errEl.textContent = 'Firebase غير متصل والبيانات المحلية غير صحيحة';
+            errEl.style.display = 'block';
+            btn.disabled = false; btn.textContent = 'تسجيل الدخول';
+          }
+        } else {
+          var msg = 'خطأ';
+          if (error.code === 'auth/user-not-found') msg = 'البريد الإلكتروني غير مسجل';
+          else if (error.code === 'auth/wrong-password') msg = 'كلمة المرور غير صحيحة';
+          else msg = error.message;
+          errEl.textContent = msg; errEl.style.display = 'block';
+          btn.disabled = false; btn.textContent = 'تسجيل الدخول';
+        }
+      });
   } else {
-    errEl.textContent = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
-    errEl.style.display = 'block';
+    if (localLogin(email, password)) {
+      localStorage.setItem('sweet_admin_local', 'true');
+      window.location.href = '/dashboard/';
+    } else {
+      errEl.textContent = 'بيانات الدخول غير صحيحة';
+      errEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'تسجيل الدخول';
+    }
   }
+});
+
+document.getElementById('registerBtn').addEventListener('click', function() {
+  var email = document.getElementById('email').value || ADMIN_EMAIL;
+  var password = document.getElementById('password').value || ADMIN_PASSWORD;
+  var errEl = document.getElementById('errorMsg');
+  this.disabled = true; this.textContent = 'جاري...';
+  errEl.style.display = 'none';
+
+  if (typeof auth === 'undefined') {
+    errEl.textContent = 'Firebase غير متاح';
+    errEl.style.display = 'block';
+    this.disabled = false; this.textContent = 'إنشاء حساب الأدمن (Firebase)';
+    return;
+  }
+
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(function() {
+      errEl.style.background = '#f0fdf4'; errEl.style.color = '#16a34a';
+      errEl.textContent = 'تم إنشاء الحساب! سجل دخول الآن.';
+      errEl.style.display = 'block';
+      document.getElementById('registerBtn').textContent = 'تم ✅';
+    })
+    .catch(function(error) {
+      var msg = 'خطأ';
+      if (error.code === 'auth/email-already-in-use') msg = 'الحساب موجود بالفعل - سجل دخول';
+      else if (error.code === 'auth/weak-password') msg = 'كلمة المرور ضعيفة';
+      else msg = error.message;
+      errEl.textContent = msg; errEl.style.display = 'block';
+      this.disabled = false; this.textContent = 'إنشاء حساب الأدمن (Firebase)';
+    }.bind(this));
 });
 </script>
 </body>
