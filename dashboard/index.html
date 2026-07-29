@@ -140,8 +140,8 @@
     }
 
     function handleLogout() {
-      localStorage.removeItem('sweet_admin_local');
-      localStorage.removeItem('sweet_admin_email');
+      try { auth.signOut(); } catch(e) {}
+      localStorage.removeItem('adminUser');
       window.location.href = '/dashboard/login.html';
     }
   </script>
