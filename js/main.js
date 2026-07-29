@@ -152,19 +152,23 @@ const Cart = {
     const subtotal = this.getTotal();
     const discount = this.getDiscount();
     let shipping;
+    let shippingText;
     if (checkout || document.querySelector('#checkoutGovernorate')) {
       const gov = document.querySelector('#checkoutGovernorate')?.value;
       if (!gov) {
-        shipping = SITE_CONFIG.shipping;
+        shipping = 0;
+        shippingText = 'مصاريف الشحن';
       } else {
         shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : getShippingCost(gov);
+        shippingText = shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`;
       }
     } else {
       shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : SITE_CONFIG.shipping;
+      shippingText = shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`;
     }
     const afterDiscount = subtotal - discount;
     document.querySelector('.cart-subtotal').textContent = `${subtotal} ${SITE_CONFIG.currency}`;
-    document.querySelector('.cart-shipping').textContent = shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`;
+    document.querySelector('.cart-shipping').textContent = shippingText;
     const discEl = document.querySelector('.cart-discount');
     if (discEl) discEl.textContent = discount > 0 ? `-${discount} ${SITE_CONFIG.currency}` : '0';
     totalEl.textContent = `${Math.max(0, afterDiscount + shipping)} ${SITE_CONFIG.currency}`;
