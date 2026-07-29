@@ -621,7 +621,7 @@ const ProductsPage = {
       UI.setupWishlistButtons();
     } catch (e) {
       console.error('Products page error:', e);
-      containers.forEach(c => { delete c.dataset._loading; c.innerHTML = '<div style="text-align:center;padding:40px;grid-column:1/-1"><p style="color:#b91c1c;font-weight:600;margin-bottom:15px;">❌ حدث خطأ في تحميل المنتجات</p><button class="btn btn-primary" onclick="ProductsPage.load()">🔄 إعادة المحاولة</button></div>'; });
+      containers.forEach(c => { delete c.dataset._loading; c.innerHTML = '<div style="text-align:center;padding:40px;grid-column:1/-1"><p style="color:#b91c1c;font-weight:600;margin-bottom:15px;">❌ حدث خطأ في تحميل المنتجات</p><p style="color:#999;margin-bottom:15px;font-size:0.85rem">' + e.message + '</p><button class="btn btn-primary" onclick="ProductsPage.load()">🔄 إعادة المحاولة</button></div>'; });
     }
   }
 };
