@@ -3,37 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تسجيل الدخول - لوحة التحكم | Sweet Accessories</title>
+  <title>تسجيل الدخول - Sweet Accessories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="/dashboard/css/dashboard.css">
 </head>
-<body class="login-page">
-  <div class="login-box">
-    <div class="logo-text">Sweet <span>Accessories</span></div>
-    <h2>لوحة التحكم</h2>
-    <div class="error-msg" id="loginError" style="background:#fef2f2;color:#dc2626;padding:12px;border-radius:var(--radius);margin-bottom:15px;font-size:0.9rem;display:none;"></div>
-    <div class="success-msg" id="loginSuccess" style="background:#f0fdf4;color:#16a34a;padding:12px;border-radius:var(--radius);margin-bottom:15px;font-size:0.9rem;display:none;"></div>
+<body style="margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);font-family:'Cairo',sans-serif;direction:rtl;">
+  <div style="background:rgba(255,255,255,0.96);border-radius:24px;padding:45px 35px;width:92%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;">
+    <div style="font-size:1.8rem;font-weight:800;color:#8B0D32;margin-bottom:5px;">
+      Sweet <span style="color:#EBA9BF;">Accessories</span>
+    </div>
+    <h2 style="font-size:1.1rem;color:#6b7280;margin-bottom:25px;font-weight:500;">لوحة التحكم</h2>
+    <div id="loginError" style="display:none;background:#fef2f2;color:#dc2626;padding:12px;border-radius:12px;margin-bottom:15px;font-size:0.9rem;"></div>
+    <div id="loginSuccess" style="display:none;background:#f0fdf4;color:#16a34a;padding:12px;border-radius:12px;margin-bottom:15px;font-size:0.9rem;"></div>
     <form id="loginForm">
-      <div class="form-group">
-        <label for="email">البريد الإلكتروني</label>
-        <input type="email" id="email" placeholder="admin@sweet-accessories.com" required>
+      <div style="text-align:right;margin-bottom:18px;">
+        <label style="display:block;font-weight:600;margin-bottom:6px;font-size:0.9rem;">البريد الإلكتروني</label>
+        <input type="email" id="email" value="admin@sweet-accessories.com" style="width:100%;padding:13px 14px;border:2px solid #e5e7eb;border-radius:12px;font-size:0.95rem;font-family:'Cairo',sans-serif;background:#f9fafb;box-sizing:border-box;">
       </div>
-      <div class="form-group">
-        <label for="password">كلمة المرور</label>
-        <input type="password" id="password" placeholder="••••••••" required>
+      <div style="text-align:right;margin-bottom:18px;">
+        <label style="display:block;font-weight:600;margin-bottom:6px;font-size:0.9rem;">كلمة المرور</label>
+        <input type="password" id="password" value="admin123" style="width:100%;padding:13px 14px;border:2px solid #e5e7eb;border-radius:12px;font-size:0.95rem;font-family:'Cairo',sans-serif;background:#f9fafb;box-sizing:border-box;">
       </div>
-      <button type="submit" class="login-btn" id="loginBtn">تسجيل الدخول</button>
+      <button type="submit" id="loginBtn" style="width:100%;padding:14px;background:linear-gradient(135deg,#8B0D32,#a0103e);color:white;border:none;border-radius:12px;font-size:1rem;font-family:'Cairo',sans-serif;font-weight:700;cursor:pointer;">تسجيل الدخول</button>
     </form>
-    <button class="register-btn" id="registerBtn">إنشاء حساب الأدمن</button>
+    <button id="registerBtn" style="width:100%;padding:12px;background:transparent;color:#8B0D32;border:2px solid #8B0D32;border-radius:12px;font-size:0.9rem;font-family:'Cairo',sans-serif;font-weight:600;cursor:pointer;margin-top:10px;">إنشاء حساب الأدمن</button>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="/js/firebase-config.js"></script>
-  <script src="/dashboard/js/dashboard.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script defer src="/js/firebase-config.js"></script>
+  <script defer src="/dashboard/js/dashboard.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    (function init() {
+      if (typeof DASHBOARD_KEY === 'undefined' || typeof auth === 'undefined') {
+        return setTimeout(init, 100);
+      }
       if (!checkKey()) { window.location.href = '/'; return; }
       checkAuth();
 
@@ -45,18 +53,19 @@
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const btn = document.getElementById('loginBtn');
-
         btn.disabled = true; btn.textContent = 'جاري تسجيل الدخول...';
         errEl.style.display = 'none'; successEl.style.display = 'none';
 
         try {
+          if (typeof auth === 'undefined') throw new Error('Firebase not loaded');
           await auth.signInWithEmailAndPassword(email, password);
           window.location.href = '/dashboard/?key=' + DASHBOARD_KEY;
         } catch (error) {
-          let msg = 'حدث خطأ في تسجيل الدخول';
-          if (error.code === 'auth/user-not-found') msg = 'البريد الإلكتروني غير مسجل';
+          let msg = 'حدث خطأ';
+          if (error.code === 'auth/user-not-found') msg = 'البريد الإلكتروني غير مسجل - استخدم "إنشاء حساب" أولاً';
           else if (error.code === 'auth/wrong-password') msg = 'كلمة المرور غير صحيحة';
-          else if (error.code === 'auth/too-many-requests') msg = 'تم تجاوز عدد المحاولات المسموحة';
+          else if (error.code === 'auth/too-many-requests') msg = 'تم تجاوز عدد المحاولات';
+          else if (error.message) msg = error.message;
           errEl.textContent = msg; errEl.style.display = 'block';
           btn.disabled = false; btn.textContent = 'تسجيل الدخول';
         }
@@ -65,23 +74,24 @@
       document.getElementById('registerBtn').addEventListener('click', async function() {
         const email = document.getElementById('email').value || 'admin@sweet-accessories.com';
         const password = document.getElementById('password').value || 'admin123';
-        this.disabled = true; this.textContent = 'جاري إنشاء الحساب...';
+        this.disabled = true; this.textContent = 'جاري...';
         errEl.style.display = 'none'; successEl.style.display = 'none';
 
         try {
+          if (typeof auth === 'undefined') throw new Error('Firebase not loaded');
           await auth.createUserWithEmailAndPassword(email, password);
-          successEl.textContent = 'تم إنشاء الحساب! سجل دخول الآن.';
-          successEl.style.display = 'block';
+          successEl.textContent = 'تم إنشاء الحساب! سجل دخول الآن.'; successEl.style.display = 'block';
           this.textContent = 'تم ✅';
         } catch (error) {
           let msg = 'حدث خطأ';
-          if (error.code === 'auth/email-already-in-use') msg = 'الحساب موجود بالفعل';
+          if (error.code === 'auth/email-already-in-use') msg = 'الحساب موجود بالفعل - سجل دخول';
+          else if (error.code === 'auth/weak-password') msg = 'كلمة المرور ضعيفة (6 أحرف فأكثر)';
           else msg = error.message;
           errEl.textContent = msg; errEl.style.display = 'block';
           this.disabled = false; this.textContent = 'إنشاء حساب الأدمن';
         }
       });
-    });
+    })();
   </script>
 </body>
 </html>
