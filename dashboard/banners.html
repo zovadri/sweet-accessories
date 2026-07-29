@@ -96,7 +96,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script src="/js/cloudinary.js"></script>
   <script src="/dashboard/js/dashboard.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -105,7 +106,7 @@
     });
 
     function loadBanners() {
-      firebase.firestore().collection('banners').onSnapshot(snap => {
+      db.collection('banners').onSnapshot(snap => {
         const tbody = document.getElementById('bannersTable');
         if (snap.empty) {
           tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">لا توجد بنرات</td></tr>';
@@ -152,23 +153,22 @@
     }
 
     function editBanner(id) {
-      firebase.firestore().collection('banners').doc(id).get().then(doc => {
+      db.collection('banners').doc(id).get().then(doc => {
         if (doc.exists) openBannerModal({ id: doc.id, ...doc.data() });
       });
     }
 
     function deleteBanner(id) {
       if (confirm('هل أنت متأكد من حذف هذا البانر؟')) {
-        firebase.firestore().collection('banners').doc(id).delete();
+        db.collection('banners').doc(id).delete();
       }
     }
 
-    function saveBanner(e) {
+    async function saveBanner(e) {
       e.preventDefault();
       const btn = document.getElementById('saveBannerBtn');
       btn.disabled = true; btn.textContent = 'جاري الحفظ...';
 
-      const db = firebase.firestore();
       const id = document.getElementById('bannerId').value;
       const title = document.getElementById('bannerTitle').value;
       const text = document.getElementById('bannerText').value;
@@ -179,22 +179,16 @@
       const data = { title, text, link, active };
 
       if (file) {
-        const storageRef = firebase.storage().ref(`banners/${Date.now()}_${file.name}`);
-        storageRef.put(file).then(snap => snap.ref.getDownloadURL()).then(url => {
-          data.image = url;
-          saveBannerData(db, id, data, btn);
-        });
-      } else {
-        saveBannerData(db, id, data, btn);
+        data.image = await uploadImage(file);
       }
-    }
 
-    function saveBannerData(db, id, data, btn) {
-      const ref = id ? db.collection('banners').doc(id).update(data) : db.collection('banners').add(data);
-      ref.then(() => {
-        closeBannerModal();
-        btn.disabled = false; btn.textContent = 'حفظ';
-      });
+      if (id) {
+        await db.collection('banners').doc(id).update(data);
+      } else {
+        await db.collection('banners').add(data);
+      }
+      closeBannerModal();
+      btn.disabled = false; btn.textContent = 'حفظ';
     }
   </script>
 </body>

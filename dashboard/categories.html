@@ -81,7 +81,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script src="/js/cloudinary.js"></script>
   <script src="/dashboard/js/dashboard.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -90,7 +91,6 @@
     });
 
     function loadCategories() {
-      const db = firebase.firestore();
       db.collection('categories').orderBy('name').onSnapshot(snap => {
         const tbody = document.getElementById('categoriesTable');
         if (snap.empty) {
@@ -133,23 +133,22 @@
     }
 
     function editCategory(id) {
-      firebase.firestore().collection('categories').doc(id).get().then(doc => {
+      db.collection('categories').doc(id).get().then(doc => {
         if (doc.exists) openCategoryModal({ id: doc.id, ...doc.data() });
       });
     }
 
     function deleteCategory(id) {
       if (confirm('هل أنت متأكد من حذف هذا القسم؟')) {
-        firebase.firestore().collection('categories').doc(id).delete();
+        db.collection('categories').doc(id).delete();
       }
     }
 
-    function saveCategory(e) {
+    async function saveCategory(e) {
       e.preventDefault();
       const btn = document.getElementById('saveCatBtn');
       btn.disabled = true; btn.textContent = 'جاري الحفظ...';
 
-      const db = firebase.firestore();
       const id = document.getElementById('categoryId').value;
       const name = document.getElementById('catName').value;
       const file = document.getElementById('catImage').files[0];
@@ -157,22 +156,16 @@
       const data = { name };
 
       if (file) {
-        const storageRef = firebase.storage().ref(`categories/${Date.now()}_${file.name}`);
-        storageRef.put(file).then(snap => snap.ref.getDownloadURL()).then(url => {
-          data.image = url;
-          saveCategoryData(db, id, data, btn);
-        });
-      } else {
-        saveCategoryData(db, id, data, btn);
+        data.image = await uploadImage(file);
       }
-    }
 
-    function saveCategoryData(db, id, data, btn) {
-      const ref = id ? db.collection('categories').doc(id).update(data) : db.collection('categories').add(data);
-      ref.then(() => {
-        closeCategoryModal();
-        btn.disabled = false; btn.textContent = 'حفظ';
-      });
+      if (id) {
+        await db.collection('categories').doc(id).update(data);
+      } else {
+        await db.collection('categories').add(data);
+      }
+      closeCategoryModal();
+      btn.disabled = false; btn.textContent = 'حفظ';
     }
   </script>
 </body>

@@ -1,54 +1,15 @@
-// ═══════════════════════════════════════════════════════════
-// Firebase Configuration
-// ═══════════════════════════════════════════════════════════
-// 1. اذهب إلى https://console.firebase.google.com
-// 2. أنشئ مشروع جديد او استخدم مشروع موجود
-// 3. اذهب إلى Project Settings > General > Your apps > Web
-// 4. انسخ الكود اللي فيه apiKey, authDomain, projectId, ...
-// 5. حط القيم هنا بدل "YOUR_..."
-// ═══════════════════════════════════════════════════════════
-
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID"
+  apiKey: "AIzaSyA89LR9cPidk96OuoyWNmo2ey6-_c1pqVE",
+  authDomain: "sweet-accessories-158cb.firebaseapp.com",
+  projectId: "sweet-accessories-158cb",
+  storageBucket: "sweet-accessories-158cb.firebasestorage.app",
+  messagingSenderId: "484869479734",
+  appId: "1:484869479734:web:b8c98051760fff1edfa797"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const storage = firebase.storage();
 const auth = firebase.auth();
-
-// ═══════════════════════════════════════════════════════════
-// Firestore Security Rules (حطها في Firebase Console)
-// ═══════════════════════════════════════════════════════════
-// rules_version = '2';
-// service cloud.firestore {
-//   match /databases/{database}/documents {
-//     match /{document=**} {
-//       allow read: if true;
-//       allow write: if request.auth != null;
-//     }
-//   }
-// }
-// ═══════════════════════════════════════════════════════════
-
-// ═══════════════════════════════════════════════════════════
-// Storage Rules (حطها في Firebase Console > Storage)
-// ═══════════════════════════════════════════════════════════
-// service firebase.storage {
-//   match /b/{bucket}/o {
-//     match /{allPaths=**} {
-//       allow read: if true;
-//       allow write: if request.auth != null;
-//     }
-//   }
-// }
-// ═══════════════════════════════════════════════════════════
 
 const CACHE_DURATION = 5 * 60 * 1000;
 
@@ -103,21 +64,6 @@ async function updateDocument(collection, docId, data) {
 async function deleteDocument(collection, docId) {
   await db.collection(collection).doc(docId).delete();
   localStorage.removeItem(collection);
-}
-
-async function uploadImage(file, path) {
-  const ref = storage.ref(path);
-  const snapshot = await ref.put(file);
-  return await snapshot.ref.getDownloadURL();
-}
-
-async function deleteImage(url) {
-  if (!url || url.includes('firebasestorage')) {
-    try {
-      const ref = storage.refFromURL(url);
-      await ref.delete();
-    } catch (e) { console.warn('Delete image error:', e); }
-  }
 }
 
 async function login(email, password) {

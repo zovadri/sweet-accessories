@@ -157,7 +157,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script src="/js/cloudinary.js"></script>
   <script src="/dashboard/js/dashboard.js"></script>
   <script>
     let settingsDocId = null;
@@ -168,7 +169,6 @@
     });
 
     function loadSettings() {
-      const db = firebase.firestore();
       db.collection('settings').limit(1).onSnapshot(snap => {
         if (!snap.empty) {
           const doc = snap.docs[0];
@@ -204,12 +204,11 @@
       });
     }
 
-    function saveSettings(e) {
+    async function saveSettings(e) {
       if (e) e.preventDefault();
       const btn = e ? e.target.querySelector('button[type="submit"]') : null;
       if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...'; }
 
-      const db = firebase.firestore();
       const data = {
         whatsapp: document.getElementById('whatsappNumber').value,
         email: document.getElementById('siteEmail').value,
@@ -233,33 +232,29 @@
         }
       };
 
-      const promises = [];
-
       const logoFile = document.getElementById('siteLogo').files[0];
       if (logoFile) {
-        const ref = firebase.storage().ref(`settings/logo_${Date.now()}_${logoFile.name}`);
-        promises.push(ref.put(logoFile).then(s => s.ref.getDownloadURL()).then(url => { data.logo = url; }));
+        data.logo = await uploadImage(logoFile);
       }
 
       const faviconFile = document.getElementById('siteFavicon').files[0];
       if (faviconFile) {
-        const ref = firebase.storage().ref(`settings/favicon_${Date.now()}_${faviconFile.name}`);
-        promises.push(ref.put(faviconFile).then(s => s.ref.getDownloadURL()).then(url => { data.favicon = url; }));
+        data.favicon = await uploadImage(faviconFile);
       }
 
-      Promise.all(promises).then(() => {
+      try {
         if (settingsDocId) {
-          return db.collection('settings').doc(settingsDocId).update(data);
+          await db.collection('settings').doc(settingsDocId).update(data);
         } else {
-          return db.collection('settings').add(data).then(ref => { settingsDocId = ref.id; });
+          const ref = await db.collection('settings').add(data);
+          settingsDocId = ref.id;
         }
-      }).then(() => {
         if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> حفظ جميع الإعدادات'; }
         alert('تم حفظ الإعدادات بنجاح');
-      }).catch(err => {
+      } catch (err) {
         if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> حفظ جميع الإعدادات'; }
         alert('حدث خطأ أثناء الحفظ: ' + err.message);
-      });
+      }
     }
   </script>
 </body>

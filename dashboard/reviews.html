@@ -58,7 +58,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
   <script src="/dashboard/js/dashboard.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -67,7 +67,7 @@
     });
 
     function loadReviews() {
-      firebase.firestore().collection('reviews').orderBy('createdAt', 'desc').onSnapshot(snap => {
+      db.collection('reviews').orderBy('createdAt', 'desc').onSnapshot(snap => {
         const tbody = document.getElementById('reviewsTable');
         if (snap.empty) {
           tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;">لا توجد تقييمات</td></tr>';
@@ -83,7 +83,7 @@
             <td><span class="badge ${r.approved ? 'badge-active' : 'badge-inactive'}" id="status_${id}">${r.approved ? 'مقبول' : 'معلق'}</span></td>
             <td class="actions-cell">
               <button class="btn-action btn-edit" onclick="toggleReview('${id}', ${!r.approved})" title="${r.approved ? 'إلغاء الموافقة' : 'موافقة'}"><i class="fas ${r.approved ? 'fa-times' : 'fa-check'}"></i></button>
-              <button class="btn-action btn-delete" onclick="deleteReview('${id}')" title="حذف"><i class="fas fa-trash"></i></button>
+              <button class="btn-action btn-delete" onclick="deleteReview('${id}')" title="حف"><i class="fas fa-trash"></i></button>
             </td>
           </tr>`;
         }).join('');
@@ -91,12 +91,12 @@
     }
 
     function toggleReview(id, approve) {
-      firebase.firestore().collection('reviews').doc(id).update({ approved: approve });
+      db.collection('reviews').doc(id).update({ approved: approve });
     }
 
     function deleteReview(id) {
       if (confirm('هل أنت متأكد من حذف هذا التقييم؟')) {
-        firebase.firestore().collection('reviews').doc(id).delete();
+        db.collection('reviews').doc(id).delete();
       }
     }
   </script>

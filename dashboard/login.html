@@ -84,6 +84,22 @@
     }
     .login-btn:hover { background: #a0103e; }
     .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .register-btn {
+      width: 100%;
+      padding: 0.8rem;
+      background: transparent;
+      color: var(--secondary);
+      border: 2px solid var(--secondary);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 0.5rem;
+    }
+    .register-btn:hover { background: var(--secondary); color: #fff; }
+    .register-btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .error-msg {
       background: #fef2f2;
       color: #dc2626;
@@ -94,10 +110,24 @@
       display: none;
     }
     .error-msg.show { display: block; }
+    .success-msg {
+      background: #f0fdf4;
+      color: #16a34a;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+      display: none;
+    }
+    .success-msg.show { display: block; }
     .login-footer {
       margin-top: 1.5rem;
       font-size: 0.85rem;
       color: #888;
+    }
+    .divider {
+      margin: 1rem 0;
+      border-top: 1px solid #eee;
     }
   </style>
 </head>
@@ -106,7 +136,8 @@
     <div class="login-logo">Sweet <span>Accessories</span></div>
     <h2>لوحة التحكم</h2>
     <div class="error-msg" id="loginError"></div>
-    <form id="loginForm" onsubmit="handleLogin(event)">
+    <div class="success-msg" id="loginSuccess"></div>
+    <form id="loginForm">
       <div class="form-group">
         <label for="email">البريد الإلكتروني</label>
         <input type="email" id="email" placeholder="admin@sweet-accessories.com" required>
@@ -117,67 +148,79 @@
       </div>
       <button type="submit" class="login-btn" id="loginBtn">تسجيل الدخول</button>
     </form>
+    <div class="divider"></div>
+    <button class="register-btn" id="registerBtn">إنشاء حساب الأدمن (لأول مرة فقط)</button>
     <div class="login-footer">
       <a href="/" style="color:var(--secondary);text-decoration:none;"><i class="fas fa-arrow-right"></i> العودة للمتجر</a>
     </div>
   </div>
 
-  <script src="/dashboard/config.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
   <script src="/dashboard/js/dashboard.js"></script>
   <script>
-    function handleLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const btn = document.getElementById('loginBtn');
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+
       const errEl = document.getElementById('loginError');
+      const successEl = document.getElementById('loginSuccess');
 
-      btn.disabled = true;
-      btn.textContent = 'جاري تسجيل الدخول...';
-      errEl.classList.remove('show');
+      document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const btn = document.getElementById('loginBtn');
 
-      const doLogin = () => {
-        window.location.href = '/dashboard/';
-      };
+        btn.disabled = true;
+        btn.textContent = 'جاري تسجيل الدخول...';
+        errEl.classList.remove('show');
+        successEl.classList.remove('show');
 
-      if (typeof firebase !== 'undefined' && firebase.app && firebase.auth) {
-        firebase.auth().signInWithEmailAndPassword(email, password)
-          .then(doLogin)
-          .catch(error => {
-            if (error.code === 'auth/network-request-failed' || error.message?.includes('network')) {
-              localLogin(email, password, doLogin, errEl, btn);
-            } else {
-              let msg = 'حدث خطأ في تسجيل الدخول';
-              if (error.code === 'auth/user-not-found') msg = 'البريد الإلكتروني غير مسجل';
-              else if (error.code === 'auth/wrong-password') msg = 'كلمة المرور غير صحيحة';
-              else if (error.code === 'auth/invalid-email') msg = 'البريد الإلكتروني غير صالح';
-              else if (error.code === 'auth/too-many-requests') msg = 'تم تجاوز عدد المحاولات المسموحة، حاول لاحقاً';
-              errEl.textContent = msg;
-              errEl.classList.add('show');
-              btn.disabled = false;
-              btn.textContent = 'تسجيل الدخول';
-            }
-          });
-      } else {
-        localLogin(email, password, doLogin, errEl, btn);
-      }
-    }
+        try {
+          await auth.signInWithEmailAndPassword(email, password);
+          window.location.href = '/dashboard/';
+        } catch (error) {
+          let msg = 'حدث خطأ في تسجيل الدخول';
+          if (error.code === 'auth/user-not-found') msg = 'البريد الإلكتروني غير مسجل - استخدم "إنشاء حساب الأدمن" أولاً';
+          else if (error.code === 'auth/wrong-password') msg = 'كلمة المرور غير صحيحة';
+          else if (error.code === 'auth/invalid-email') msg = 'البريد الإلكتروني غير صالح';
+          else if (error.code === 'auth/too-many-requests') msg = 'تم تجاوز عدد المحاولات المسموحة، حاول لاحقاً';
+          errEl.textContent = msg;
+          errEl.classList.add('show');
+          btn.disabled = false;
+          btn.textContent = 'تسجيل الدخول';
+        }
+      });
 
-    function localLogin(email, password, onSuccess, errEl, btn) {
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        localStorage.setItem('sweet_admin_local', 'true');
-        localStorage.setItem('sweet_admin_email', email);
-        onSuccess();
-      } else {
-        errEl.textContent = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
-        errEl.classList.add('show');
-        btn.disabled = false;
-        btn.textContent = 'تسجيل الدخول';
-      }
-    }
+      document.getElementById('registerBtn').addEventListener('click', async function() {
+        const email = document.getElementById('email').value || 'admin@sweet-accessories.com';
+        const password = document.getElementById('password').value || 'admin123';
+        const btn = this;
+
+        btn.disabled = true;
+        btn.textContent = 'جاري إنشاء الحساب...';
+        errEl.classList.remove('show');
+        successEl.classList.remove('show');
+
+        try {
+          await auth.createUserWithEmailAndPassword(email, password);
+          successEl.textContent = 'تم إنشاء حساب الأدمن بنجاح! يمكنك تسجيل الدخول الآن.';
+          successEl.classList.add('show');
+          btn.textContent = 'تم إنشاء الحساب ✅';
+        } catch (error) {
+          let msg = 'حدث خطأ';
+          if (error.code === 'auth/email-already-in-use') msg = 'الحساب موجود بالفعل - سجل دخول مباشرة';
+          else if (error.code === 'auth/weak-password') msg = 'كلمة المرور ضعيفة - استخدم 6 أحرف على الأقل';
+          else msg = error.message;
+          errEl.textContent = msg;
+          errEl.classList.add('show');
+          btn.disabled = false;
+          btn.textContent = 'إنشاء حساب الأدمن (لأول مرة فقط)';
+        }
+      });
+    });
   </script>
 </body>
 </html>
