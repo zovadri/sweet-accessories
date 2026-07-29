@@ -1,7 +1,7 @@
 const SITE_CONFIG = {
   name: 'Sweet Accessories',
   whatsapp: '+2010XXXXXXXX',
-  currency: 'ر.س',
+  currency: 'جنيه',
   shipping: 30,
   freeShippingMin: 500
 };
