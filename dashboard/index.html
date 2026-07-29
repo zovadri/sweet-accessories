@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -19,6 +19,7 @@
       <nav class="sidebar-nav">
         <a href="/dashboard/" class="active"><i class="fas fa-home"></i> الرئيسية</a>
         <a href="/dashboard/products.html"><i class="fas fa-box"></i> المنتجات</a>
+        <a href="/dashboard/orders.html"><i class="fas fa-shopping-bag"></i> الطلبات</a>
         <a href="/dashboard/categories.html"><i class="fas fa-tags"></i> الأقسام</a>
         <a href="/dashboard/banners.html"><i class="fas fa-images"></i> البنرات</a>
         <a href="/dashboard/reviews.html"><i class="fas fa-star"></i> التقييمات</a>
@@ -48,10 +49,31 @@
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon"><i class="fas fa-tags"></i></div>
+          <div class="stat-icon" style="background:var(--primary)"><i class="fas fa-tags"></i></div>
           <div class="stat-info">
             <span class="stat-number" id="statCategories">0</span>
             <span class="stat-label">عدد الأقسام</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#dbeafe;color:#1d4ed8"><i class="fas fa-shopping-bag"></i></div>
+          <div class="stat-info">
+            <span class="stat-number" id="statOrders">0</span>
+            <span class="stat-label">الطلبات الجديدة</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#d1fae5;color:#047857"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-info">
+            <span class="stat-number" id="statDelivered">0</span>
+            <span class="stat-label">تم التوصيل</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fef3c7;color:#b45309"><i class="fas fa-spinner"></i></div>
+          <div class="stat-info">
+            <span class="stat-number" id="statProcessing">0</span>
+            <span class="stat-label">قيد التجهيز</span>
           </div>
         </div>
         <div class="stat-card">
@@ -131,6 +153,13 @@
       db.collection('reviews').onSnapshot(function(snap) {
         document.getElementById('statReviews').textContent = snap.size;
       }, function() {});
+
+      db.collection('orders').onSnapshot(function(snap) {
+        var orders = snap.docs.map(function(d) { return d.data(); });
+        document.getElementById('statOrders').textContent = orders.filter(function(o) { return o.status === 'جديد'; }).length;
+        document.getElementById('statDelivered').textContent = orders.filter(function(o) { return o.status === 'تم التوصيل'; }).length;
+        document.getElementById('statProcessing').textContent = orders.filter(function(o) { return o.status === 'قيد التجهيز' || o.status === 'تم الشحن'; }).length;
+      }, function() {});
     } catch(e) {}
 
     function deleteProduct(id) {
@@ -138,12 +167,7 @@
         try { db.collection('products').doc(id).delete(); } catch(e) {}
       }
     }
-
-    function handleLogout() {
-      try { auth.signOut(); } catch(e) {}
-      localStorage.removeItem('adminUser');
-      window.location.href = '/dashboard/login.html';
-    }
   </script>
 </body>
 </html>
+

@@ -525,7 +525,7 @@ const ProductsPage = {
 };
 
 const Checkout = {
-  submit() {
+  async submit() {
     const cart = Cart.get();
     if (cart.length === 0) { Cart.showToast('سلتك فارغة', 'error'); return; }
     const name = document.querySelector('#checkoutName')?.value?.trim();
@@ -533,14 +533,26 @@ const Checkout = {
     const governorate = document.querySelector('#checkoutGovernorate')?.value?.trim();
     const city = document.querySelector('#checkoutCity')?.value?.trim();
     const address = document.querySelector('#checkoutAddress')?.value?.trim();
+    const notes = document.querySelector('#checkoutNotes')?.value?.trim();
     if (!name || !phone || !governorate || !city || !address) {
       Cart.showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
       return;
     }
     const subtotal = Cart.getTotal();
     const shippingCost = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : getShippingCost(governorate);
+    const total = subtotal + shippingCost;
+    const orderData = {
+      customer: { name, phone, governorate, city, address, notes },
+      items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, color: i.color || '', size: i.size || '', image: i.image || '' })),
+      subtotal,
+      shipping: shippingCost,
+      total,
+      status: 'جديد',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    try { await db.collection('orders').add(orderData); } catch(e) { console.error('Order save error:', e); }
     let productsList = cart.map(i => `• ${i.name} ×${i.quantity}${i.color ? ` (${i.color})` : ''}${i.size ? ` (${i.size})` : ''}`).join('\n');
-    const message = `🛍️ طلب جديد من ${SITE_CONFIG.name}\n\n👤 الاسم: ${name}\n📱 الهاتف: ${phone}\n📍 المحافظة: ${governorate}\n🏙️ المدينة: ${city}\n🏠 العنوان: ${address}\n\n📦 المنتجات:\n${productsList}\n\n💰 الإجمالي: ${subtotal + shippingCost} ${SITE_CONFIG.currency}\n🚚 الشحن: ${shippingCost === 0 ? 'مجاني' : shippingCost + ' ' + SITE_CONFIG.currency}`;
+    const message = `🛍️ طلب جديد من ${SITE_CONFIG.name}\n\n👤 الاسم: ${name}\n📱 الهاتف: ${phone}\n📍 المحافظة: ${governorate}\n🏙️ المدينة: ${city}\n🏠 العنوان: ${address}\n${notes ? `📝 ملاحظات: ${notes}\n` : ''}\n📦 المنتجات:\n${productsList}\n\n💰 الإجمالي: ${total} ${SITE_CONFIG.currency}\n🚚 الشحن: ${shippingCost === 0 ? 'مجاني' : shippingCost + ' ' + SITE_CONFIG.currency}`;
     window.open(`https://wa.me/${SITE_CONFIG.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
     Cart.clear();
     Cart.showToast('تم إرسال الطلب! سيتم التواصل معك قريباً', 'success');

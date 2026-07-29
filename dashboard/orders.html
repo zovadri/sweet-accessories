@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إدارة الطلبات | Sweet Accessories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css">
+  <style>
+    .order-status { display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; }
+    .order-status.new { background: #dbeafe; color: #1d4ed8; }
+    .order-status.processing { background: #fef3c7; color: #b45309; }
+    .order-status.shipped { background: #d1fae5; color: #047857; }
+    .order-status.delivered { background: #d1fae5; color: #065f46; }
+    .order-status.cancelled { background: #fee2e2; color: #b91c1c; }
+    .order-detail-modal .modal-content { max-width: 600px; }
+    .order-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 15px 0; }
+    .order-info-card { background: #f9fafb; border-radius: 12px; padding: 15px; }
+    .order-info-card label { font-size: 0.8rem; color: #999; display: block; margin-bottom: 3px; }
+    .order-info-card span { font-weight: 600; color: var(--text); }
+    .order-items-list { margin-top: 15px; }
+    .order-item-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #eee; }
+    .order-item-row img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+    .order-item-row .item-info { flex: 1; }
+    .order-item-row .item-info h4 { margin: 0; font-size: 0.95rem; }
+    .order-item-row .item-info p { margin: 2px 0 0; font-size: 0.8rem; color: #999; }
+    .order-total-row { display: flex; justify-content: space-between; padding: 12px 0; font-weight: 700; font-size: 1.1rem; border-top: 2px solid var(--primary); margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">Sweet <span>Accessories</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="/dashboard/"><i class="fas fa-home"></i> الرئيسية</a>
+        <a href="/dashboard/orders.html" class="active"><i class="fas fa-shopping-bag"></i> الطلبات</a>
+        <a href="/dashboard/products.html"><i class="fas fa-box"></i> المنتجات</a>
+        <a href="/dashboard/categories.html"><i class="fas fa-tags"></i> الأقسام</a>
+        <a href="/dashboard/banners.html"><i class="fas fa-images"></i> البنرات</a>
+        <a href="/dashboard/reviews.html"><i class="fas fa-star"></i> التقييمات</a>
+        <a href="/dashboard/settings.html"><i class="fas fa-cog"></i> الإعدادات</a>
+        <a href="#" onclick="handleLogout()" class="logout-link"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-title">
+          <h1>الطلبات</h1>
+          <p>إدارة ومتابعة طلبات العملاء</p>
+        </div>
+        <div class="topbar-actions">
+          <select id="statusFilter" onchange="loadOrders()" style="padding:8px 16px;border:2px solid var(--border);border-radius:10px;font-family:'Cairo',sans-serif;">
+            <option value="">كل الطلبات</option>
+            <option value="جديد">جديد</option>
+            <option value="قيد التجهيز">قيد التجهيز</option>
+            <option value="تم الشحن">تم الشحن</option>
+            <option value="تم التوصيل">تم التوصيل</option>
+            <option value="ملغي">ملغي</option>
+          </select>
+        </div>
+      </header>
+
+      <div class="content-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>العميل</th>
+                <th>الهاتف</th>
+                <th>المحافظة</th>
+                <th>عدد المنتجات</th>
+                <th>الإجمالي</th>
+                <th>الحالة</th>
+                <th>التاريخ</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTable">
+              <tr><td colspan="9" style="text-align:center;color:#999;">جاري التحميل...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay order-detail-modal" id="orderModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>تفاصيل الطلب</h3>
+        <span class="modal-close" onclick="closeOrderModal()">&times;</span>
+      </div>
+      <div id="orderDetailContent"></div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="/js/firebase-config.js"></script>
+  <script src="/dashboard/js/dashboard.js"></script>
+  <script>
+    const STATUSES = ['جديد', 'قيد التجهيز', 'تم الشحن', 'تم التوصيل', 'ملغي'];
+
+    document.addEventListener('DOMContentLoaded', function() {
+      checkAuth();
+      loadOrders();
+    });
+
+    function loadOrders() {
+      const filter = document.getElementById('statusFilter').value;
+      let query = db.collection('orders').orderBy('createdAt', 'desc');
+      if (filter) query = query.where('status', '==', filter);
+      query.onSnapshot(snap => {
+        const tbody = document.getElementById('ordersTable');
+        if (snap.empty) {
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#999;">لا توجد طلبات</td></tr>';
+          return;
+        }
+        tbody.innerHTML = snap.docs.map((d, idx) => {
+          const o = d.data(); const id = d.id;
+          const date = o.createdAt?.toDate?.() ? o.createdAt.toDate().toLocaleDateString('ar-EG') : '-';
+          const itemCount = o.items ? o.items.reduce((s, i) => s + i.quantity, 0) : 0;
+          return `<tr>
+            <td>${idx + 1}</td>
+            <td><strong>${o.customer?.name || '?'}</strong></td>
+            <td dir="ltr" style="text-align:right">${o.customer?.phone || '-'}</td>
+            <td>${o.customer?.governorate || '-'}</td>
+            <td>${itemCount}</td>
+            <td style="font-weight:700;color:var(--secondary)">${o.total || 0} جنيه</td>
+            <td>
+              <select class="order-status ${o.status === 'جديد' ? 'new' : o.status === 'قيد التجهيز' ? 'processing' : o.status === 'تم الشحن' ? 'shipped' : o.status === 'تم التوصيل' ? 'delivered' : 'cancelled'}" onchange="updateStatus('${id}', this.value)" style="font-family:'Cairo',sans-serif;">
+                ${STATUSES.map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+            </td>
+            <td style="font-size:0.85rem;color:#999">${date}</td>
+            <td class="actions-cell">
+              <button class="btn-action btn-edit" onclick="viewOrder('${id}')" title="عرض"><i class="fas fa-eye"></i></button>
+              <button class="btn-action btn-delete" onclick="deleteOrder('${id}')" title="حذف"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>`;
+        }).join('');
+      });
+    }
+
+    function updateStatus(id, status) {
+      db.collection('orders').doc(id).update({ status });
+    }
+
+    function viewOrder(id) {
+      db.collection('orders').doc(id).get().then(doc => {
+        if (!doc.exists) return;
+        const o = doc.data();
+        const date = o.createdAt?.toDate?.() ? o.createdAt.toDate().toLocaleString('ar-EG') : '-';
+        const itemsHtml = o.items ? o.items.map(i => `
+          <div class="order-item-row">
+            <img src="${i.image || '/images/placeholder.svg'}" alt="${i.name}">
+            <div class="item-info">
+              <h4>${i.name}</h4>
+              <p>${i.price} جنيه × ${i.quantity}${i.color ? ` | ${i.color}` : ''}${i.size ? ` | ${i.size}` : ''}</p>
+            </div>
+            <div style="font-weight:700;color:var(--secondary)">${i.price * i.quantity} جنيه</div>
+          </div>
+        `).join('') : '<p style="color:#999">لا توجد منتجات</p>';
+
+        document.getElementById('orderDetailContent').innerHTML = `
+          <div class="order-info-grid">
+            <div class="order-info-card">
+              <label>👤 الاسم</label>
+              <span>${o.customer?.name || '-'}</span>
+            </div>
+            <div class="order-info-card">
+              <label>📱 الهاتف</label>
+              <span dir="ltr" style="text-align:right;display:block">${o.customer?.phone || '-'}</span>
+            </div>
+            <div class="order-info-card">
+              <label>📍 المحافظة</label>
+              <span>${o.customer?.governorate || '-'}</span>
+            </div>
+            <div class="order-info-card">
+              <label>🏙️ المدينة</label>
+              <span>${o.customer?.city || '-'}</span>
+            </div>
+            <div class="order-info-card" style="grid-column:1/-1">
+              <label>🏠 العنوان</label>
+              <span>${o.customer?.address || '-'}</span>
+            </div>
+            ${o.customer?.notes ? `<div class="order-info-card" style="grid-column:1/-1"><label>📝 ملاحظات</label><span>${o.customer.notes}</span></div>` : ''}
+            <div class="order-info-card">
+              <label>📅 التاريخ</label>
+              <span>${date}</span>
+            </div>
+            <div class="order-info-card">
+              <label>🔖 الحالة</label>
+              <span class="order-status ${o.status === 'جديد' ? 'new' : o.status === 'قيد التجهيز' ? 'processing' : o.status === 'تم الشحن' ? 'shipped' : o.status === 'تم التوصيل' ? 'delivered' : 'cancelled'}">${o.status}</span>
+            </div>
+          </div>
+          <h4 style="margin-top:0">📦 المنتجات</h4>
+          <div class="order-items-list">${itemsHtml}</div>
+          <div class="order-total-row">
+            <span>المجموع الفرعي: ${o.subtotal || 0} جنيه</span>
+            <span>الشحن: ${o.shipping === 0 ? 'مجاني' : (o.shipping || 0) + ' جنيه'}</span>
+            <span style="color:var(--secondary)">الإجمالي: ${o.total || 0} جنيه</span>
+          </div>
+        `;
+        document.getElementById('orderModal').style.display = 'flex';
+      });
+    }
+
+    function closeOrderModal() {
+      document.getElementById('orderModal').style.display = 'none';
+    }
+
+    function deleteOrder(id) {
+      if (confirm('هل أنت متأكد من حذف هذا الطلب؟')) {
+        db.collection('orders').doc(id).delete();
+      }
+    }
+  </script>
+</body>
+</html>
