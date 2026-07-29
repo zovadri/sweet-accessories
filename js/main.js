@@ -3,8 +3,28 @@ const SITE_CONFIG = {
   whatsapp: '+201022222222',
   currency: 'جنيه',
   shipping: 30,
-  freeShippingMin: 500
+  freeShippingMin: 500,
+  shippingByGov: {}
 };
+
+async function loadSiteConfig() {
+  try {
+    const snap = await db.collection('settings').limit(1).get();
+    if (!snap.empty) {
+      const s = snap.docs[0].data();
+      if (s.whatsapp) SITE_CONFIG.whatsapp = s.whatsapp;
+      if (s.shipping) {
+        if (s.shipping.freeMin) SITE_CONFIG.freeShippingMin = s.shipping.freeMin;
+        if (s.shipping.default) SITE_CONFIG.shipping = s.shipping.default;
+        if (s.shipping.governorates) SITE_CONFIG.shippingByGov = s.shipping.governorates;
+      }
+    }
+  } catch(e) { console.error('Config load error:', e); }
+}
+function getShippingCost(governorate) {
+  if (!governorate) return SITE_CONFIG.shipping;
+  return SITE_CONFIG.shippingByGov[governorate] || SITE_CONFIG.shipping;
+}
 
 const Cart = {
   key: 'sweet-cart',
@@ -99,12 +119,18 @@ const Cart = {
     `).join('');
     this.updateSummary();
   },
-  updateSummary() {
+  updateSummary(checkout) {
     const totalEl = document.querySelector('.cart-total');
     if (!totalEl) return;
     const items = this.get();
     const subtotal = this.getTotal();
-    const shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : SITE_CONFIG.shipping;
+    let shipping;
+    if (checkout) {
+      const gov = document.querySelector('#checkoutGovernorate')?.value;
+      shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : getShippingCost(gov);
+    } else {
+      shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : SITE_CONFIG.shipping;
+    }
     document.querySelector('.cart-subtotal').textContent = `${subtotal} ${SITE_CONFIG.currency}`;
     document.querySelector('.cart-shipping').textContent = shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`;
     totalEl.textContent = `${subtotal + shipping} ${SITE_CONFIG.currency}`;
@@ -512,9 +538,9 @@ const Checkout = {
       return;
     }
     const subtotal = Cart.getTotal();
-    const shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : SITE_CONFIG.shipping;
+    const shippingCost = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : getShippingCost(governorate);
     let productsList = cart.map(i => `• ${i.name} ×${i.quantity}${i.color ? ` (${i.color})` : ''}${i.size ? ` (${i.size})` : ''}`).join('\n');
-    const message = `🛍️ طلب جديد من ${SITE_CONFIG.name}\n\n👤 الاسم: ${name}\n📱 الهاتف: ${phone}\n📍 المحافظة: ${governorate}\n🏙️ المدينة: ${city}\n🏠 العنوان: ${address}\n\n📦 المنتجات:\n${productsList}\n\n💰 الإجمالي: ${subtotal + shipping} ${SITE_CONFIG.currency}\n🚚 الشحن: ${shipping === 0 ? 'مجاني' : shipping + ' ' + SITE_CONFIG.currency}`;
+    const message = `🛍️ طلب جديد من ${SITE_CONFIG.name}\n\n👤 الاسم: ${name}\n📱 الهاتف: ${phone}\n📍 المحافظة: ${governorate}\n🏙️ المدينة: ${city}\n🏠 العنوان: ${address}\n\n📦 المنتجات:\n${productsList}\n\n💰 الإجمالي: ${subtotal + shippingCost} ${SITE_CONFIG.currency}\n🚚 الشحن: ${shippingCost === 0 ? 'مجاني' : shippingCost + ' ' + SITE_CONFIG.currency}`;
     window.open(`https://wa.me/${SITE_CONFIG.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
     Cart.clear();
     Cart.showToast('تم إرسال الطلب! سيتم التواصل معك قريباً', 'success');
@@ -621,7 +647,7 @@ const Banners = {
   }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   UI.init();
   Cart.updateBadge();
   ProductDetail.load();
@@ -629,8 +655,11 @@ document.addEventListener('DOMContentLoaded', () => {
   Cart.updateCartUI();
   Reviews.load();
   Banners.load();
+  await loadSiteConfig();
 
   document.querySelector('#sortFilter')?.addEventListener('change', ProductsPage.load);
+
+  document.querySelector('#checkoutGovernorate')?.addEventListener('change', () => Cart.updateSummary(true));
 
   document.querySelector('#checkoutForm')?.addEventListener('submit', e => {
     e.preventDefault();
