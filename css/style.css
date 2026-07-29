@@ -1602,6 +1602,12 @@ input,textarea,select{font-family:inherit;outline:none;border:none}
   .mobile-menu-btn{display:flex}
   .section{padding:50px 0}
   .section-title h2{font-size:1.6rem}
+  .hero-slider{height:280px}
+  .hero-slide .hero-content h2{font-size:1.5rem}
+  .hero-slide .hero-content p{font-size:0.9rem}
+  .hero-arrow{width:36px;height:36px;font-size:1rem}
+  .hero-arrow-prev{left:8px}
+  .hero-arrow-next{right:8px}
   .hero-content h1{font-size:2rem}
   .hero{min-height:auto;padding:120px 0 60px}
   .categories-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
