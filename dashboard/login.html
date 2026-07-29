@@ -42,7 +42,8 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
   errEl.style.display = 'none';
 
   auth.signInWithEmailAndPassword(email, password)
-    .then(function() {
+    .then(function(result) {
+      localStorage.setItem('adminUser', email);
       window.location.href = '/dashboard/';
     })
     .catch(function(error) {

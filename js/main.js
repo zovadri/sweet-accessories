@@ -440,6 +440,56 @@ const Reviews = {
   }
 };
 
+const Banners = {
+  current: 0,
+  interval: null,
+  async load() {
+    const track = document.getElementById('heroTrack');
+    const dots = document.getElementById('heroDots');
+    if (!track) return;
+    try {
+      const snap = await db.collection('banners').where('active', '==', true).orderBy('createdAt', 'desc').get();
+      if (snap.empty) {
+        document.getElementById('heroSlider').style.display = 'none';
+        return;
+      }
+      const items = snap.docs.map(d => d.data());
+      track.innerHTML = items.map(b => `
+        <div class="hero-slide">
+          <img src="${b.image || '/images/placeholder.svg'}" alt="${b.title}">
+          <div class="hero-overlay"></div>
+          <div class="hero-content">
+            <h2>${b.title}</h2>
+            ${b.text ? `<p>${b.text}</p>` : ''}
+            ${b.link ? `<a href="${b.link}">تسوق الآن</a>` : ''}
+          </div>
+        </div>
+      `).join('');
+      dots.innerHTML = items.map((_, i) => `<button class="dot${i === 0 ? ' active' : ''}" onclick="Banners.goTo(${i})"></button>`).join('');
+      this.startAuto();
+    } catch(e) { console.error('Banners error:', e); }
+  },
+  goTo(index) {
+    const track = document.getElementById('heroTrack');
+    const dots = document.querySelectorAll('.hero-dots .dot');
+    if (!track || !dots.length) return;
+    this.current = Math.max(0, Math.min(index, dots.length - 1));
+    track.style.transform = `translateX(-${this.current * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle('active', i === this.current));
+  },
+  next() { this.goTo(this.current + 1); },
+  prev() { this.goTo(this.current - 1); },
+  startAuto() {
+    clearInterval(this.interval);
+    const dots = document.querySelectorAll('.hero-dots .dot');
+    if (dots.length <= 1) { document.querySelector('.hero-arrow-prev').style.display = 'none'; document.querySelector('.hero-arrow-next').style.display = 'none'; return; }
+    this.interval = setInterval(() => {
+      this.current = (this.current + 1) % dots.length;
+      this.goTo(this.current);
+    }, 5000);
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   UI.init();
   Cart.updateBadge();
@@ -447,6 +497,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ProductsPage.load();
   Cart.updateCartUI();
   Reviews.load();
+  Banners.load();
 
   document.querySelector('#sortFilter')?.addEventListener('change', ProductsPage.load);
 
