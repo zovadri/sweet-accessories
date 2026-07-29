@@ -157,7 +157,7 @@ const Cart = {
       const gov = document.querySelector('#checkoutGovernorate')?.value;
       if (!gov) {
         shipping = 0;
-        shippingText = 'مصاريف الشحن';
+        shippingText = 'يرجى تحديد المحافظة';
       } else {
         shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : getShippingCost(gov);
         shippingText = shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`;
