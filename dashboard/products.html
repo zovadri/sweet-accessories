@@ -134,7 +134,7 @@
     });
 
     function loadCategoriesDropdown() {
-      db.collection('categories').onSnapshot(snap => {
+      try { db.collection('categories').onSnapshot(snap => {
         const sel = document.getElementById('prodCategory');
         sel.innerHTML = '<option value="">اختر القسم</option>';
         categoriesMap = {};
@@ -143,11 +143,11 @@
           categoriesMap[d.id] = c.name;
           sel.innerHTML += `<option value="${d.id}">${c.name}</option>`;
         });
-      });
+      }); } catch(e) {}
     }
 
     function loadProducts() {
-      db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snap => {
+      try { db.collection('products').orderBy('createdAt', 'desc').onSnapshot(snap => {
         const tbody = document.getElementById('productsTable');
         if (snap.empty) {
           tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;">لا توجد منتجات</td></tr>';
@@ -169,7 +169,7 @@
             </td>
           </tr>`;
         }).join('');
-      });
+      }); } catch(e) {}
     }
 
     function openProductModal(data) {
