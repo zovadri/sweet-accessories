@@ -615,7 +615,7 @@ const ProductsPage = {
         const sort = document.querySelector('#sortFilter')?.value;
         if (sort === 'price-asc') filtered.sort((a,b) => a.price - b.price);
         else if (sort === 'price-desc') filtered.sort((a,b) => b.price - a.price);
-        else if (sort === 'newest') filtered.sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));
+        else if (sort === 'newest') filtered.sort((a,b) => ((b.createdAt?.toMillis?.()||b.createdAt?.seconds*1000||0)) - ((a.createdAt?.toMillis?.()||a.createdAt?.seconds*1000||0)));
         c.innerHTML = filtered.length ? filtered.map(p => UI.productCardHTML(p)).join('') : '<div style="text-align:center;padding:40px;grid-column:1/-1;color:#999;">لا توجد منتجات</div>';
       });
       UI.setupWishlistButtons();
