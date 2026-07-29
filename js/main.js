@@ -152,31 +152,20 @@ const Cart = {
     const isCheckout = checkout || document.querySelector('#checkoutGovernorate');
     const subtotal = this.getTotal();
     const discount = this.getDiscount();
+    const afterDiscount = subtotal - discount;
     let shipping;
-    let shippingText;
     if (isCheckout) {
       const gov = document.querySelector('#checkoutGovernorate')?.value;
-      if (!gov) {
-        shipping = 0;
-        shippingText = 'حدد المحافظة';
-      } else {
-        shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : getShippingCost(gov);
-        shippingText = shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`;
-      }
+      shipping = (gov && subtotal < SITE_CONFIG.freeShippingMin) ? getShippingCost(gov) : 0;
     } else {
       shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : SITE_CONFIG.shipping;
-      shippingText = shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`;
     }
-    const afterDiscount = subtotal - discount;
     document.querySelector('.cart-subtotal').textContent = `${subtotal} ${SITE_CONFIG.currency}`;
-    document.querySelector('.cart-shipping').textContent = shippingText;
+    const shippingEl = document.querySelector('.cart-shipping');
+    if (shippingEl) shippingEl.textContent = isCheckout && !document.querySelector('#checkoutGovernorate')?.value ? '-' : (shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`);
     const discEl = document.querySelector('.cart-discount');
     if (discEl) discEl.textContent = discount > 0 ? `-${discount} ${SITE_CONFIG.currency}` : '0';
-    if (!isCheckout || document.querySelector('#checkoutGovernorate')?.value) {
-      totalEl.textContent = `${Math.max(0, afterDiscount + shipping)} ${SITE_CONFIG.currency}`;
-    } else {
-      totalEl.textContent = `${Math.max(0, afterDiscount)} ${SITE_CONFIG.currency}`;
-    }
+    totalEl.textContent = `${Math.max(0, afterDiscount + shipping)} ${SITE_CONFIG.currency}`;
   },
   showToast(msg, type = 'info') {
     const toast = document.createElement('div');
