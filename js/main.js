@@ -611,6 +611,7 @@ const ProductsPage = {
         if (type === 'featured') filtered = filtered.filter(p => p.featured).slice(0, 8);
         else if (type === 'bestseller') filtered = filtered.filter(p => p.bestseller).slice(0, 8);
         else if (type === 'similar' && categoryId) filtered = filtered.filter(p => p.category === categoryId || p.categoryName === categoryId).slice(0, 8);
+        else if (type === 'all') filtered = filtered.slice(0, 20);
         if (catFilter) filtered = filtered.filter(p => p.category === catFilter || p.categoryName === catFilter);
         const sort = document.querySelector('#sortFilter')?.value;
         if (sort === 'price-asc') filtered.sort((a,b) => a.price - b.price);
