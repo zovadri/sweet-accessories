@@ -26,7 +26,7 @@
     <div class="header-actions">
       <button onclick="Search.open()" aria-label="بحث">🔍</button>
       <button onclick="window.location.href='/cart.html'" aria-label="السلة" style="position:relative">
-        🛒<span class="badge cart-badge" style="display:none">0</span>
+        🛒<span class="badge cart-badge">0</span>
       </button>
       <button class="mobile-menu-btn" aria-label="القائمة">
         <span></span><span></span><span></span>
@@ -39,15 +39,9 @@
   <a href="/">الرئيسية</a>
   <a href="/products.html">جميع المنتجات</a>
   <div style="padding:0 20px;margin:5px 0;font-size:0.85rem;color:var(--secondary);font-weight:700">الأقسام</div>
-  <a href="/products.html?category=سلاسل" style="font-size:0.9rem;padding:8px 25px">📿 سلاسل</a>
-  <a href="/products.html?category=اسورة" style="font-size:0.9rem;padding:8px 25px">💍 اسورة</a>
-  <a href="/products.html?category=انسيالات" style="font-size:0.9rem;padding:8px 25px">✨ انسيالات</a>
-  <a href="/products.html?category=خواتم" style="font-size:0.9rem;padding:8px 25px">💍 خواتم</a>
-  <a href="/products.html?category=اطقم" style="font-size:0.9rem;padding:8px 25px">👑 اطقم</a>
-  <a href="/products.html?category=طرح" style="font-size:0.9rem;padding:8px 25px">🧣 طرح</a>
-  <a href="/products.html?category=ساعات" style="font-size:0.9rem;padding:8px 25px">⌚ ساعات</a>
+  <div id="mobileMenuCategories"></div>
   <div style="border-top:1px solid var(--primary);margin:10px 20px"></div>
-  <a href="/cart.html">السلة</a>
+  <a href="/cart.html">🛒 السلة</a>
 </div>
 
 <section class="hero-slider" id="heroSlider">

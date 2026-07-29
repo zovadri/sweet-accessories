@@ -16,13 +16,37 @@ const Cart = {
     this.updateBadge();
     this.updateCartUI();
   },
-  add(product) {
+  add(product, el) {
     const items = this.get();
     const existing = items.find(i => i.id === product.id && i.color === product.color && i.size === product.size);
     if (existing) existing.quantity += product.quantity || 1;
     else items.push({ ...product, quantity: product.quantity || 1 });
     this.save(items);
-    this.showToast('تمت إضافة المنتج إلى السلة', 'success');
+    if (el) this.flyToCart(el);
+    this.showToast('تمت إضافة المنتج للسلة', 'success');
+  },
+
+  flyToCart(el) {
+    const cartIcon = document.querySelector('.header-actions button[aria-label="السلة"]');
+    if (!el || !cartIcon) return;
+    const btnRect = el.getBoundingClientRect();
+    const cartRect = cartIcon.getBoundingClientRect();
+    const clone = el.cloneNode(true);
+    clone.style.cssText = `position:fixed;z-index:9999;top:${btnRect.top}px;left:${btnRect.left}px;width:${btnRect.width}px;height:${btnRect.height}px;pointer-events:none;transition:all 0.6s cubic-bezier(0.4,0,0.2,1);border-radius:8px;font-size:12px;padding:8px 16px;background:var(--secondary);color:white;border:none;display:flex;align-items:center;justify-content:center;`;
+    document.body.appendChild(clone);
+    requestAnimationFrame(() => {
+      clone.style.top = `${cartRect.top + cartRect.height/2 - btnRect.height/2}px`;
+      clone.style.left = `${cartRect.left + cartRect.width/2 - btnRect.width/2}px`;
+      clone.style.width = '30px';
+      clone.style.height = '30px';
+      clone.style.borderRadius = '50%';
+      clone.style.opacity = '0.3';
+    });
+    setTimeout(() => clone.remove(), 700);
+    cartIcon.style.transform = 'scale(1.2)';
+    setTimeout(() => cartIcon.style.transform = '', 200);
+    const badge = document.querySelector('.cart-badge');
+    if (badge) { badge.classList.add('pulse'); setTimeout(() => badge.classList.remove('pulse'), 300); }
   },
   remove(id, color, size) {
     this.save(this.get().filter(i => !(i.id === id && i.color === color && i.size === size)));
@@ -38,7 +62,8 @@ const Cart = {
   updateBadge() {
     document.querySelectorAll('.cart-badge').forEach(el => {
       el.textContent = this.getCount();
-      el.style.display = this.getCount() > 0 ? 'flex' : 'none';
+      el.style.display = 'inline';
+      el.style.opacity = '1';
     });
   },
   updateCartUI() {
@@ -184,6 +209,31 @@ const UI = {
     this.mobileMenu();
     this.setupSearch();
     this.renderCategories();
+    this.loadMobileMenuCategories();
+    this.updateBadgeAlways();
+  },
+
+  updateBadgeAlways() {
+    const badge = document.querySelector('.cart-badge');
+    if (badge) {
+      const items = Cart.get();
+      badge.textContent = items.reduce((s, i) => s + i.quantity, 0);
+      badge.style.display = 'inline';
+      badge.style.opacity = '1';
+    }
+  },
+
+  loadMobileMenuCategories() {
+    const container = document.getElementById('mobileMenuCategories');
+    if (!container) return;
+    try {
+      db.collection('categories').orderBy('name').get().then(snap => {
+        container.innerHTML = snap.docs.map(d => {
+          const c = d.data();
+          return `<a href="/products.html?category=${encodeURIComponent(d.id)}" style="font-size:0.9rem;padding:8px 25px">${c.image ? `<img src="${c.image}" style="width:20px;height:20px;border-radius:50%;vertical-align:middle;margin-left:6px;object-fit:cover;">` : ''}${c.name}</a>`;
+        }).join('');
+      });
+    } catch(e) {}
   },
 
   headerScroll() {
@@ -270,7 +320,7 @@ const UI = {
           </div>
         </div>
         <div style="padding:0 20px 20px">
-          <button class="add-cart" onclick='Cart.add({id:"${p.id}",name:"${p.name?.replace(/"/g,"\\\"")}",price:${p.price},image:"${p.images?.[0]||''}"})'>🛒 إضافة للسلة</button>
+          <button class="add-cart" onclick="Cart.add({id:&quot;${p.id}&quot;,name:&quot;${p.name?.replace(/"/g,"\\\"")}&quot;,price:${p.price},image:&quot;${p.images?.[0]||''}&quot;},this)">🛒 إضافة للسلة</button>
         </div>
       </div>`;
   },
@@ -318,7 +368,7 @@ const ProductDetail = {
           <div class="item">📦 الحالة: ${product.available !== false ? 'متوفر' : 'غير متوفر'}</div>
         </div>
         <div class="actions">
-          <button class="btn btn-primary btn-lg" onclick="ProductDetail.addToCart('${product.id}')" ${product.available === false ? 'disabled' : ''}>🛒 إضافة للسلة</button>
+          <button class="btn btn-primary btn-lg" onclick="ProductDetail.addToCart('${product.id}')" id="addToCartBtn" ${product.available === false ? 'disabled' : ''}>🛒 إضافة للسلة</button>
         </div>
         <div class="description">
           <h3>الوصف</h3>
@@ -341,7 +391,7 @@ const ProductDetail = {
     product.price = parseFloat(priceText.replace(/[^0-9.]/g, ''));
     product.image = document.querySelector('#zoomImg')?.src || '';
     product.quantity = parseInt(document.querySelector('#productQty')?.value || '1');
-    Cart.add(product);
+    Cart.add(product, document.getElementById('addToCartBtn'));
   }
 };
 
