@@ -151,7 +151,23 @@
     }
 
     function updateStatus(id, status) {
-      db.collection('orders').doc(id).update({ status });
+      db.collection('orders').doc(id).get().then(doc => {
+        if (!doc.exists) return;
+        const order = doc.data();
+        const oldStatus = order.status;
+        if (oldStatus === status) return;
+        db.collection('orders').doc(id).update({ status });
+        const phone = order.customer?.phone?.replace(/[^0-9]/g, '');
+        if (!phone) return;
+        const msgs = {
+          'قيد التجهيز': 'طلبك 🛍️ دخل مرحلة التجهيز! هنتواصل معاك قريباً لتأكيد التفاصيل. شكراً لاختيارك Sweet Accessories ❤️',
+          'تم الشحن': 'طلبك 🚚 اتشحن! هتوصللك خلال 3-5 أيام عمل. هتبقى عينك على الواتساب لأي تحديث. شكراً لثقتك ❤️',
+          'تم التوصيل': 'طلبك 🎉 اتوصل! نتمنى إنه يعجبك ويومك سعيد. متنسيناش في تقييمك 💕 Sweet Accessories',
+          'ملغي': 'طلبك 📋 تم إلغاؤه. للاستفسار أو تعديل الطلب، تواصل معانا على الرقم دا. شكراً 🙏'
+        };
+        const msg = msgs[status];
+        if (msg) window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+      });
     }
 
     function viewOrder(id) {
