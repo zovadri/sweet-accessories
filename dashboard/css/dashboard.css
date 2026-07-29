@@ -255,6 +255,28 @@ body {
 }
 .topbar-actions { display: flex; gap: 10px; }
 
+/* Sidebar Toggle (mobile) */
+.sidebar-toggle {
+  display: none;
+  width: 40px; height: 40px;
+  border: none; border-radius: var(--radius-sm);
+  background: var(--bg); color: var(--text);
+  font-size: 1.3rem;
+  align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  position: fixed; top: 12px; right: 12px; z-index: 1001;
+  box-shadow: var(--shadow-sm);
+}
+.sidebar-toggle:hover { background: var(--primary); color: white; }
+.sidebar-backdrop {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 999;
+}
+.sidebar-backdrop.open { display: block; }
+
 /* ============ STATS ============ */
 .stats-grid {
   display: grid;
@@ -485,17 +507,29 @@ body {
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 768px) {
-  .sidebar { width: 0; overflow: hidden; }
-  .sidebar.open { width: 270px; box-shadow: var(--shadow-xl); }
-  .main-content { margin-right: 0; padding: 15px; }
+  .sidebar { width: 0; overflow: hidden; position: fixed; top: 0; right: 0; height: 100vh; z-index: 1000; box-shadow: none; }
+  .sidebar.open { width: 280px; box-shadow: var(--shadow-xl); }
+  .main-content { margin-right: 0; padding: 15px; padding-top: 65px; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .form-row { grid-template-columns: 1fr; }
   .settings-grid { grid-template-columns: 1fr; }
-  .topbar { flex-direction: column; gap: 12px; text-align: center; }
+  .topbar { flex-direction: column; gap: 12px; text-align: center; padding: 15px; }
   .login-box { padding: 30px 25px; }
+  .sidebar-toggle { display: flex; }
 }
 @media (max-width: 480px) {
   .stats-grid { grid-template-columns: 1fr; }
-  .table-responsive { padding: 12px; }
-  .data-table th, .data-table td { padding: 10px 12px; }
+  .table-responsive { padding: 12px; overflow-x: auto; }
+  .data-table { font-size: 0.8rem; }
+  .data-table th, .data-table td { padding: 10px 8px; white-space: nowrap; }
+  .data-table .table-thumb { width: 36px; height: 36px; }
+  .data-table .actions-cell { gap: 4px; }
+  .data-table .btn-action { width: 30px; height: 30px; font-size: 0.8rem; }
+  .modal-content { padding: 20px; max-width: 95%; }
+  .settings-card { padding: 18px; }
+  .topbar-title h1 { font-size: 1.1rem; }
+  .topbar-title p { font-size: 0.75rem; }
+  .stat-card { padding: 18px; gap: 14px; }
+  .stat-card .stat-number { font-size: 1.4rem; }
+  .stat-card .stat-icon { width: 44px; height: 44px; font-size: 1.2rem; }
 }
