@@ -595,16 +595,18 @@ const ProductDetail = {
 };
 
 const ProductsPage = {
-  async load() {
-    const containers = document.querySelectorAll('.products-grid');
+  async load(container) {
+    const containers = container ? [container] : document.querySelectorAll('.products-grid');
     if (!containers.length) return;
     const catFilter = new URLSearchParams(window.location.search).get('category');
+    containers.forEach(c => { if (!c.dataset._loading) { c.innerHTML = '<div class="loading-spinner" style="text-align:center;padding:40px;grid-column:1/-1"><div class="spinner"></div><p style="color:#999;margin-top:10px">جاري تحميل المنتجات...</p></div>'; c.dataset._loading = '1'; } });
     try {
       let products = await getCollection('products');
       products = products.filter(p => p.available !== false);
-      containers.forEach(container => {
-        const type = container.dataset.type;
-        const categoryId = container.dataset.category;
+      containers.forEach(c => {
+        delete c.dataset._loading;
+        const type = c.dataset.type;
+        const categoryId = c.dataset.category;
         let filtered = [...products];
         if (type === 'featured') filtered = filtered.filter(p => p.featured).slice(0, 8);
         else if (type === 'bestseller') filtered = filtered.filter(p => p.bestseller).slice(0, 8);
@@ -614,11 +616,12 @@ const ProductsPage = {
         if (sort === 'price-asc') filtered.sort((a,b) => a.price - b.price);
         else if (sort === 'price-desc') filtered.sort((a,b) => b.price - a.price);
         else if (sort === 'newest') filtered.sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));
-        container.innerHTML = filtered.length ? filtered.map(p => UI.productCardHTML(p)).join('') : '<div style="text-align:center;padding:40px;grid-column:1/-1;color:#999;">لا توجد منتجات</div>';
+        c.innerHTML = filtered.length ? filtered.map(p => UI.productCardHTML(p)).join('') : '<div style="text-align:center;padding:40px;grid-column:1/-1;color:#999;">لا توجد منتجات</div>';
       });
       UI.setupWishlistButtons();
     } catch (e) {
       console.error('Products page error:', e);
+      containers.forEach(c => { delete c.dataset._loading; c.innerHTML = '<div style="text-align:center;padding:40px;grid-column:1/-1"><p style="color:#b91c1c;font-weight:600;margin-bottom:15px;">❌ حدث خطأ في تحميل المنتجات</p><button class="btn btn-primary" onclick="ProductsPage.load()">🔄 إعادة المحاولة</button></div>'; });
     }
   }
 };
