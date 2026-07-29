@@ -149,20 +149,22 @@ const Cart = {
   updateSummary(checkout) {
     const totalEl = document.querySelector('.cart-total');
     if (!totalEl) return;
-    const isCheckout = checkout || document.querySelector('#checkoutGovernorate');
     const subtotal = this.getTotal();
     const discount = this.getDiscount();
-    const afterDiscount = subtotal - discount;
     let shipping;
-    if (isCheckout) {
+    if (checkout || document.querySelector('#checkoutGovernorate')) {
       const gov = document.querySelector('#checkoutGovernorate')?.value;
-      shipping = (gov && subtotal < SITE_CONFIG.freeShippingMin) ? getShippingCost(gov) : 0;
+      if (!gov) {
+        shipping = SITE_CONFIG.shipping;
+      } else {
+        shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : getShippingCost(gov);
+      }
     } else {
       shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : SITE_CONFIG.shipping;
     }
+    const afterDiscount = subtotal - discount;
     document.querySelector('.cart-subtotal').textContent = `${subtotal} ${SITE_CONFIG.currency}`;
-    const shippingEl = document.querySelector('.cart-shipping');
-    if (shippingEl) shippingEl.textContent = isCheckout && !document.querySelector('#checkoutGovernorate')?.value ? '-' : (shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`);
+    document.querySelector('.cart-shipping').textContent = shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`;
     const discEl = document.querySelector('.cart-discount');
     if (discEl) discEl.textContent = discount > 0 ? `-${discount} ${SITE_CONFIG.currency}` : '0';
     totalEl.textContent = `${Math.max(0, afterDiscount + shipping)} ${SITE_CONFIG.currency}`;
