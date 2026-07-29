@@ -44,20 +44,21 @@
   <a href="/cart.html">🛒 السلة</a>
 </div>
 
-<section class="hero-slider" id="heroSlider">
-  <div class="hero-track" id="heroTrack"></div>
-  <div class="hero-dots" id="heroDots"></div>
-  <button class="hero-arrow hero-arrow-prev" onclick="Banners.prev()">❮</button>
-  <button class="hero-arrow hero-arrow-next" onclick="Banners.next()">❯</button>
-</section>
-
-<section class="section section-alt">
+<section class="hero">
   <div class="container">
-    <div class="section-title">
-      <h2>🔥 منتجات مميزة</h2>
-      <p>أحدث التصاميم وأجود الخامات</p>
+    <div class="hero-content">
+      <h1>أجمل الإكسسوارات <br>لأجمل اللحظات</h1>
+      <p>اكتشفي أحدث صيحات الموضة والإكسسوارات النسائية الفاخرة. تشكيلتنا مختارة بعناية لتمنحك إطلالة استثنائية في كل مناسبة.</p>
+      <div class="hero-buttons">
+        <a href="/products.html" class="btn btn-primary btn-lg">🛍️ تسوق الآن</a>
+      </div>
     </div>
-    <div class="products-grid" data-type="featured"></div>
+    <div class="hero-image">
+      <div class="hero-logo-wrap">
+        <img src="/images/logo.jpeg" alt="Sweet Accessories" loading="eager" class="hero-logo-img">
+        <div class="hero-logo-glow"></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -67,19 +68,6 @@
       <h2>الأقسام</h2>
     </div>
     <div class="categories-grid"></div>
-  </div>
-</section>
-
-<section class="section reviews-section" id="reviews">
-  <div class="container">
-    <div class="section-title">
-      <h2>⭐ ماذا قالوا عنا</h2>
-      <p>آراء عملائنا</p>
-    </div>
-    <div class="reviews-carousel" id="reviewsCarousel">
-      <div class="reviews-track" id="reviewsTrack"></div>
-      <div class="reviews-dots" id="reviewsDots"></div>
-    </div>
   </div>
 </section>
 
@@ -124,10 +112,10 @@
 
 <button class="scroll-top" aria-label="أعلى الصفحة">⬆</button>
 
-<script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script defer src="/js/firebase-config.js"></script>
-<script defer src="/js/main.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="/js/firebase-config.js"></script>
+<script src="/js/main.js"></script>
 </body>
 </html>
