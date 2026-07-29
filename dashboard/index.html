@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>لوحة التحكم | Sweet Accessories</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="/dashboard/css/dashboard.css">
 </head>
@@ -31,6 +28,7 @@
       <header class="topbar">
         <div class="topbar-title">
           <h1>الرئيسية</h1>
+          <p>نظرة عامة على المتجر</p>
         </div>
         <div class="topbar-user">
           <span id="userEmail">admin@sweet-accessories.com</span>
@@ -38,58 +36,56 @@
         </div>
       </header>
 
-      <div class="content-body">
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-icon" style="background:var(--bg-section);color:var(--secondary);"><i class="fas fa-box"></i></div>
-            <div class="stat-info">
-              <span class="stat-number" id="statProducts">0</span>
-              <span class="stat-label">عدد المنتجات</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:var(--bg-section);color:var(--secondary);"><i class="fas fa-tags"></i></div>
-            <div class="stat-info">
-              <span class="stat-number" id="statCategories">0</span>
-              <span class="stat-label">عدد الأقسام</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:var(--bg-section);color:var(--secondary);"><i class="fas fa-star"></i></div>
-            <div class="stat-info">
-              <span class="stat-number" id="statReviews">0</span>
-              <span class="stat-label">عدد التقييمات</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:var(--bg-section);color:var(--secondary);"><i class="fas fa-crown"></i></div>
-            <div class="stat-info">
-              <span class="stat-number" id="statFeatured">0</span>
-              <span class="stat-label">المنتجات المميزة</span>
-            </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-box"></i></div>
+          <div class="stat-info">
+            <span class="stat-number" id="statProducts">0</span>
+            <span class="stat-label">عدد المنتجات</span>
           </div>
         </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-tags"></i></div>
+          <div class="stat-info">
+            <span class="stat-number" id="statCategories">0</span>
+            <span class="stat-label">عدد الأقسام</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-star"></i></div>
+          <div class="stat-info">
+            <span class="stat-number" id="statReviews">0</span>
+            <span class="stat-label">عدد التقييمات</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-crown"></i></div>
+          <div class="stat-info">
+            <span class="stat-number" id="statFeatured">0</span>
+            <span class="stat-label">المنتجات المميزة</span>
+          </div>
+        </div>
+      </div>
 
-        <div class="section-header">
-          <h2>أحدث المنتجات</h2>
-        </div>
-        <div class="table-responsive">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>الصورة</th>
-                <th>الاسم</th>
-                <th>السعر</th>
-                <th>القسم</th>
-                <th>الحالة</th>
-                <th>الإجراءات</th>
-              </tr>
-            </thead>
-            <tbody id="recentProductsTable">
-              <tr><td colspan="6" style="text-align:center;color:#999;">لا توجد منتجات</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="section-header">
+        <h2><i class="fas fa-clock"></i> أحدث المنتجات</h2>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>الصورة</th>
+              <th>الاسم</th>
+              <th>السعر</th>
+              <th>القسم</th>
+              <th>الحالة</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="recentProductsTable">
+            <tr><td colspan="6" style="text-align:center;color:var(--text-lighter);padding:40px;">لا توجد منتجات بعد</td></tr>
+          </tbody>
+        </table>
       </div>
     </main>
   </div>
@@ -111,14 +107,14 @@
         const recent = snap.docs.slice(-5).reverse();
         const tbody = document.getElementById('recentProductsTable');
         if (recent.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;">لا توجد منتجات</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-lighter);padding:40px;">لا توجد منتجات بعد</td></tr>';
           return;
         }
         tbody.innerHTML = recent.map(d => {
           const p = d.data(); const id = d.id;
           return `<tr>
-            <td><img src="${p.image || 'https://via.placeholder.com/50'}" alt="${p.name}" class="table-thumb"></td>
-            <td>${p.name}</td>
+            <td><img src="${p.image || 'https://via.placeholder.com/48'}" alt="${p.name}" class="table-thumb"></td>
+            <td><strong>${p.name}</strong></td>
             <td>${p.price} ر.س</td>
             <td>${p.category || '-'}</td>
             <td><span class="badge ${p.active ? 'badge-active' : 'badge-inactive'}">${p.active ? 'نشط' : 'غير نشط'}</span></td>

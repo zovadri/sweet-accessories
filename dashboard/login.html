@@ -4,139 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>تسجيل الدخول - لوحة التحكم | Sweet Accessories</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="/dashboard/css/dashboard.css">
-  <style>
-    :root { --primary:#F8D9E5; --secondary:#8B0D32; --accent:#EBA9BF; --bg:#FFFFFF; --bg-section:#FFF5F8; --text:#2E2E2E; }
-    body {
-      font-family: 'Cairo', sans-serif;
-      background: var(--bg-section);
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      direction: rtl;
-    }
-    .login-box {
-      background: #fff;
-      border-radius: 16px;
-      padding: 2.5rem;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-      text-align: center;
-    }
-    .login-logo {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--secondary);
-      margin-bottom: 0.3rem;
-    }
-    .login-logo span { color: var(--accent); }
-    .login-box h2 {
-      font-size: 1.3rem;
-      color: var(--text);
-      margin: 0.5rem 0 1.5rem;
-      font-weight: 600;
-    }
-    .form-group {
-      text-align: right;
-      margin-bottom: 1.2rem;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 0.4rem;
-      font-weight: 600;
-      color: #444;
-      font-size: 0.95rem;
-    }
-    .form-group input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 2px solid #eee;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-family: 'Cairo', sans-serif;
-      box-sizing: border-box;
-      transition: border-color 0.3s;
-    }
-    .form-group input:focus {
-      outline: none;
-      border-color: var(--secondary);
-    }
-    .login-btn {
-      width: 100%;
-      padding: 0.8rem;
-      background: var(--secondary);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 1.1rem;
-      font-family: 'Cairo', sans-serif;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s;
-      margin-top: 0.5rem;
-    }
-    .login-btn:hover { background: #a0103e; }
-    .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .register-btn {
-      width: 100%;
-      padding: 0.8rem;
-      background: transparent;
-      color: var(--secondary);
-      border: 2px solid var(--secondary);
-      border-radius: 8px;
-      font-size: 1rem;
-      font-family: 'Cairo', sans-serif;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 0.5rem;
-    }
-    .register-btn:hover { background: var(--secondary); color: #fff; }
-    .register-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .error-msg {
-      background: #fef2f2;
-      color: #dc2626;
-      padding: 0.7rem 1rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      font-size: 0.95rem;
-      display: none;
-    }
-    .error-msg.show { display: block; }
-    .success-msg {
-      background: #f0fdf4;
-      color: #16a34a;
-      padding: 0.7rem 1rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      font-size: 0.95rem;
-      display: none;
-    }
-    .success-msg.show { display: block; }
-    .login-footer {
-      margin-top: 1.5rem;
-      font-size: 0.85rem;
-      color: #888;
-    }
-    .divider {
-      margin: 1rem 0;
-      border-top: 1px solid #eee;
-    }
-  </style>
 </head>
-<body>
+<body class="login-page">
   <div class="login-box">
-    <div class="login-logo">Sweet <span>Accessories</span></div>
+    <div class="logo-text">Sweet <span>Accessories</span></div>
     <h2>لوحة التحكم</h2>
-    <div class="error-msg" id="loginError"></div>
-    <div class="success-msg" id="loginSuccess"></div>
+    <div class="error-msg" id="loginError" style="background:#fef2f2;color:#dc2626;padding:12px;border-radius:var(--radius);margin-bottom:15px;font-size:0.9rem;display:none;"></div>
+    <div class="success-msg" id="loginSuccess" style="background:#f0fdf4;color:#16a34a;padding:12px;border-radius:var(--radius);margin-bottom:15px;font-size:0.9rem;display:none;"></div>
     <form id="loginForm">
       <div class="form-group">
         <label for="email">البريد الإلكتروني</label>
@@ -148,11 +24,7 @@
       </div>
       <button type="submit" class="login-btn" id="loginBtn">تسجيل الدخول</button>
     </form>
-    <div class="divider"></div>
-    <button class="register-btn" id="registerBtn">إنشاء حساب الأدمن (لأول مرة فقط)</button>
-    <div class="login-footer">
-      <a href="/" style="color:var(--secondary);text-decoration:none;"><i class="fas fa-arrow-right"></i> العودة للمتجر</a>
-    </div>
+    <button class="register-btn" id="registerBtn">إنشاء حساب الأدمن</button>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -174,51 +46,39 @@
         const password = document.getElementById('password').value;
         const btn = document.getElementById('loginBtn');
 
-        btn.disabled = true;
-        btn.textContent = 'جاري تسجيل الدخول...';
-        errEl.classList.remove('show');
-        successEl.classList.remove('show');
+        btn.disabled = true; btn.textContent = 'جاري تسجيل الدخول...';
+        errEl.style.display = 'none'; successEl.style.display = 'none';
 
         try {
           await auth.signInWithEmailAndPassword(email, password);
-          window.location.href = '/dashboard/';
+          window.location.href = '/dashboard/?key=' + DASHBOARD_KEY;
         } catch (error) {
           let msg = 'حدث خطأ في تسجيل الدخول';
-          if (error.code === 'auth/user-not-found') msg = 'البريد الإلكتروني غير مسجل - استخدم "إنشاء حساب الأدمن" أولاً';
+          if (error.code === 'auth/user-not-found') msg = 'البريد الإلكتروني غير مسجل';
           else if (error.code === 'auth/wrong-password') msg = 'كلمة المرور غير صحيحة';
-          else if (error.code === 'auth/invalid-email') msg = 'البريد الإلكتروني غير صالح';
-          else if (error.code === 'auth/too-many-requests') msg = 'تم تجاوز عدد المحاولات المسموحة، حاول لاحقاً';
-          errEl.textContent = msg;
-          errEl.classList.add('show');
-          btn.disabled = false;
-          btn.textContent = 'تسجيل الدخول';
+          else if (error.code === 'auth/too-many-requests') msg = 'تم تجاوز عدد المحاولات المسموحة';
+          errEl.textContent = msg; errEl.style.display = 'block';
+          btn.disabled = false; btn.textContent = 'تسجيل الدخول';
         }
       });
 
       document.getElementById('registerBtn').addEventListener('click', async function() {
         const email = document.getElementById('email').value || 'admin@sweet-accessories.com';
         const password = document.getElementById('password').value || 'admin123';
-        const btn = this;
-
-        btn.disabled = true;
-        btn.textContent = 'جاري إنشاء الحساب...';
-        errEl.classList.remove('show');
-        successEl.classList.remove('show');
+        this.disabled = true; this.textContent = 'جاري إنشاء الحساب...';
+        errEl.style.display = 'none'; successEl.style.display = 'none';
 
         try {
           await auth.createUserWithEmailAndPassword(email, password);
-          successEl.textContent = 'تم إنشاء حساب الأدمن بنجاح! يمكنك تسجيل الدخول الآن.';
-          successEl.classList.add('show');
-          btn.textContent = 'تم إنشاء الحساب ✅';
+          successEl.textContent = 'تم إنشاء الحساب! سجل دخول الآن.';
+          successEl.style.display = 'block';
+          this.textContent = 'تم ✅';
         } catch (error) {
           let msg = 'حدث خطأ';
-          if (error.code === 'auth/email-already-in-use') msg = 'الحساب موجود بالفعل - سجل دخول مباشرة';
-          else if (error.code === 'auth/weak-password') msg = 'كلمة المرور ضعيفة - استخدم 6 أحرف على الأقل';
+          if (error.code === 'auth/email-already-in-use') msg = 'الحساب موجود بالفعل';
           else msg = error.message;
-          errEl.textContent = msg;
-          errEl.classList.add('show');
-          btn.disabled = false;
-          btn.textContent = 'إنشاء حساب الأدمن (لأول مرة فقط)';
+          errEl.textContent = msg; errEl.style.display = 'block';
+          this.disabled = false; this.textContent = 'إنشاء حساب الأدمن';
         }
       });
     });
