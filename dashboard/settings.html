@@ -59,7 +59,7 @@
               <h3><i class="fas fa-phone"></i> معلومات التواصل</h3>
               <div class="form-group">
                 <label>رقم الواتساب</label>
-                <input type="text" id="whatsappNumber" placeholder="966500000000">
+                <input type="text" id="whatsappNumber" placeholder="201022222222">
               </div>
               <div class="form-group">
                 <label>البريد الإلكتروني</label>
@@ -70,20 +70,16 @@
             <div class="settings-card">
               <h3><i class="fas fa-globe"></i> روابط التواصل الاجتماعي</h3>
               <div class="form-group">
+                <label>فيسبوك</label>
+                <input type="text" id="socialFacebook" placeholder="https://facebook.com/...">
+              </div>
+              <div class="form-group">
                 <label>انستغرام</label>
                 <input type="text" id="socialInstagram" placeholder="https://instagram.com/...">
               </div>
               <div class="form-group">
-                <label>سناب شات</label>
-                <input type="text" id="socialSnapchat" placeholder="https://snapchat.com/...">
-              </div>
-              <div class="form-group">
-                <label>تويتر / X</label>
-                <input type="text" id="socialTwitter" placeholder="https://twitter.com/...">
-              </div>
-              <div class="form-group">
-                <label>تيليجرام</label>
-                <input type="text" id="socialTelegram" placeholder="https://t.me/...">
+                <label>تيك توك</label>
+                <input type="text" id="socialTiktok" placeholder="https://tiktok.com/...">
               </div>
             </div>
 
@@ -177,10 +173,9 @@
           const s = doc.data();
           if (s.whatsapp) document.getElementById('whatsappNumber').value = s.whatsapp;
           if (s.email) document.getElementById('siteEmail').value = s.email;
+          if (s.facebook) document.getElementById('socialFacebook').value = s.facebook;
           if (s.instagram) document.getElementById('socialInstagram').value = s.instagram;
-          if (s.snapchat) document.getElementById('socialSnapchat').value = s.snapchat;
-          if (s.twitter) document.getElementById('socialTwitter').value = s.twitter;
-          if (s.telegram) document.getElementById('socialTelegram').value = s.telegram;
+          if (s.tiktok) document.getElementById('socialTiktok').value = s.tiktok;
           if (s.address) document.getElementById('storeAddress').value = s.address;
           if (s.description) document.getElementById('storeDescription').value = s.description;
           if (s.announcement) {
@@ -213,10 +208,9 @@
       const data = {
         whatsapp: document.getElementById('whatsappNumber').value,
         email: document.getElementById('siteEmail').value,
+        facebook: document.getElementById('socialFacebook').value,
         instagram: document.getElementById('socialInstagram').value,
-        snapchat: document.getElementById('socialSnapchat').value,
-        twitter: document.getElementById('socialTwitter').value,
-        telegram: document.getElementById('socialTelegram').value,
+        tiktok: document.getElementById('socialTiktok').value,
         address: document.getElementById('storeAddress').value,
         description: document.getElementById('storeDescription').value,
         announcement: {
