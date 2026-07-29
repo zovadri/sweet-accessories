@@ -239,53 +239,52 @@
       if (e) e.preventDefault();
       const btn = e ? e.target.querySelector('button[type="submit"]') : null;
       if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...'; }
-
-      const data = {
-        whatsapp: document.getElementById('whatsappNumber').value,
-        email: document.getElementById('siteEmail').value,
-        facebook: document.getElementById('socialFacebook').value,
-        instagram: document.getElementById('socialInstagram').value,
-        tiktok: document.getElementById('socialTiktok').value,
-        address: document.getElementById('storeAddress').value,
-        description: document.getElementById('storeDescription').value,
-        announcement: {
-          text: document.getElementById('announcementText').value,
-          bg: document.getElementById('announcementBg').value,
-          color: document.getElementById('announcementColor').value,
-          active: document.getElementById('announcementActive').checked
-        },
-        colors: {
-          primary: document.getElementById('colorPrimary').value,
-          secondary: document.getElementById('colorSecondary').value,
-          accent: document.getElementById('colorAccent').value,
-          bg: document.getElementById('colorBg').value
-        },
-        shipping: {
-          freeMin: parseInt(document.getElementById('shippingFreeMin').value) || 0,
-          default: parseInt(document.getElementById('shippingDefault').value) || 0,
-          governorates: (function() {
-            const obj = {};
-            GOVS.forEach(g => {
-              const el = document.getElementById('ship_' + g);
-              const val = parseInt(el?.value);
-              if (val > 0) obj[g] = val;
-            });
-            return obj;
-          })()
-        }
-      };
-
-      const logoFile = document.getElementById('siteLogo').files[0];
-      if (logoFile) {
-        data.logo = await uploadImage(logoFile);
-      }
-
-      const faviconFile = document.getElementById('siteFavicon').files[0];
-      if (faviconFile) {
-        data.favicon = await uploadImage(faviconFile);
-      }
-
       try {
+        const data = {
+          whatsapp: document.getElementById('whatsappNumber').value,
+          email: document.getElementById('siteEmail').value,
+          facebook: document.getElementById('socialFacebook').value,
+          instagram: document.getElementById('socialInstagram').value,
+          tiktok: document.getElementById('socialTiktok').value,
+          address: document.getElementById('storeAddress').value,
+          description: document.getElementById('storeDescription').value,
+          announcement: {
+            text: document.getElementById('announcementText').value,
+            bg: document.getElementById('announcementBg').value,
+            color: document.getElementById('announcementColor').value,
+            active: document.getElementById('announcementActive').checked
+          },
+          colors: {
+            primary: document.getElementById('colorPrimary').value,
+            secondary: document.getElementById('colorSecondary').value,
+            accent: document.getElementById('colorAccent').value,
+            bg: document.getElementById('colorBg').value
+          },
+          shipping: {
+            freeMin: parseInt(document.getElementById('shippingFreeMin').value) || 0,
+            default: parseInt(document.getElementById('shippingDefault').value) || 0,
+            governorates: (function() {
+              const obj = {};
+              GOVS.forEach(g => {
+                const el = document.getElementById('ship_' + g);
+                const val = parseInt(el?.value);
+                if (val > 0) obj[g] = val;
+              });
+              return obj;
+            })()
+          }
+        };
+
+        const logoFile = document.getElementById('siteLogo').files[0];
+        if (logoFile) {
+          data.logo = await uploadImage(logoFile);
+        }
+
+        const faviconFile = document.getElementById('siteFavicon').files[0];
+        if (faviconFile) {
+          data.favicon = await uploadImage(faviconFile);
+        }
+
         if (settingsDocId) {
           await db.collection('settings').doc(settingsDocId).update(data);
         } else {

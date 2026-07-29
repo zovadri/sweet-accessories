@@ -171,26 +171,27 @@
       e.preventDefault();
       const btn = document.getElementById('saveBannerBtn');
       btn.disabled = true; btn.textContent = 'جاري الحفظ...';
+      try {
+        const id = document.getElementById('bannerId').value;
+        const title = document.getElementById('bannerTitle').value;
+        const text = document.getElementById('bannerText').value;
+        const link = document.getElementById('bannerLink').value;
+        const active = document.getElementById('bannerActive').checked;
+        const file = document.getElementById('bannerImage').files[0];
 
-      const id = document.getElementById('bannerId').value;
-      const title = document.getElementById('bannerTitle').value;
-      const text = document.getElementById('bannerText').value;
-      const link = document.getElementById('bannerLink').value;
-      const active = document.getElementById('bannerActive').checked;
-      const file = document.getElementById('bannerImage').files[0];
+        const data = { title, text, link, active };
 
-      const data = { title, text, link, active };
+        if (file) {
+          data.image = await uploadImage(file);
+        }
 
-      if (file) {
-        data.image = await uploadImage(file);
-      }
-
-      if (id) {
-        await db.collection('banners').doc(id).update(data);
-      } else {
-        await db.collection('banners').add(data);
-      }
-      closeBannerModal();
+        if (id) {
+          await db.collection('banners').doc(id).update(data);
+        } else {
+          await db.collection('banners').add(data);
+        }
+        closeBannerModal();
+      } catch(err) { alert('خطأ: ' + err.message); }
       btn.disabled = false; btn.textContent = 'حفظ';
     }
   </script>

@@ -256,48 +256,49 @@
       e.preventDefault();
       const btn = document.getElementById('saveProductBtn');
       btn.disabled = true; btn.textContent = 'جاري الحفظ...';
+      try {
+        const id = document.getElementById('productId').value;
+        const name = document.getElementById('prodName').value;
+        const price = parseFloat(document.getElementById('prodPrice').value) || 0;
+        const oldPrice = parseFloat(document.getElementById('prodOldPrice').value) || 0;
+        let discount = parseInt(document.getElementById('prodDiscount').value) || 0;
+        const category = document.getElementById('prodCategory').value;
+        const categoryName = categoriesMap[category] || '';
+        const desc = document.getElementById('prodDesc').value;
+        const active = document.getElementById('prodActive').checked;
+        const featured = document.getElementById('prodFeatured').checked;
+        const bestseller = document.getElementById('prodBestseller').checked;
+        const colorsRaw = document.getElementById('prodColors').value;
+        const sizesRaw = document.getElementById('prodSizes').value;
+        const stock = parseInt(document.getElementById('prodStock').value) || 0;
 
-      const id = document.getElementById('productId').value;
-      const name = document.getElementById('prodName').value;
-      const price = parseFloat(document.getElementById('prodPrice').value) || 0;
-      const oldPrice = parseFloat(document.getElementById('prodOldPrice').value) || 0;
-      let discount = parseInt(document.getElementById('prodDiscount').value) || 0;
-      const category = document.getElementById('prodCategory').value;
-      const categoryName = categoriesMap[category] || '';
-      const desc = document.getElementById('prodDesc').value;
-      const active = document.getElementById('prodActive').checked;
-      const featured = document.getElementById('prodFeatured').checked;
-      const bestseller = document.getElementById('prodBestseller').checked;
-      const colorsRaw = document.getElementById('prodColors').value;
-      const sizesRaw = document.getElementById('prodSizes').value;
-      const stock = parseInt(document.getElementById('prodStock').value) || 0;
-
-      if (!discount && oldPrice > price) {
-        discount = Math.round((1 - price / oldPrice) * 100);
-      }
-
-      const data = { name, price, oldPrice, discount, category, categoryName, desc, active, featured, bestseller, stock, colors: colorsRaw ? colorsRaw.split(',').map(s => s.trim()).filter(Boolean) : [], sizes: sizesRaw ? sizesRaw.split(',').map(s => s.trim()).filter(Boolean) : [], updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
-
-      const files = document.getElementById('prodImage').files;
-      if (files.length > 0) {
-        const urls = [];
-        for (let i = 0; i < files.length; i++) {
-          const url = await uploadImage(files[i]);
-          if (url) urls.push(url);
+        if (!discount && oldPrice > price) {
+          discount = Math.round((1 - price / oldPrice) * 100);
         }
-        if (urls.length > 0) {
-          data.images = urls;
-          data.image = urls[0];
-        }
-      }
 
-      if (id) {
-        await db.collection('products').doc(id).update(data);
-      } else {
-        data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-        await db.collection('products').add(data);
-      }
-      closeProductModal();
+        const data = { name, price, oldPrice, discount, category, categoryName, desc, active, featured, bestseller, stock, colors: colorsRaw ? colorsRaw.split(',').map(s => s.trim()).filter(Boolean) : [], sizes: sizesRaw ? sizesRaw.split(',').map(s => s.trim()).filter(Boolean) : [], updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+
+        const files = document.getElementById('prodImage').files;
+        if (files.length > 0) {
+          const urls = [];
+          for (let i = 0; i < files.length; i++) {
+            const url = await uploadImage(files[i]);
+            if (url) urls.push(url);
+          }
+          if (urls.length > 0) {
+            data.images = urls;
+            data.image = urls[0];
+          }
+        }
+
+        if (id) {
+          await db.collection('products').doc(id).update(data);
+        } else {
+          data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+          await db.collection('products').add(data);
+        }
+        closeProductModal();
+      } catch(err) { alert('خطأ: ' + err.message); }
       btn.disabled = false; btn.textContent = 'حفظ';
     }
   </script>

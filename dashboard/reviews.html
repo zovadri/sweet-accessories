@@ -238,37 +238,38 @@
       e.preventDefault();
       const btn = document.getElementById('saveRevBtn');
       btn.disabled = true; btn.textContent = 'جاري الحفظ...';
+      try {
+        const id = document.getElementById('reviewId').value;
+        const data = {
+          name: document.getElementById('revName').value,
+          email: document.getElementById('revEmail').value,
+          rating: reviewRating,
+          comment: document.getElementById('revComment').value,
+          approved: document.getElementById('revApproved').checked,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
 
-      const id = document.getElementById('reviewId').value;
-      const data = {
-        name: document.getElementById('revName').value,
-        email: document.getElementById('revEmail').value,
-        rating: reviewRating,
-        comment: document.getElementById('revComment').value,
-        approved: document.getElementById('revApproved').checked,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      const files = document.getElementById('revImages').files;
-      if (files.length > 0) {
-        const urls = [];
-        for (let i = 0; i < files.length; i++) {
-          const url = await uploadImage(files[i]);
-          if (url) urls.push(url);
+        const files = document.getElementById('revImages').files;
+        if (files.length > 0) {
+          const urls = [];
+          for (let i = 0; i < files.length; i++) {
+            const url = await uploadImage(files[i]);
+            if (url) urls.push(url);
+          }
+          if (urls.length > 0) {
+            data.images = urls;
+            data.image = urls[0];
+          }
         }
-        if (urls.length > 0) {
-          data.images = urls;
-          data.image = urls[0];
-        }
-      }
 
-      if (id) {
-        await db.collection('reviews').doc(id).update(data);
-      } else {
-        data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-        await db.collection('reviews').add(data);
-      }
-      closeReviewModal();
+        if (id) {
+          await db.collection('reviews').doc(id).update(data);
+        } else {
+          data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+          await db.collection('reviews').add(data);
+        }
+        closeReviewModal();
+      } catch(err) { alert('خطأ: ' + err.message); }
       btn.disabled = false; btn.textContent = 'حفظ';
     }
   </script>

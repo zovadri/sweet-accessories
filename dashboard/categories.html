@@ -151,23 +151,21 @@
       e.preventDefault();
       const btn = document.getElementById('saveCatBtn');
       btn.disabled = true; btn.textContent = 'جاري الحفظ...';
-
-      const id = document.getElementById('categoryId').value;
-      const name = document.getElementById('catName').value;
-      const file = document.getElementById('catImage').files[0];
-
-      const data = { name };
-
-      if (file) {
-        data.image = await uploadImage(file);
-      }
-
-      if (id) {
-        await db.collection('categories').doc(id).update(data);
-      } else {
-        await db.collection('categories').add(data);
-      }
-      closeCategoryModal();
+      try {
+        const id = document.getElementById('categoryId').value;
+        const name = document.getElementById('catName').value;
+        const file = document.getElementById('catImage').files[0];
+        const data = { name };
+        if (file) {
+          data.image = await uploadImage(file);
+        }
+        if (id) {
+          await db.collection('categories').doc(id).update(data);
+        } else {
+          await db.collection('categories').add(data);
+        }
+        closeCategoryModal();
+      } catch(err) { alert('خطأ: ' + err.message); }
       btn.disabled = false; btn.textContent = 'حفظ';
     }
   </script>
