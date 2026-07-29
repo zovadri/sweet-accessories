@@ -38,7 +38,7 @@ const Cart = {
   },
   add(product, el) {
     const items = this.get();
-    const existing = items.find(i => i.id === product.id && i.color === product.color && i.size === product.size);
+    const existing = items.find(i => i.id === product.id && (i.color || '') === (product.color || '') && (i.size || '') === (product.size || ''));
     if (existing) existing.quantity += product.quantity || 1;
     else items.push({ ...product, quantity: product.quantity || 1 });
     this.save(items);
@@ -69,11 +69,11 @@ const Cart = {
     if (badge) { badge.classList.add('pulse'); setTimeout(() => badge.classList.remove('pulse'), 300); }
   },
   remove(id, color, size) {
-    this.save(this.get().filter(i => !(i.id === id && i.color === color && i.size === size)));
+    this.save(this.get().filter(i => !(i.id === id && (i.color || '') === (color || '') && (i.size || '') === (size || ''))));
   },
   updateQuantity(id, color, size, qty) {
     const items = this.get();
-    const item = items.find(i => i.id === id && i.color === color && i.size === size);
+    const item = items.find(i => i.id === id && (i.color || '') === (color || '') && (i.size || '') === (size || ''));
     if (item) { item.quantity = Math.max(1, qty); this.save(items); }
   },
   coupon: null,
