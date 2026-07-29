@@ -397,6 +397,10 @@ const UI = {
 };
 
 const ProductDetail = {
+  currentImageIndex: 0,
+  images: [],
+  slideInterval: null,
+
   async load() {
     const container = document.querySelector('.product-detail');
     if (!container) return;
@@ -414,17 +418,26 @@ const ProductDetail = {
 
   render(product) {
     const container = document.querySelector('.product-detail .container');
-    const images = product.images && product.images.length > 0 ? product.images : ['/images/placeholder.svg'];
+    this.images = product.images && product.images.length > 0 ? product.images : ['/images/placeholder.svg'];
+    this.currentImageIndex = 0;
     const discount = product.oldPrice ? Math.round((1 - product.price / product.oldPrice) * 100) : 0;
     const colors = product.colors && product.colors.length ? product.colors : null;
     const sizes = product.sizes && product.sizes.length ? product.sizes : null;
     const outOfStock = product.stock !== undefined && product.stock === 0;
+    const hasMultiple = this.images.length > 1;
     container.innerHTML = `
       <div class="product-gallery">
-        <div class="main-image" id="mainImage">
-          <img src="${images[0]}" alt="${product.name}" id="zoomImg">
+        <div class="gallery-slider" ${hasMultiple ? '' : ''}>
+          <div class="gallery-track" id="galleryTrack">
+            ${this.images.map(img => `<div class="gallery-slide"><img src="${img}" alt="${product.name}" loading="lazy"></div>`).join('')}
+          </div>
+          ${hasMultiple ? `
+          <button class="gallery-btn gallery-prev" onclick="ProductDetail.prevImage()">❮</button>
+          <button class="gallery-btn gallery-next" onclick="ProductDetail.nextImage()">❯</button>
+          <div class="gallery-dots">${this.images.map((_, i) => `<span class="gallery-dot${i===0?' active':''}" onclick="ProductDetail.goToImage(${i})"></span>`).join('')}</div>
+          ` : ''}
         </div>
-        <div class="thumbs">${images.map((img, i) => `<img src="${img}" alt="" class="${i===0?'active':''}" onclick="ProductDetail.switchImage(this,'${img}')" loading="lazy">`).join('')}</div>
+        ${this.images.length > 1 ? `<div class="gallery-thumbs">${this.images.map((img, i) => `<img src="${img}" alt="" class="${i===0?'active':''}" onclick="ProductDetail.goToImage(${i})" loading="lazy">`).join('')}</div>` : ''}
       </div>
       <div class="product-info">
         <div class="category">${product.categoryName || product.category || ''}</div>
@@ -463,11 +476,42 @@ const ProductDetail = {
       </div>`;
     Cart.updateBadge();
     ProductDetail.reviewRating = 0;
+    if (hasMultiple) this.startAutoSlide();
     const similarGrid = document.querySelector('.products-grid[data-type="similar"]');
     if (similarGrid && product.category) {
       similarGrid.dataset.category = product.category;
       ProductsPage.load();
     }
+  },
+
+  goToImage(index) {
+    const track = document.getElementById('galleryTrack');
+    if (!track) return;
+    this.currentImageIndex = Math.max(0, Math.min(index, this.images.length - 1));
+    track.style.transform = `translateX(-${this.currentImageIndex * 100}%)`;
+    document.querySelectorAll('.gallery-dot').forEach((d, i) => d.classList.toggle('active', i === this.currentImageIndex));
+    document.querySelectorAll('.gallery-thumbs img').forEach((t, i) => t.classList.toggle('active', i === this.currentImageIndex));
+    this.restartAutoSlide();
+  },
+
+  nextImage() { this.goToImage(this.currentImageIndex + 1); },
+  prevImage() { this.goToImage(this.currentImageIndex - 1); },
+
+  startAutoSlide() {
+    this.stopAutoSlide();
+    this.slideInterval = setInterval(() => {
+      const next = (this.currentImageIndex + 1) % this.images.length;
+      this.goToImage(next);
+    }, 4000);
+  },
+
+  stopAutoSlide() {
+    if (this.slideInterval) { clearInterval(this.slideInterval); this.slideInterval = null; }
+  },
+
+  restartAutoSlide() {
+    this.stopAutoSlide();
+    this.startAutoSlide();
   },
 
   reviewRating: 0,
@@ -512,12 +556,6 @@ const ProductDetail = {
       this.reviewRating = 0;
       document.querySelectorAll('#starPicker span').forEach(s => s.textContent = '☆');
     } catch(err) { Cart.showToast('حدث خطأ، حاول مرة أخرى', 'error'); }
-  },
-
-  switchImage(el, src) {
-    document.querySelectorAll('.thumbs img').forEach(i => i.classList.remove('active'));
-    el.classList.add('active');
-    document.querySelector('#zoomImg').src = src;
   },
 
   addToCart(id) {
