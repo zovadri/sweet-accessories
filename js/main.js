@@ -125,21 +125,21 @@ const Cart = {
     }
     if (summary) summary.style.display = 'block';
     container.innerHTML = items.map((item, idx) => `
-      <div class="cart-item" data-index="${idx}">
-        <img src="${item.image || '/images/placeholder.svg'}" alt="${item.name}" loading="lazy">
+      <div class="cart-item" data-idx="${idx}">
+        <img src="${item.image || '/images/placeholder.svg'}" alt="${item.name.replace(/['"]/g, '')}" loading="lazy">
         <div class="info">
-          <h4>${item.name}</h4>
-          ${item.color ? `<p style="font-size:0.85rem;color:var(--text-lighter)">اللون: ${item.color}</p>` : ''}
-          ${item.size ? `<p style="font-size:0.85rem;color:var(--text-lighter)">المقاس: ${item.size}</p>` : ''}
+          <h4>${item.name.replace(/['"]/g, '')}</h4>
+          ${item.color ? `<p style="font-size:0.85rem;color:var(--text-lighter)">اللون: ${item.color.replace(/['"]/g, '')}</p>` : ''}
+          ${item.size ? `<p style="font-size:0.85rem;color:var(--text-lighter)">المقاس: ${item.size.replace(/['"]/g, '')}</p>` : ''}
           <div class="price">${item.price} ${SITE_CONFIG.currency}</div>
           <div class="quantity" style="margin-top:8px">
             <div class="controls" style="display:inline-flex;border:1px solid var(--primary);border-radius:8px;overflow:hidden">
-              <button onclick="Cart.updateQuantity('${item.id}','${item.color||''}','${item.size||''}',${item.quantity-1})" style="width:30px;height:30px">−</button>
+              <button class="cart-qty-btn" data-action="dec" data-idx="${idx}" style="width:30px;height:30px">−</button>
               <input type="text" value="${item.quantity}" readonly style="width:36px;height:30px;text-align:center;border:none;border-left:1px solid var(--primary);border-right:1px solid var(--primary);font-weight:700">
-              <button onclick="Cart.updateQuantity('${item.id}','${item.color||''}','${item.size||''}',${item.quantity+1})" style="width:30px;height:30px">+</button>
+              <button class="cart-qty-btn" data-action="inc" data-idx="${idx}" style="width:30px;height:30px">+</button>
             </div>
           </div>
-          <span class="remove" onclick="Cart.remove('${item.id}','${item.color||''}','${item.size||''}')">🗑️ حذف</span>
+          <span class="remove" data-action="remove" data-idx="${idx}">🗑️ حذف</span>
         </div>
         <div style="font-weight:700;color:var(--secondary);font-size:1.1rem">${item.price * item.quantity} ${SITE_CONFIG.currency}</div>
       </div>
@@ -179,6 +179,27 @@ const Cart = {
     toast.innerHTML = msg;
     document.body.appendChild(toast);
     setTimeout(() => { toast.classList.add('removing'); setTimeout(() => toast.remove(), 400); }, 3000);
+  },
+  setupCartEvents() {
+    document.querySelector('.cart-items')?.addEventListener('click', e => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const idx = parseInt(btn.dataset.idx);
+      const items = Cart.get();
+      if (isNaN(idx) || idx >= items.length) return;
+      const item = items[idx];
+      const action = btn.dataset.action;
+      if (action === 'inc') {
+        item.quantity = (item.quantity || 1) + 1;
+        Cart.save(items);
+      } else if (action === 'dec') {
+        item.quantity = Math.max(1, (item.quantity || 1) - 1);
+        Cart.save(items);
+      } else if (action === 'remove') {
+        items.splice(idx, 1);
+        Cart.save(items);
+      }
+    });
   }
 };
 
@@ -763,6 +784,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   ProductDetail.load();
   ProductsPage.load();
   Cart.updateCartUI();
+  Cart.setupCartEvents();
   Reviews.load();
   Banners.load();
   await loadSiteConfig();
