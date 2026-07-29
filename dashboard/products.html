@@ -97,7 +97,7 @@
           <textarea id="prodDesc" rows="3"></textarea>
         </div>
         <div class="form-group">
-          <label>صورة المنتج</label>
+          <label>صور المنتج <small style="color:#999;font-weight:400;">(يمكنك اختيار أكثر من صورة)</small></label>
           <input type="file" id="prodImage" accept="image/*" multiple>
           <div id="prodImagePreview" style="margin-top:0.5rem;display:flex;gap:8px;flex-wrap:wrap;"></div>
         </div>
@@ -131,6 +131,17 @@
       checkAuth();
       loadCategoriesDropdown();
       loadProducts();
+      document.getElementById('prodImage').addEventListener('change', function() {
+        const preview = document.getElementById('prodImagePreview');
+        preview.innerHTML = '';
+        for (const file of this.files) {
+          const reader = new FileReader();
+          reader.onload = e => {
+            preview.innerHTML += `<img src="${e.target.result}" style="width:80px;height:80px;border-radius:8px;object-fit:cover;border:2px solid #eee;">`;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
     });
 
     function loadCategoriesDropdown() {
@@ -245,15 +256,13 @@
       const files = document.getElementById('prodImage').files;
       if (files.length > 0) {
         const urls = [];
-        let completed = 0;
         for (let i = 0; i < files.length; i++) {
           const url = await uploadImage(files[i]);
-          urls.push(url);
-          completed++;
-          if (completed === files.length) {
-            data.images = urls;
-            data.image = urls[0];
-          }
+          if (url) urls.push(url);
+        }
+        if (urls.length > 0) {
+          data.images = urls;
+          data.image = urls[0];
         }
       }
 
