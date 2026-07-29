@@ -162,6 +162,7 @@
   <script src="/dashboard/js/dashboard.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      if (!checkKey()) { window.location.href = '/'; return; }
       checkAuth();
 
       const errEl = document.getElementById('loginError');
