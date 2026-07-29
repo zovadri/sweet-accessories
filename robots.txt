@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
-Sitemap: https://sweet-accessories.com/sitemap.xml
+
+Sitemap: https://sweet-accessories.pages.dev/sitemap.xml
