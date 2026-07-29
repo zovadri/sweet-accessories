@@ -149,21 +149,34 @@ const Cart = {
   updateSummary(checkout) {
     const totalEl = document.querySelector('.cart-total');
     if (!totalEl) return;
+    const isCheckout = checkout || document.querySelector('#checkoutGovernorate');
     const subtotal = this.getTotal();
     const discount = this.getDiscount();
     let shipping;
-    if (checkout) {
+    let shippingText;
+    if (isCheckout) {
       const gov = document.querySelector('#checkoutGovernorate')?.value;
-      shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : getShippingCost(gov);
+      if (!gov) {
+        shipping = 0;
+        shippingText = 'حدد المحافظة';
+      } else {
+        shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : getShippingCost(gov);
+        shippingText = shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`;
+      }
     } else {
       shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : SITE_CONFIG.shipping;
+      shippingText = shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`;
     }
     const afterDiscount = subtotal - discount;
     document.querySelector('.cart-subtotal').textContent = `${subtotal} ${SITE_CONFIG.currency}`;
-    document.querySelector('.cart-shipping').textContent = shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`;
+    document.querySelector('.cart-shipping').textContent = shippingText;
     const discEl = document.querySelector('.cart-discount');
     if (discEl) discEl.textContent = discount > 0 ? `-${discount} ${SITE_CONFIG.currency}` : '0';
-    totalEl.textContent = `${Math.max(0, afterDiscount + shipping)} ${SITE_CONFIG.currency}`;
+    if (!isCheckout || document.querySelector('#checkoutGovernorate')?.value) {
+      totalEl.textContent = `${Math.max(0, afterDiscount + shipping)} ${SITE_CONFIG.currency}`;
+    } else {
+      totalEl.textContent = `${Math.max(0, afterDiscount)} ${SITE_CONFIG.currency}`;
+    }
   },
   showToast(msg, type = 'info') {
     const toast = document.createElement('div');
