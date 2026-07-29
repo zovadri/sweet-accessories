@@ -74,11 +74,11 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>السعر بعد الخصم (ر.س)</label>
+            <label>السعر بعد الخصم (جنيه)</label>
             <input type="number" id="prodPrice" step="0.01" required>
           </div>
           <div class="form-group">
-            <label>السعر قبل الخصم (ر.س)</label>
+            <label>السعر قبل الخصم (جنيه)</label>
             <input type="number" id="prodOldPrice" step="0.01" placeholder="اتركه فارغاً إن لم يكن هناك خصم">
           </div>
         </div>
@@ -160,7 +160,7 @@
           return `<tr>
             <td><img src="${img}" alt="${p.name}" class="table-thumb"></td>
             <td>${p.name}</td>
-            <td>${priceDisplay} ر.س</td>
+            <td>${priceDisplay} جنيه</td>
             <td>${p.categoryName || '-'}</td>
             <td><span class="badge ${p.active !== false ? 'badge-active' : 'badge-inactive'}">${p.active !== false ? 'نشط' : 'غير نشط'}</span></td>
             <td class="actions-cell">
