@@ -390,12 +390,63 @@ const Checkout = {
   }
 };
 
+const Reviews = {
+  current: 0,
+  interval: null,
+  async load() {
+    const track = document.getElementById('reviewsTrack');
+    const dots = document.getElementById('reviewsDots');
+    if (!track) return;
+    try {
+      const snap = await db.collection('reviews').where('approved', '==', true).orderBy('createdAt', 'desc').limit(10).get();
+      if (snap.empty) { track.innerHTML = ''; return; }
+      const items = snap.docs.map(d => d.data());
+      track.innerHTML = items.map(r => {
+        const stars = Array(5).fill('').map((_, i) => `<i class="fas fa-star${i < r.rating ? '' : ' active'}"></i>`).join('');
+        const img = r.images?.[0] || r.image;
+        const avatar = img ? `<img src="${img}" class="review-img">` : `<div class="review-img-placeholder">${r.name?.[0] || '?'}</div>`;
+        const extraImgs = r.images && r.images.length > 1 ? `<div class="review-images">${r.images.slice(1, 4).map(u => `<img src="${u}">`).join('')}</div>` : '';
+        return `<div class="review-slide">
+          <div class="review-card">
+            ${avatar}
+            <div class="review-stars">${stars}</div>
+            <p class="review-text">"${r.comment}"</p>
+            <div class="review-name">${r.name}</div>
+            ${extraImgs}
+          </div>
+        </div>`;
+      }).join('');
+      dots.innerHTML = items.map((_, i) => `<button class="dot${i === 0 ? ' active' : ''}" onclick="Reviews.goTo(${i})"></button>`).join('');
+      this.startAuto();
+    } catch(e) { console.error('Reviews error:', e); }
+  },
+  goTo(index) {
+    const track = document.getElementById('reviewsTrack');
+    const dots = document.querySelectorAll('.reviews-dots .dot');
+    if (!track || !dots.length) return;
+    this.current = Math.max(0, Math.min(index, dots.length - 1));
+    track.style.transform = `translateX(-${this.current * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle('active', i === this.current));
+  },
+  next() { this.goTo(this.current + 1); },
+  startAuto() {
+    clearInterval(this.interval);
+    const dots = document.querySelectorAll('.reviews-dots .dot');
+    if (dots.length <= 1) return;
+    this.interval = setInterval(() => {
+      this.current = (this.current + 1) % dots.length;
+      this.goTo(this.current);
+    }, 5000);
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   UI.init();
   Cart.updateBadge();
   ProductDetail.load();
   ProductsPage.load();
   Cart.updateCartUI();
+  Reviews.load();
 
   document.querySelector('#sortFilter')?.addEventListener('change', ProductsPage.load);
 
