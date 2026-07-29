@@ -1701,6 +1701,25 @@ input,textarea,select{font-family:inherit;outline:none;border:none}
 .hero-arrow-next { right: 20px; }
 
 /* Responsive */
+/* تحسينات التصميم */
+.section-alt { position: relative; }
+.section-alt::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--secondary), var(--accent), transparent);
+  opacity: 0.3;
+}
+.product-card { border: 1px solid rgba(248,217,229,0.3); }
+.product-card:hover { border-color: var(--primary); }
+.category-card { border: 1px solid rgba(248,217,229,0.2); }
+.category-card:hover { border-color: var(--accent); background: var(--white); }
+.section-title h2 { letter-spacing: -0.5px; }
+.hero-content h1 { letter-spacing: -1px; }
+.btn { letter-spacing: 0.3px; }
+.hero-logo-wrap { border: 3px solid rgba(255,255,255,0.6); }
+.product-card .add-cart { border-radius: var(--radius-full); margin: 0 12px 12px; width: auto; }
+.features-grid .feature-card { border: 1px solid rgba(248,217,229,0.2); }
+.features-grid .feature-card:hover { border-color: var(--accent); background: var(--white); }
+
 @media(max-width:1024px){
   .hero .container{grid-template-columns:1fr;text-align:center}
   .hero-content h1{font-size:2.5rem}
