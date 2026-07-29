@@ -1336,6 +1336,80 @@ input,textarea,select{font-family:inherit;outline:none;border:none}
 .add-cart { transition: all 0.2s; }
 .add-cart:active { transform: scale(0.95); }
 
+/* Product options (color, size, quantity) */
+.product-info .options {
+  margin: 15px 0;
+}
+.product-info .options label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.color-options { display: flex; gap: 10px; flex-wrap: wrap; }
+.color-swatch {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: all 0.2s;
+  display: inline-block;
+}
+.color-swatch.active { border-color: var(--secondary); box-shadow: 0 0 0 2px white, 0 0 0 4px var(--secondary); transform: scale(1.1); }
+.size-options { display: flex; gap: 8px; flex-wrap: wrap; }
+.size-opt {
+  padding: 6px 18px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.size-opt.active { background: var(--secondary); color: white; border-color: var(--secondary); }
+.qty-selector {
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid var(--primary);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.qty-selector button {
+  width: 40px; height: 40px;
+  border: none;
+  background: var(--primary);
+  font-size: 1.3rem;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--secondary);
+  transition: all 0.2s;
+}
+.qty-selector button:hover { background: var(--primary-dark); }
+.qty-selector span {
+  width: 50px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* Review submit form */
+.review-submit {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid var(--primary);
+}
+.review-submit h3 { margin-bottom: 15px; }
+.star-picker { direction: ltr; display: flex; gap: 5px; margin: 10px 0; }
+.star-picker span {
+  font-size: 2rem;
+  cursor: pointer;
+  color: #ddd;
+  transition: color 0.2s;
+  user-select: none;
+}
+.star-picker span:hover, .star-picker span:hover ~ span { color: #f59e0b; }
+
 /* Coupon */
 .coupon-section{margin:20px 0}
 .coupon-section .coupon-input{

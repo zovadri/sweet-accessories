@@ -350,6 +350,8 @@ const ProductDetail = {
     const container = document.querySelector('.product-detail .container');
     const images = product.images && product.images.length > 0 ? product.images : ['/images/placeholder.svg'];
     const discount = product.oldPrice ? Math.round((1 - product.price / product.oldPrice) * 100) : 0;
+    const colors = product.colors && product.colors.length ? product.colors : null;
+    const sizes = product.sizes && product.sizes.length ? product.sizes : null;
     container.innerHTML = `
       <div class="product-gallery">
         <div class="main-image" id="mainImage">
@@ -367,6 +369,9 @@ const ProductDetail = {
         <div class="meta">
           <div class="item">📦 الحالة: ${product.available !== false ? 'متوفر' : 'غير متوفر'}</div>
         </div>
+        ${colors ? `<div class="options"><label>اللون:</label><div class="color-options">${colors.map((c, i) => `<span class="color-swatch${i===0?' active':''}" style="background:${c.hex||'#ccc'}" data-color="${c.name||c}" onclick="ProductDetail.selectColor(this,'${c.name||c}')" title="${c.name||c}"></span>`).join('')}</div></div>` : ''}
+        ${sizes ? `<div class="options"><label>المقاس:</label><div class="size-options">${sizes.map((s, i) => `<span class="size-opt${i===0?' active':''}" onclick="ProductDetail.selectSize(this,'${s}')">${s}</span>`).join('')}</div></div>` : ''}
+        <div class="options"><label>الكمية:</label><div class="qty-selector"><button onclick="ProductDetail.qty(-1)">−</button><span id="productQty">1</span><button onclick="ProductDetail.qty(1)">+</button></div></div>
         <div class="actions">
           <button class="btn btn-primary btn-lg" onclick="ProductDetail.addToCart('${product.id}')" id="addToCartBtn" ${product.available === false ? 'disabled' : ''}>🛒 إضافة للسلة</button>
         </div>
@@ -374,8 +379,72 @@ const ProductDetail = {
           <h3>الوصف</h3>
           <p>${product.description || 'لا يوجد وصف'}</p>
         </div>
+        <div class="review-submit">
+          <h3>📝 أضف تقييمك</h3>
+          <form onsubmit="ProductDetail.submitReview(event,'${product.id}')">
+            <div class="form-row">
+              <div class="form-group"><input type="text" id="revNameInput" placeholder="اسمك" required></div>
+              <div class="form-group"><input type="email" id="revEmailInput" placeholder="بريدك الإلكتروني (اختياري)"></div>
+            </div>
+            <div class="form-group star-picker" id="starPicker">
+              <span onclick="ProductDetail.setRating(1)">☆</span><span onclick="ProductDetail.setRating(2)">☆</span><span onclick="ProductDetail.setRating(3)">☆</span><span onclick="ProductDetail.setRating(4)">☆</span><span onclick="ProductDetail.setRating(5)">☆</span>
+            </div>
+            <div class="form-group"><textarea id="revCommentInput" rows="3" placeholder="اكتب رأيك عن المنتج" required></textarea></div>
+            <button type="submit" class="btn btn-primary">إرسال التقييم</button>
+          </form>
+        </div>
       </div>`;
     Cart.updateBadge();
+    ProductDetail.reviewRating = 0;
+    const similarGrid = document.querySelector('.products-grid[data-type="similar"]');
+    if (similarGrid && product.category) {
+      similarGrid.dataset.category = product.category;
+      ProductsPage.load();
+    }
+  },
+
+  reviewRating: 0,
+  selectedColor: null,
+  selectedSize: null,
+
+  selectColor(el, name) {
+    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    this.selectedColor = name;
+  },
+  selectSize(el, size) {
+    document.querySelectorAll('.size-opt').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    this.selectedSize = size;
+  },
+  qty(delta) {
+    const el = document.getElementById('productQty');
+    if (!el) return;
+    const val = parseInt(el.textContent) || 1;
+    el.textContent = Math.max(1, val + delta);
+  },
+  setRating(r) {
+    this.reviewRating = r;
+    document.querySelectorAll('#starPicker span').forEach((s, i) => s.textContent = i < r ? '★' : '☆');
+  },
+  async submitReview(e, productId) {
+    e.preventDefault();
+    const name = document.getElementById('revNameInput')?.value;
+    const email = document.getElementById('revEmailInput')?.value;
+    const comment = document.getElementById('revCommentInput')?.value;
+    const rating = this.reviewRating;
+    if (!name || !comment || !rating) { Cart.showToast('الرجاء إكمال جميع الحقول', 'error'); return; }
+    try {
+      await db.collection('reviews').add({
+        name, email, comment, rating, productId,
+        approved: false,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      Cart.showToast('شكراً! تم إرسال تقييمك وسيتم نشره بعد المراجعة', 'success');
+      e.target.reset();
+      this.reviewRating = 0;
+      document.querySelectorAll('#starPicker span').forEach(s => s.textContent = '☆');
+    } catch(err) { Cart.showToast('حدث خطأ، حاول مرة أخرى', 'error'); }
   },
 
   switchImage(el, src) {
@@ -390,30 +459,42 @@ const ProductDetail = {
     const priceText = document.querySelector('.product-info .price')?.textContent || '0';
     product.price = parseFloat(priceText.replace(/[^0-9.]/g, ''));
     product.image = document.querySelector('#zoomImg')?.src || '';
-    product.quantity = parseInt(document.querySelector('#productQty')?.value || '1');
+    product.quantity = parseInt(document.getElementById('productQty')?.textContent || '1');
+    const activeColor = document.querySelector('.color-swatch.active');
+    if (activeColor) product.color = activeColor.dataset.color || activeColor.title;
+    const activeSize = document.querySelector('.size-opt.active');
+    if (activeSize) product.size = activeSize.textContent;
     Cart.add(product, document.getElementById('addToCartBtn'));
   }
 };
 
 const ProductsPage = {
   async load() {
-    const container = document.querySelector('.products-grid');
-    if (!container) return;
+    const containers = document.querySelectorAll('.products-grid');
+    if (!containers.length) return;
     const catFilter = new URLSearchParams(window.location.search).get('category');
     try {
       let products = await getCollection('products');
       products = products.filter(p => p.available !== false);
-      if (catFilter) products = products.filter(p => p.category === catFilter || p.categoryName === catFilter);
-      const sort = document.querySelector('#sortFilter')?.value;
-      if (sort === 'price-asc') products.sort((a,b) => a.price - b.price);
-      else if (sort === 'price-desc') products.sort((a,b) => b.price - a.price);
-      else if (sort === 'newest') products.sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));
-      container.innerHTML = products.map(p => UI.productCardHTML(p)).join('');
+      containers.forEach(container => {
+        const type = container.dataset.type;
+        const categoryId = container.dataset.category;
+        let filtered = [...products];
+        if (type === 'featured') filtered = filtered.filter(p => p.featured).slice(0, 8);
+        else if (type === 'bestseller') filtered = filtered.filter(p => p.bestseller).slice(0, 8);
+        else if (type === 'similar' && categoryId) filtered = filtered.filter(p => p.category === categoryId || p.categoryName === categoryId).slice(0, 8);
+        if (catFilter) filtered = filtered.filter(p => p.category === catFilter || p.categoryName === catFilter);
+        const sort = document.querySelector('#sortFilter')?.value;
+        if (sort === 'price-asc') filtered.sort((a,b) => a.price - b.price);
+        else if (sort === 'price-desc') filtered.sort((a,b) => b.price - a.price);
+        else if (sort === 'newest') filtered.sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));
+        container.innerHTML = filtered.length ? filtered.map(p => UI.productCardHTML(p)).join('') : '<div style="text-align:center;padding:40px;grid-column:1/-1;color:#999;">لا توجد منتجات</div>';
+      });
       UI.setupWishlistButtons();
     } catch (e) {
       console.error('Products page error:', e);
-      container.innerHTML = '<div style="text-align:center;padding:60px;grid-column:1/-1"><h3>حدث خطأ</h3></div>';
     }
+  }
   }
 };
 

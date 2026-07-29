@@ -103,6 +103,16 @@
         </div>
         <div class="form-row">
           <div class="form-group">
+            <label>الألوان المتاحة <small style="color:#999;font-weight:400;">(افصل بـ ,)</small></label>
+            <input type="text" id="prodColors" placeholder="ذهبي, فضي, أسود">
+          </div>
+          <div class="form-group">
+            <label>المقاسات المتاحة <small style="color:#999;font-weight:400;">(افصل بـ ,)</small></label>
+            <input type="text" id="prodSizes" placeholder="صغير, متوسط, كبير">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
             <label><input type="checkbox" id="prodActive" checked> منتج نشط</label>
           </div>
           <div class="form-group">
@@ -197,6 +207,8 @@
         document.getElementById('prodActive').checked = data.active !== false;
         document.getElementById('prodFeatured').checked = data.featured === true;
         document.getElementById('prodBestseller').checked = data.bestseller === true;
+        document.getElementById('prodColors').value = (data.colors && Array.isArray(data.colors)) ? data.colors.map(c => typeof c === 'string' ? c : c.name).join(', ') : '';
+        document.getElementById('prodSizes').value = (data.sizes && Array.isArray(data.sizes)) ? data.sizes.join(', ') : '';
         const preview = document.getElementById('prodImagePreview');
         preview.innerHTML = '';
         if (data.images && data.images.length) {
@@ -246,12 +258,14 @@
       const active = document.getElementById('prodActive').checked;
       const featured = document.getElementById('prodFeatured').checked;
       const bestseller = document.getElementById('prodBestseller').checked;
+      const colorsRaw = document.getElementById('prodColors').value;
+      const sizesRaw = document.getElementById('prodSizes').value;
 
       if (!discount && oldPrice > price) {
         discount = Math.round((1 - price / oldPrice) * 100);
       }
 
-      const data = { name, price, oldPrice, discount, category, categoryName, desc, active, featured, bestseller, updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+      const data = { name, price, oldPrice, discount, category, categoryName, desc, active, featured, bestseller, colors: colorsRaw ? colorsRaw.split(',').map(s => s.trim()).filter(Boolean) : [], sizes: sizesRaw ? sizesRaw.split(',').map(s => s.trim()).filter(Boolean) : [], updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
 
       const files = document.getElementById('prodImage').files;
       if (files.length > 0) {
