@@ -155,13 +155,17 @@ const Cart = {
     const shippingEl = document.querySelector('.cart-shipping');
     let shipping = 0;
     if (shippingEl) {
-      const gov = document.querySelector('#checkoutGovernorate')?.value;
-      if (!gov) {
-        shipping = 0;
-        shippingEl.textContent = 'يرجى تحديد المحافظة';
+      const isCheckout = document.querySelector('#checkoutGovernorate');
+      if (!isCheckout) {
+        shippingEl.textContent = 'حسب المدينة';
       } else {
-        shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : getShippingCost(gov);
-        shippingEl.textContent = shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`;
+        const gov = document.querySelector('#checkoutGovernorate')?.value;
+        if (!gov) {
+          shippingEl.textContent = 'يرجى تحديد المحافظة';
+        } else {
+          shipping = subtotal >= SITE_CONFIG.freeShippingMin ? 0 : getShippingCost(gov);
+          shippingEl.textContent = shipping === 0 ? 'مجاني' : `${shipping} ${SITE_CONFIG.currency}`;
+        }
       }
     }
     document.querySelector('.cart-subtotal').textContent = `${subtotal} ${SITE_CONFIG.currency}`;
