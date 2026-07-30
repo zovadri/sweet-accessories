@@ -96,7 +96,10 @@
         </div>
         <div class="form-group">
           <label>وصف المنتج</label>
-          <textarea id="prodDesc" rows="3"></textarea>
+          <div style="display:flex;gap:8px">
+            <textarea id="prodDesc" rows="3" style="flex:1"></textarea>
+            <button type="button" onclick="generateAIDesc()" style="white-space:nowrap;padding:8px 12px;background:#8B0D32;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;align-self:flex-start">🪄 AI وصف</button>
+          </div>
         </div>
         <div class="form-group">
           <label>صور المنتج <small style="color:#999;font-weight:400;">(يمكنك اختيار أكثر من صورة)</small></label>
@@ -300,6 +303,34 @@
         closeProductModal();
       } catch(err) { alert('خطأ: ' + err.message); }
       btn.disabled = false; btn.textContent = 'حفظ';
+    }
+
+    async function generateAIDesc() {
+      const btn = document.querySelector('button[onclick="generateAIDesc()"]');
+      const name = document.getElementById('prodName').value.trim();
+      const price = document.getElementById('prodPrice').value;
+      if (!name) { alert('أدخل اسم المنتج أولاً'); return; }
+      btn.disabled = true; btn.textContent = '🪄 جاري التوليد...';
+      try {
+        const snap = await db.collection('settings').limit(1).get();
+        let key = '';
+        if (!snap.empty) key = snap.docs[0].data().geminiKey || '';
+        if (!key) { alert('مفيش مفتاح Gemini! روح للإعدادات وحط المفتاح'); btn.disabled = false; btn.textContent = '🪄 AI وصف'; return; }
+        const prompt = `اكتب جملة واحدة قصيرة بالعامية المصرية تصف منتج اسمه "${name}" وسعره ${price} جنيه. تكون الجملة مشوقة وتحفز على الشراء. لا تكثر من الكلام، سطر واحد فقط.`;
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        });
+        const data = await res.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        if (text) {
+          document.getElementById('prodDesc').value = text.replace(/^["']|["']$/g, '').trim();
+        } else {
+          alert('مفيش نتيجة من Gemini، جرب تاني');
+        }
+      } catch(e) { alert('خطأ: ' + e.message); }
+      btn.disabled = false; btn.textContent = '🪄 AI وصف';
     }
   </script>
 </body>

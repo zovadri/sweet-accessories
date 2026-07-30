@@ -98,6 +98,15 @@
             </div>
 
             <div class="settings-card">
+              <h3><i class="fas fa-robot"></i> الذكاء الاصطناعي - وصف المنتجات</h3>
+              <div class="form-group">
+                <label>مفتاح Gemini API <small style="color:#999;font-weight:400;">(مجاني من <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--secondary)">aistudio.google.com</a>)</small></label>
+                <input type="text" id="geminiKey" placeholder="AIzaSy...">
+                <small style="color:#999;display:block;margin-top:4px">هيستخدم في توليد وصف تلقائي للمنتجات بالعامية المصرية</small>
+              </div>
+            </div>
+
+            <div class="settings-card">
               <h3><i class="fas fa-bullhorn"></i> شريط الإعلانات</h3>
               <div class="form-group">
                 <label>نص الإعلان</label>
@@ -197,6 +206,7 @@
           settingsDocId = doc.id;
           const s = doc.data();
           if (s.whatsapp) document.getElementById('whatsappNumber').value = s.whatsapp;
+          if (s.geminiKey) document.getElementById('geminiKey').value = s.geminiKey;
           if (s.email) document.getElementById('siteEmail').value = s.email;
           if (s.facebook) document.getElementById('socialFacebook').value = s.facebook;
           if (s.instagram) document.getElementById('socialInstagram').value = s.instagram;
@@ -242,6 +252,7 @@
       try {
         const data = {
           whatsapp: document.getElementById('whatsappNumber').value,
+          geminiKey: document.getElementById('geminiKey').value,
           email: document.getElementById('siteEmail').value,
           facebook: document.getElementById('socialFacebook').value,
           instagram: document.getElementById('socialInstagram').value,
