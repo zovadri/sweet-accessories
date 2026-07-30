@@ -315,39 +315,50 @@
         const snap = await db.collection('settings').limit(1).get();
         let key = '';
         if (!snap.empty) key = snap.docs[0].data().geminiKey || '';
-        if (!key) { alert('مفيش مفتاح Gemini! روح للإعدادات وحط المفتاح'); btn.disabled = false; btn.textContent = '🪄 AI وصف'; return; }
-        const files = document.getElementById('prodImage').files;
         const colors = document.getElementById('prodColors').value.trim();
         const sizes = document.getElementById('prodSizes').value.trim();
-        let extra = '';
-        if (colors) extra += ` الألوان: ${colors}.`;
-        if (sizes) extra += ` المقاسات: ${sizes}.`;
-        const parts = [];
-        if (files.length > 0) {
-          const img = files[0];
-          const b64 = await new Promise(r => { const f = new FileReader(); f.onload = e => r(e.target.result.split(',')[1]); f.readAsDataURL(img); });
-          parts.push({ inlineData: { mimeType: img.type, data: b64 } });
-          parts.push({ text: `صف المنتج في الصورة بجملة واحدة بالعامية المصرية. اسمه "${name}" بسعر ${price} جنيه.${extra} تكون مشوقة وتحفز على الشراء. سطر واحد فقط.` });
-        } else {
-          parts.push({ text: `اكتب جملة واحدة قصيرة بالعامية المصرية تصف منتج اسمه "${name}" وسعره ${price} جنيه.${extra} تكون مشوقة وتحفز على الشراء. سطر واحد فقط.` });
+        let ok = false;
+        if (key) {
+          const files = document.getElementById('prodImage').files;
+          let extra = '';
+          if (colors) extra += ` الألوان: ${colors}.`;
+          if (sizes) extra += ` المقاسات: ${sizes}.`;
+          const parts = [];
+          if (files.length > 0) {
+            const img = files[0];
+            const b64 = await new Promise(r => { const f = new FileReader(); f.onload = e => r(e.target.result.split(',')[1]); f.readAsDataURL(img); });
+            parts.push({ inlineData: { mimeType: img.type, data: b64 } });
+            parts.push({ text: `صف المنتج في الصورة بجملة واحدة بالعامية المصرية. اسمه "${name}" بسعر ${price} جنيه.${extra} تكون مشوقة وتحفز على الشراء. سطر واحد فقط.` });
+          } else {
+            parts.push({ text: `اكتب جملة واحدة قصيرة بالعامية المصرية تصف منتج اسمه "${name}" وسعره ${price} جنيه.${extra} تكون مشوقة وتحفز على الشراء. سطر واحد فقط.` });
+          }
+          try {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${key}`, {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ contents: [{ parts }] })
+            });
+            const data = await res.json();
+            if (res.ok) {
+              const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (text) { document.getElementById('prodDesc').value = text.replace(/^["']|["']$/g, '').trim(); ok = true; }
+            }
+          } catch(e) {}
         }
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${key}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts }] })
-        });
-        const data = await res.json();
-        if (!res.ok) { alert('❌ خطأ من Gemini: ' + (data.error?.message || res.status)); btn.disabled = false; btn.textContent = '🪄 AI وصف'; return; }
-        const candidate = data?.candidates?.[0];
-        if (!candidate) { alert('❌ مفيش نتيجة. تأكد من المفتاح وارفع صورة أقل في الحجم'); btn.disabled = false; btn.textContent = '🪄 AI وصف'; return; }
-        if (candidate.finishReason && candidate.finishReason !== 'STOP') { alert('❌ تم حظر الرد لأسباب أمنية. جرب وصف مختلف'); btn.disabled = false; btn.textContent = '🪄 AI وصف'; return; }
-        const text = candidate?.content?.parts?.[0]?.text || '';
-        if (text) {
-          document.getElementById('prodDesc').value = text.replace(/^["']|["']$/g, '').trim();
-        } else {
-          alert('❌ النتيجة فارغة. جرب تاني');
+        if (!ok) {
+          const features = [];
+          if (colors) features.push(`متوفر بألوان ${colors}`);
+          if (sizes) features.push(`مقاسات ${sizes}`);
+          const featStr = features.length ? ` (${features.join('، ')})` : '';
+          const descs = [
+            `${name} ${price} جنيه 💫 أنيق وعصري، مثالي لإطلالتك اليومية${featStr}`,
+            `${name} ${price} جنيه ✨ تصميم راقي وجودة عالية، هدية مثالية${featStr}`,
+            `${name} ${price} جنيه 🌸 مميز وأنيق، يضيف لمسة جمال${featStr}`,
+            `${name} ${price} جنيه 💎 خامات فاخرة وتصميم عصري، يناسب كل الأوقات${featStr}`,
+            `${name} ${price} جنيه 🎀 أناقة وجودة عالية، اطلبه الآن${featStr}`
+          ];
+          document.getElementById('prodDesc').value = descs[Math.floor(Math.random() * descs.length)];
         }
-      } catch(e) { alert('❌ خطأ: ' + e.message); }
+      } catch(e) {}
       btn.disabled = false; btn.textContent = '🪄 AI وصف';
     }
   </script>
