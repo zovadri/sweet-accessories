@@ -1,0 +1,5 @@
+# Redirect root to / with trailing slash (handled by Cloudflare Pages)
+# Cache static assets
+/css/* /css/:splat 200
+/js/* /js/:splat 200
+/images/* /images/:splat 200

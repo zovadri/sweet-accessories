@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>كوبونات الخصم | Sweet Accessories</title>
+  <title>ظƒظˆط¨ظˆظ†ط§طھ ط§ظ„ط®طµظ… | Sweet Accessories</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
@@ -17,26 +17,26 @@
         <div class="sidebar-logo">Sweet <span>Accessories</span></div>
       </div>
       <nav class="sidebar-nav">
-        <a href="/dashboard/"><i class="fas fa-home"></i> الرئيسية</a>
-        <a href="/dashboard/products.html"><i class="fas fa-box"></i> المنتجات</a>
-        <a href="/dashboard/orders.html"><i class="fas fa-shopping-bag"></i> الطلبات</a>
-        <a href="/dashboard/coupons.html" class="active"><i class="fas fa-tag"></i> كوبونات</a>
-        <a href="/dashboard/categories.html"><i class="fas fa-tags"></i> الأقسام</a>
-        <a href="/dashboard/banners.html"><i class="fas fa-images"></i> البنرات</a>
-        <a href="/dashboard/reviews.html"><i class="fas fa-star"></i> التقييمات</a>
-        <a href="/dashboard/settings.html"><i class="fas fa-cog"></i> الإعدادات</a>
-        <a href="#" onclick="handleLogout()" class="logout-link"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+        <a href="/dashboard/"><i class="fas fa-home"></i> ط§ظ„ط±ط¦ظٹط³ظٹط©</a>
+        <a href="/dashboard/products.html"><i class="fas fa-box"></i> ط§ظ„ظ…ظ†طھط¬ط§طھ</a>
+        <a href="/dashboard/orders.html"><i class="fas fa-shopping-bag"></i> ط§ظ„ط·ظ„ط¨ط§طھ</a>
+        <a href="/dashboard/coupons.html" class="active"><i class="fas fa-tag"></i> ظƒظˆط¨ظˆظ†ط§طھ</a>
+        <a href="/dashboard/categories.html"><i class="fas fa-tags"></i> ط§ظ„ط£ظ‚ط³ط§ظ…</a>
+        <a href="/dashboard/banners.html"><i class="fas fa-images"></i> ط§ظ„ط¨ظ†ط±ط§طھ</a>
+        <a href="/dashboard/reviews.html"><i class="fas fa-star"></i> ط§ظ„طھظ‚ظٹظٹظ…ط§طھ</a>
+        <a href="/dashboard/settings.html"><i class="fas fa-cog"></i> ط§ظ„ط¥ط¹ط¯ط§ط¯ط§طھ</a>
+        <a href="#" onclick="handleLogout()" class="logout-link"><i class="fas fa-sign-out-alt"></i> طھط³ط¬ظٹظ„ ط§ظ„ط®ط±ظˆط¬</a>
       </nav>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
         <div class="topbar-title">
-          <h1>كوبونات الخصم</h1>
-          <p>إدارة أكواد الخصم والتخفيضات</p>
+          <h1>ظƒظˆط¨ظˆظ†ط§طھ ط§ظ„ط®طµظ…</h1>
+          <p>ط¥ط¯ط§ط±ط© ط£ظƒظˆط§ط¯ ط§ظ„ط®طµظ… ظˆط§ظ„طھط®ظپظٹط¶ط§طھ</p>
         </div>
         <div class="topbar-actions">
-          <button class="btn btn-primary" onclick="openCouponModal()"><i class="fas fa-plus"></i> إضافة كوبون</button>
+          <button class="btn btn-primary" onclick="openCouponModal()"><i class="fas fa-plus"></i> ط¥ط¶ط§ظپط© ظƒظˆط¨ظˆظ†</button>
         </div>
       </header>
 
@@ -45,18 +45,18 @@
           <table class="data-table">
             <thead>
               <tr>
-                <th>الكود</th>
-                <th>الخصم</th>
-                <th>النوع</th>
-                <th>أقل طلب</th>
-                <th>الاستخدام</th>
-                <th>تاريخ الانتهاء</th>
-                <th>الحالة</th>
-                <th>الإجراءات</th>
+                <th>ط§ظ„ظƒظˆط¯</th>
+                <th>ط§ظ„ط®طµظ…</th>
+                <th>ط§ظ„ظ†ظˆط¹</th>
+                <th>ط£ظ‚ظ„ ط·ظ„ط¨</th>
+                <th>ط§ظ„ط§ط³طھط®ط¯ط§ظ…</th>
+                <th>طھط§ط±ظٹط® ط§ظ„ط§ظ†طھظ‡ط§ط،</th>
+                <th>ط§ظ„ط­ط§ظ„ط©</th>
+                <th>ط§ظ„ط¥ط¬ط±ط§ط،ط§طھ</th>
               </tr>
             </thead>
             <tbody id="couponsTable">
-              <tr><td colspan="8" style="text-align:center;color:#999;">جاري التحميل...</td></tr>
+              <tr><td colspan="8" style="text-align:center;color:#999;">ط¬ط§ط±ظٹ ط§ظ„طھط­ظ…ظٹظ„...</td></tr>
             </tbody>
           </table>
         </div>
@@ -67,48 +67,48 @@
   <div class="modal-overlay" id="couponModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="modalTitle">إضافة كوبون جديد</h3>
+        <h3 id="modalTitle">ط¥ط¶ط§ظپط© ظƒظˆط¨ظˆظ† ط¬ط¯ظٹط¯</h3>
         <span class="modal-close" onclick="closeCouponModal()">&times;</span>
       </div>
       <form id="couponForm" onsubmit="saveCoupon(event)">
         <input type="hidden" id="couponId">
         <div class="form-group">
-          <label>كود الخصم</label>
+          <label>ظƒظˆط¯ ط§ظ„ط®طµظ…</label>
           <input type="text" id="cupCode" placeholder="WELCOME10" required style="text-transform:uppercase;direction:ltr">
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>نوع الخصم</label>
+            <label>ظ†ظˆط¹ ط§ظ„ط®طµظ…</label>
             <select id="cupType">
-              <option value="percentage">نسبة (%)</option>
-              <option value="fixed">قيمة ثابتة (جنيه)</option>
+              <option value="percentage">ظ†ط³ط¨ط© (%)</option>
+              <option value="fixed">ظ‚ظٹظ…ط© ط«ط§ط¨طھط© (ط¬ظ†ظٹظ‡)</option>
             </select>
           </div>
           <div class="form-group">
-            <label>قيمة الخصم</label>
+            <label>ظ‚ظٹظ…ط© ط§ظ„ط®طµظ…</label>
             <input type="number" id="cupValue" step="0.01" min="0" placeholder="10" required>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>أقل قيمة للطلب</label>
+            <label>ط£ظ‚ظ„ ظ‚ظٹظ…ط© ظ„ظ„ط·ظ„ط¨</label>
             <input type="number" id="cupMinOrder" step="0.01" min="0" placeholder="0">
           </div>
           <div class="form-group">
-            <label>أقصى استخدام</label>
+            <label>ط£ظ‚طµظ‰ ط§ط³طھط®ط¯ط§ظ…</label>
             <input type="number" id="cupMaxUses" min="1" placeholder="100">
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>تاريخ الانتهاء</label>
+            <label>طھط§ط±ظٹط® ط§ظ„ط§ظ†طھظ‡ط§ط،</label>
             <input type="date" id="cupExpiry">
           </div>
           <div class="form-group" style="display:flex;align-items:flex-end;padding-bottom:10px;">
-            <label><input type="checkbox" id="cupActive" checked> نشط</label>
+            <label><input type="checkbox" id="cupActive" checked> ظ†ط´ط·</label>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary" id="saveCouponBtn">حفظ</button>
+        <button type="submit" class="btn btn-primary" id="saveCouponBtn">ط­ظپط¸</button>
       </form>
     </div>
   </div>
@@ -116,7 +116,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="/js/firebase-config.js"></script>
+  <script src="/js/firebase-config.min.js"></script>
   <script src="/dashboard/js/dashboard.js"></script>
   <script>
     let editCouponId = null;
@@ -130,12 +130,12 @@
       db.collection('coupons').orderBy('createdAt', 'desc').onSnapshot(snap => {
         const tbody = document.getElementById('couponsTable');
         if (snap.empty) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#999;">لا توجد كوبونات</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#999;">ظ„ط§ طھظˆط¬ط¯ ظƒظˆط¨ظˆظ†ط§طھ</td></tr>';
           return;
         }
         tbody.innerHTML = snap.docs.map(d => {
           const c = d.data(); const id = d.id;
-          const typeLabel = c.type === 'fixed' ? 'جنيه' : '%';
+          const typeLabel = c.type === 'fixed' ? 'ط¬ظ†ظٹظ‡' : '%';
           const expiry = c.expiry ? new Date(c.expiry).toLocaleDateString('ar-EG') : '-';
           const now = new Date();
           const expired = c.expiry && new Date(c.expiry) < now;
@@ -144,14 +144,14 @@
           return `<tr>
             <td><strong style="direction:ltr;display:inline-block;background:#f3f4f6;padding:4px 12px;border-radius:6px;">${c.code}</strong></td>
             <td>${c.value}${typeLabel}</td>
-            <td>${c.type === 'fixed' ? '💰 قيمة ثابتة' : '📊 نسبة'}</td>
-            <td>${c.minOrder ? c.minOrder + ' جنيه' : '-'}</td>
+            <td>${c.type === 'fixed' ? 'ًں’° ظ‚ظٹظ…ط© ط«ط§ط¨طھط©' : 'ًں“ٹ ظ†ط³ط¨ط©'}</td>
+            <td>${c.minOrder ? c.minOrder + ' ط¬ظ†ظٹظ‡' : '-'}</td>
             <td>${c.uses || 0}${c.maxUses ? ' / ' + c.maxUses : ''}</td>
             <td style="font-size:0.85rem">${expiry}</td>
-            <td><span class="badge ${active ? 'badge-active' : 'badge-inactive'}">${active ? 'نشط' : (expired ? 'منتهي' : 'غير نشط')}</span></td>
+            <td><span class="badge ${active ? 'badge-active' : 'badge-inactive'}">${active ? 'ظ†ط´ط·' : (expired ? 'ظ…ظ†طھظ‡ظٹ' : 'ط؛ظٹط± ظ†ط´ط·')}</span></td>
             <td class="actions-cell">
-              <button class="btn-action btn-edit" onclick="editCoupon('${id}')" title="تعديل"><i class="fas fa-edit"></i></button>
-              <button class="btn-action btn-delete" onclick="deleteCoupon('${id}')" title="حذف"><i class="fas fa-trash"></i></button>
+              <button class="btn-action btn-edit" onclick="editCoupon('${id}')" title="طھط¹ط¯ظٹظ„"><i class="fas fa-edit"></i></button>
+              <button class="btn-action btn-delete" onclick="deleteCoupon('${id}')" title="ط­ط°ظپ"><i class="fas fa-trash"></i></button>
             </td>
           </tr>`;
         }).join('');
@@ -161,7 +161,7 @@
     function openCouponModal(data) {
       document.getElementById('couponModal').style.display = 'flex';
       if (data) {
-        document.getElementById('modalTitle').textContent = 'تعديل الكوبون';
+        document.getElementById('modalTitle').textContent = 'طھط¹ط¯ظٹظ„ ط§ظ„ظƒظˆط¨ظˆظ†';
         document.getElementById('couponId').value = data.id;
         document.getElementById('cupCode').value = data.code || '';
         document.getElementById('cupType').value = data.type || 'percentage';
@@ -171,7 +171,7 @@
         document.getElementById('cupExpiry').value = data.expiry || '';
         document.getElementById('cupActive').checked = data.active !== false;
       } else {
-        document.getElementById('modalTitle').textContent = 'إضافة كوبون جديد';
+        document.getElementById('modalTitle').textContent = 'ط¥ط¶ط§ظپط© ظƒظˆط¨ظˆظ† ط¬ط¯ظٹط¯';
         document.getElementById('couponForm').reset();
         document.getElementById('couponId').value = '';
         document.getElementById('cupActive').checked = true;
@@ -189,13 +189,13 @@
     }
 
     function deleteCoupon(id) {
-      if (confirm('حذف هذا الكوبون؟')) db.collection('coupons').doc(id).delete();
+      if (confirm('ط­ط°ظپ ظ‡ط°ط§ ط§ظ„ظƒظˆط¨ظˆظ†طں')) db.collection('coupons').doc(id).delete();
     }
 
     async function saveCoupon(e) {
       e.preventDefault();
       const btn = document.getElementById('saveCouponBtn');
-      btn.disabled = true; btn.textContent = 'جاري الحفظ...';
+      btn.disabled = true; btn.textContent = 'ط¬ط§ط±ظٹ ط§ظ„ط­ظپط¸...';
 
       const id = document.getElementById('couponId').value;
       const code = document.getElementById('cupCode').value.trim().toUpperCase();
@@ -214,14 +214,15 @@
         } else {
           data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
           const existing = await db.collection('coupons').where('code', '==', code).get();
-          if (!existing.empty) { alert('هذا الكود موجود مسبقاً'); btn.disabled = false; btn.textContent = 'حفظ'; return; }
+          if (!existing.empty) { alert('ظ‡ط°ط§ ط§ظ„ظƒظˆط¯ ظ…ظˆط¬ظˆط¯ ظ…ط³ط¨ظ‚ط§ظ‹'); btn.disabled = false; btn.textContent = 'ط­ظپط¸'; return; }
           await db.collection('coupons').add(data);
         }
         closeCouponModal();
-      } catch(err) { alert('خطأ: ' + err.message); }
+      } catch(err) { alert('ط®ط·ط£: ' + err.message); }
 
-      btn.disabled = false; btn.textContent = 'حفظ';
+      btn.disabled = false; btn.textContent = 'ط­ظپط¸';
     }
   </script>
 </body>
 </html>
+

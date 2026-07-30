@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://www.gstatic.com">
+  <link rel="preconnect" href="https://firestore.googleapis.com">
+  <link rel="preconnect" href="https://identitytoolkit.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <title>من نحن - Sweet Accessories</title>
   <meta name="description" content="تعرفي على قصة Sweet Accessories، متجر الإكسسوارات النسائية الفاخرة في مصر. شغف بالجودة والأناقة.">
   <meta name="robots" content="index, follow">
@@ -12,7 +17,7 @@
   <meta property="og:url" content="https://sweet-accessories.pages.dev/about.html">
   <link rel="canonical" href="https://sweet-accessories.pages.dev/about.html">
   <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.min.css">
 </head>
 <body>
 
@@ -20,7 +25,7 @@
 <header class="header" id="header">
   <div class="container">
     <a href="/" class="logo">
-      <img src="/images/logo.jpeg" alt="Sweet Accessories" width="45" height="45">
+      <img fetchpriority="high" src="/images/logo.jpeg" alt="Sweet Accessories" width="45" height="45">
       <span>Sweet Accessories</span>
     </a>
     <nav class="nav">
@@ -163,10 +168,16 @@
 <!-- Scroll to Top -->
 <button class="scroll-top" aria-label="أعلى الصفحة">⬆</button>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="/js/firebase-config.js"></script>
-<script src="/js/main.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="/js/firebase-config.min.js"></script>
+<script src="/js/main.min.js"></script>
 </body>
 </html>
+
+
+
+
+
+

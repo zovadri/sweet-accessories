@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تسجيل الدخول - Sweet Accessories</title>
+  <title>طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ - Sweet Accessories</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
@@ -12,25 +12,25 @@
 
 <div style="background:white;border-radius:24px;padding:40px 30px;width:92%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;">
   <div style="font-size:1.8rem;font-weight:800;color:#8B0D32;margin-bottom:3px;">Sweet <span style="color:#EBA9BF;">Accessories</span></div>
-  <p style="font-size:1rem;color:#6b7280;margin:0 0 25px;">لوحة التحكم</p>
+  <p style="font-size:1rem;color:#6b7280;margin:0 0 25px;">ظ„ظˆط­ط© ط§ظ„طھط­ظƒظ…</p>
   <div id="errorMsg" style="display:none;background:#fef2f2;color:#dc2626;padding:12px;border-radius:12px;margin-bottom:15px;font-size:0.9rem;"></div>
   <form id="loginForm">
     <div style="text-align:right;margin-bottom:15px;">
-      <label style="display:block;font-weight:600;margin-bottom:5px;font-size:0.9rem;">البريد الإلكتروني</label>
+      <label style="display:block;font-weight:600;margin-bottom:5px;font-size:0.9rem;">ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ</label>
       <input type="email" id="email" placeholder="sweet@example.com" style="width:100%;padding:12px;border:2px solid #e5e7eb;border-radius:12px;font-size:0.95rem;font-family:'Cairo',sans-serif;background:#f9fafb;box-sizing:border-box;">
     </div>
     <div style="text-align:right;margin-bottom:15px;">
-      <label style="display:block;font-weight:600;margin-bottom:5px;font-size:0.9rem;">كلمة المرور</label>
-      <input type="password" id="password" placeholder="••••••••" style="width:100%;padding:12px;border:2px solid #e5e7eb;border-radius:12px;font-size:0.95rem;font-family:'Cairo',sans-serif;background:#f9fafb;box-sizing:border-box;">
+      <label style="display:block;font-weight:600;margin-bottom:5px;font-size:0.9rem;">ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط±</label>
+      <input type="password" id="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" style="width:100%;padding:12px;border:2px solid #e5e7eb;border-radius:12px;font-size:0.95rem;font-family:'Cairo',sans-serif;background:#f9fafb;box-sizing:border-box;">
     </div>
-    <button type="submit" id="loginBtn" style="width:100%;padding:13px;background:linear-gradient(135deg,#8B0D32,#a0103e);color:white;border:none;border-radius:12px;font-size:1rem;font-family:'Cairo',sans-serif;font-weight:700;cursor:pointer;">تسجيل الدخول</button>
+    <button type="submit" id="loginBtn" style="width:100%;padding:13px;background:linear-gradient(135deg,#8B0D32,#a0103e);color:white;border:none;border-radius:12px;font-size:1rem;font-family:'Cairo',sans-serif;font-weight:700;cursor:pointer;">طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„</button>
   </form>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="/js/firebase-config.js"></script>
+<script src="/js/firebase-config.min.js"></script>
 <script>
 document.getElementById('loginForm').addEventListener('submit', function(e) {
   e.preventDefault();
@@ -38,7 +38,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
   var password = document.getElementById('password').value;
   var btn = document.getElementById('loginBtn');
   var errEl = document.getElementById('errorMsg');
-  btn.disabled = true; btn.textContent = 'جاري...';
+  btn.disabled = true; btn.textContent = 'ط¬ط§ط±ظٹ...';
   errEl.style.display = 'none';
 
   auth.signInWithEmailAndPassword(email, password)
@@ -47,16 +47,17 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
       window.location.href = '/dashboard/';
     })
     .catch(function(error) {
-      var msg = 'حدث خطأ';
-      if (error.code === 'auth/user-not-found') msg = 'البريد الإلكتروني غير مسجل';
-      else if (error.code === 'auth/wrong-password') msg = 'كلمة المرور غير صحيحة';
-      else if (error.code === 'auth/too-many-requests') msg = 'تم تجاوز عدد المحاولات، حاول لاحقاً';
-      else if (error.code === 'auth/network-request-failed') msg = 'مشكلة في الاتصال - تأكد من تفعيل Email/Password في Firebase Console';
+      var msg = 'ط­ط¯ط« ط®ط·ط£';
+      if (error.code === 'auth/user-not-found') msg = 'ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ ط؛ظٹط± ظ…ط³ط¬ظ„';
+      else if (error.code === 'auth/wrong-password') msg = 'ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط؛ظٹط± طµط­ظٹط­ط©';
+      else if (error.code === 'auth/too-many-requests') msg = 'طھظ… طھط¬ط§ظˆط² ط¹ط¯ط¯ ط§ظ„ظ…ط­ط§ظˆظ„ط§طھطŒ ط­ط§ظˆظ„ ظ„ط§ط­ظ‚ط§ظ‹';
+      else if (error.code === 'auth/network-request-failed') msg = 'ظ…ط´ظƒظ„ط© ظپظٹ ط§ظ„ط§طھطµط§ظ„ - طھط£ظƒط¯ ظ…ظ† طھظپط¹ظٹظ„ Email/Password ظپظٹ Firebase Console';
       else msg = error.message;
       errEl.textContent = msg; errEl.style.display = 'block';
-      btn.disabled = false; btn.textContent = 'تسجيل الدخول';
+      btn.disabled = false; btn.textContent = 'طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„';
     });
 });
 </script>
 </body>
 </html>
+
