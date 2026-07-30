@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ط¥ط¯ط§ط±ط© ط§ظ„ط·ظ„ط¨ط§طھ | Sweet Accessories</title>
+  <title>إدارة الطلبات | Sweet Accessories</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
@@ -37,32 +37,32 @@
         <div class="sidebar-logo">Sweet <span>Accessories</span></div>
       </div>
       <nav class="sidebar-nav">
-        <a href="/dashboard/"><i class="fas fa-home"></i> ط§ظ„ط±ط¦ظٹط³ظٹط©</a>
-        <a href="/dashboard/orders.html" class="active"><i class="fas fa-shopping-bag"></i> ط§ظ„ط·ظ„ط¨ط§طھ</a>
-        <a href="/dashboard/products.html"><i class="fas fa-box"></i> ط§ظ„ظ…ظ†طھط¬ط§طھ</a>
-        <a href="/dashboard/coupons.html"><i class="fas fa-tag"></i> ظƒظˆط¨ظˆظ†ط§طھ</a>
-        <a href="/dashboard/categories.html"><i class="fas fa-tags"></i> ط§ظ„ط£ظ‚ط³ط§ظ…</a>
-        <a href="/dashboard/banners.html"><i class="fas fa-images"></i> ط§ظ„ط¨ظ†ط±ط§طھ</a>
-        <a href="/dashboard/reviews.html"><i class="fas fa-star"></i> ط§ظ„طھظ‚ظٹظٹظ…ط§طھ</a>
-        <a href="/dashboard/settings.html"><i class="fas fa-cog"></i> ط§ظ„ط¥ط¹ط¯ط§ط¯ط§طھ</a>
-        <a href="#" onclick="handleLogout()" class="logout-link"><i class="fas fa-sign-out-alt"></i> طھط³ط¬ظٹظ„ ط§ظ„ط®ط±ظˆط¬</a>
+        <a href="/dashboard/"><i class="fas fa-home"></i> الرئيسية</a>
+        <a href="/dashboard/orders.html" class="active"><i class="fas fa-shopping-bag"></i> الطلبات</a>
+        <a href="/dashboard/products.html"><i class="fas fa-box"></i> المنتجات</a>
+        <a href="/dashboard/coupons.html"><i class="fas fa-tag"></i> كوبونات</a>
+        <a href="/dashboard/categories.html"><i class="fas fa-tags"></i> الأقسام</a>
+        <a href="/dashboard/banners.html"><i class="fas fa-images"></i> البنرات</a>
+        <a href="/dashboard/reviews.html"><i class="fas fa-star"></i> التقييمات</a>
+        <a href="/dashboard/settings.html"><i class="fas fa-cog"></i> الإعدادات</a>
+        <a href="#" onclick="handleLogout()" class="logout-link"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
       </nav>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
         <div class="topbar-title">
-          <h1>ط§ظ„ط·ظ„ط¨ط§طھ</h1>
-          <p>ط¥ط¯ط§ط±ط© ظˆظ…طھط§ط¨ط¹ط© ط·ظ„ط¨ط§طھ ط§ظ„ط¹ظ…ظ„ط§ط،</p>
+          <h1>الطلبات</h1>
+          <p>إدارة ومتابعة طلبات العملاء</p>
         </div>
         <div class="topbar-actions">
           <select id="statusFilter" onchange="loadOrders()" style="padding:8px 16px;border:2px solid var(--border);border-radius:10px;font-family:'Cairo',sans-serif;">
-            <option value="">ظƒظ„ ط§ظ„ط·ظ„ط¨ط§طھ</option>
-            <option value="ط¬ط¯ظٹط¯">ط¬ط¯ظٹط¯</option>
-            <option value="ظ‚ظٹط¯ ط§ظ„طھط¬ظ‡ظٹط²">ظ‚ظٹط¯ ط§ظ„طھط¬ظ‡ظٹط²</option>
-            <option value="طھظ… ط§ظ„ط´ط­ظ†">طھظ… ط§ظ„ط´ط­ظ†</option>
-            <option value="طھظ… ط§ظ„طھظˆطµظٹظ„">طھظ… ط§ظ„طھظˆطµظٹظ„</option>
-            <option value="ظ…ظ„ط؛ظٹ">ظ…ظ„ط؛ظٹ</option>
+            <option value="">كل الطلبات</option>
+            <option value="جديد">جديد</option>
+            <option value="قيد التجهيز">قيد التجهيز</option>
+            <option value="تم الشحن">تم الشحن</option>
+            <option value="تم التوصيل">تم التوصيل</option>
+            <option value="ملغي">ملغي</option>
           </select>
         </div>
       </header>
@@ -73,18 +73,18 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>ط§ظ„ط¹ظ…ظٹظ„</th>
-                <th>ط§ظ„ظ‡ط§طھظپ</th>
-                <th>ط§ظ„ظ…ط­ط§ظپط¸ط©</th>
-                <th>ط¹ط¯ط¯ ط§ظ„ظ…ظ†طھط¬ط§طھ</th>
-                <th>ط§ظ„ط¥ط¬ظ…ط§ظ„ظٹ</th>
-                <th>ط§ظ„ط­ط§ظ„ط©</th>
-                <th>ط§ظ„طھط§ط±ظٹط®</th>
-                <th>ط§ظ„ط¥ط¬ط±ط§ط،ط§طھ</th>
+                <th>العميل</th>
+                <th>الهاتف</th>
+                <th>المحافظة</th>
+                <th>عدد المنتجات</th>
+                <th>الإجمالي</th>
+                <th>الحالة</th>
+                <th>التاريخ</th>
+                <th>الإجراءات</th>
               </tr>
             </thead>
             <tbody id="ordersTable">
-              <tr><td colspan="9" style="text-align:center;color:#999;">ط¬ط§ط±ظٹ ط§ظ„طھط­ظ…ظٹظ„...</td></tr>
+              <tr><td colspan="9" style="text-align:center;color:#999;">جاري التحميل...</td></tr>
             </tbody>
           </table>
         </div>
@@ -95,7 +95,7 @@
   <div class="modal-overlay order-detail-modal" id="orderModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>طھظپط§طµظٹظ„ ط§ظ„ط·ظ„ط¨</h3>
+        <h3>تفاصيل الطلب</h3>
         <span class="modal-close" onclick="closeOrderModal()">&times;</span>
       </div>
       <div id="orderDetailContent"></div>
@@ -108,7 +108,7 @@
   <script src="/js/firebase-config.min.js"></script>
   <script src="/dashboard/js/dashboard.js"></script>
   <script>
-    const STATUSES = ['ط¬ط¯ظٹط¯', 'ظ‚ظٹط¯ ط§ظ„طھط¬ظ‡ظٹط²', 'طھظ… ط§ظ„ط´ط­ظ†', 'طھظ… ط§ظ„طھظˆطµظٹظ„', 'ظ…ظ„ط؛ظٹ'];
+    const STATUSES = ['جديد', 'قيد التجهيز', 'تم الشحن', 'تم التوصيل', 'ملغي'];
 
     document.addEventListener('DOMContentLoaded', function() {
       checkAuth();
@@ -122,7 +122,7 @@
       query.onSnapshot(snap => {
         const tbody = document.getElementById('ordersTable');
         if (snap.empty) {
-          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#999;">ظ„ط§ طھظˆط¬ط¯ ط·ظ„ط¨ط§طھ</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#999;">لا توجد طلبات</td></tr>';
           return;
         }
         tbody.innerHTML = snap.docs.map((d, idx) => {
@@ -135,16 +135,16 @@
             <td dir="ltr" style="text-align:right">${o.customer?.phone || '-'}</td>
             <td>${o.customer?.governorate || '-'}</td>
             <td>${itemCount}</td>
-            <td style="font-weight:700;color:var(--secondary)">${o.total || 0} ط¬ظ†ظٹظ‡</td>
+            <td style="font-weight:700;color:var(--secondary)">${o.total || 0} جنيه</td>
             <td>
-              <select class="order-status ${o.status === 'ط¬ط¯ظٹط¯' ? 'new' : o.status === 'ظ‚ظٹط¯ ط§ظ„طھط¬ظ‡ظٹط²' ? 'processing' : o.status === 'طھظ… ط§ظ„ط´ط­ظ†' ? 'shipped' : o.status === 'طھظ… ط§ظ„طھظˆطµظٹظ„' ? 'delivered' : 'cancelled'}" onchange="updateStatus('${id}', this.value)" style="font-family:'Cairo',sans-serif;">
+              <select class="order-status ${o.status === 'جديد' ? 'new' : o.status === 'قيد التجهيز' ? 'processing' : o.status === 'تم الشحن' ? 'shipped' : o.status === 'تم التوصيل' ? 'delivered' : 'cancelled'}" onchange="updateStatus('${id}', this.value)" style="font-family:'Cairo',sans-serif;">
                 ${STATUSES.map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s}</option>`).join('')}
               </select>
             </td>
             <td style="font-size:0.85rem;color:#999">${date}</td>
             <td class="actions-cell">
-              <button class="btn-action btn-edit" onclick="viewOrder('${id}')" title="ط¹ط±ط¶"><i class="fas fa-eye"></i></button>
-              <button class="btn-action btn-delete" onclick="deleteOrder('${id}')" title="ط­ط°ظپ"><i class="fas fa-trash"></i></button>
+              <button class="btn-action btn-edit" onclick="viewOrder('${id}')" title="عرض"><i class="fas fa-eye"></i></button>
+              <button class="btn-action btn-delete" onclick="deleteOrder('${id}')" title="حذف"><i class="fas fa-trash"></i></button>
             </td>
           </tr>`;
         }).join('');
@@ -163,10 +163,10 @@
         if (phone.startsWith('00')) phone = phone.replace(/^00/, '');
         if (phone.startsWith('0')) phone = '20' + phone.substring(1);
         const msgs = {
-          'ظ‚ظٹط¯ ط§ظ„طھط¬ظ‡ظٹط²': 'ط·ظ„ط¨ظƒ ًں›چï¸ڈ ط¯ط®ظ„ ظ…ط±ط­ظ„ط© ط§ظ„طھط¬ظ‡ظٹط²! ظ‡ظ†طھظˆط§طµظ„ ظ…ط¹ط§ظƒ ظ‚ط±ظٹط¨ط§ظ‹ ظ„طھط£ظƒظٹط¯ ط§ظ„طھظپط§طµظٹظ„. ط´ظƒط±ط§ظ‹ ظ„ط§ط®طھظٹط§ط±ظƒ Sweet Accessories â‌¤ï¸ڈ',
-          'طھظ… ط§ظ„ط´ط­ظ†': 'ط·ظ„ط¨ظƒ ًںڑڑ ط§طھط´ط­ظ†! ظ‡طھظˆطµظ„ظ„ظƒ ط®ظ„ط§ظ„ 3-5 ط£ظٹط§ظ… ط¹ظ…ظ„. ظ‡طھط¨ظ‚ظ‰ ط¹ظٹظ†ظƒ ط¹ظ„ظ‰ ط§ظ„ظˆط§طھط³ط§ط¨ ظ„ط£ظٹ طھط­ط¯ظٹط«. ط´ظƒط±ط§ظ‹ ظ„ط«ظ‚طھظƒ â‌¤ï¸ڈ',
-          'طھظ… ط§ظ„طھظˆطµظٹظ„': 'ط·ظ„ط¨ظƒ ًںژ‰ ط§طھظˆطµظ„! ظ†طھظ…ظ†ظ‰ ط¥ظ†ظ‡ ظٹط¹ط¬ط¨ظƒ ظˆظٹظˆظ…ظƒ ط³ط¹ظٹط¯. ظ…طھظ†ط³ظٹظ†ط§ط´ ظپظٹ طھظ‚ظٹظٹظ…ظƒ ًں’• Sweet Accessories',
-          'ظ…ظ„ط؛ظٹ': 'ط·ظ„ط¨ظƒ ًں“‹ طھظ… ط¥ظ„ط؛ط§ط¤ظ‡. ظ„ظ„ط§ط³طھظپط³ط§ط± ط£ظˆ طھط¹ط¯ظٹظ„ ط§ظ„ط·ظ„ط¨طŒ طھظˆط§طµظ„ ظ…ط¹ط§ظ†ط§ ط¹ظ„ظ‰ ط§ظ„ط±ظ‚ظ… ط¯ط§. ط´ظƒط±ط§ظ‹ ًں™ڈ'
+          'قيد التجهيز': 'طلبك 🛍️ دخل مرحلة التجهيز! هنتواصل معاك قريباً لتأكيد التفاصيل. شكراً لاختيارك Sweet Accessories ❤️',
+          'تم الشحن': 'طلبك 🚚 اتشحن! هتوصللك خلال 3-5 أيام عمل. هتبقى عينك على الواتساب لأي تحديث. شكراً لثقتك ❤️',
+          'تم التوصيل': 'طلبك 🎉 اتوصل! نتمنى إنه يعجبك ويومك سعيد. متنسيناش في تقييمك 💕 Sweet Accessories',
+          'ملغي': 'طلبك 📋 تم إلغاؤه. للاستفسار أو تعديل الطلب، تواصل معانا على الرقم دا. شكراً 🙏'
         };
         const msg = msgs[status];
         if (msg) window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
@@ -183,50 +183,50 @@
             <img src="${i.image || '/images/placeholder.svg'}" alt="${i.name}">
             <div class="item-info">
               <h4>${i.name}</h4>
-              <p>${i.price} ط¬ظ†ظٹظ‡ أ— ${i.quantity}${i.color ? ` | ${i.color}` : ''}${i.size ? ` | ${i.size}` : ''}</p>
+              <p>${i.price} جنيه × ${i.quantity}${i.color ? ` | ${i.color}` : ''}${i.size ? ` | ${i.size}` : ''}</p>
             </div>
-            <div style="font-weight:700;color:var(--secondary)">${i.price * i.quantity} ط¬ظ†ظٹظ‡</div>
+            <div style="font-weight:700;color:var(--secondary)">${i.price * i.quantity} جنيه</div>
           </div>
-        `).join('') : '<p style="color:#999">ظ„ط§ طھظˆط¬ط¯ ظ…ظ†طھط¬ط§طھ</p>';
+        `).join('') : '<p style="color:#999">لا توجد منتجات</p>';
 
         document.getElementById('orderDetailContent').innerHTML = `
           <div class="order-info-grid">
             <div class="order-info-card">
-              <label>ًں‘¤ ط§ظ„ط§ط³ظ…</label>
+              <label>👤 الاسم</label>
               <span>${o.customer?.name || '-'}</span>
             </div>
             <div class="order-info-card">
-              <label>ًں“± ط§ظ„ظ‡ط§طھظپ</label>
+              <label>📱 الهاتف</label>
               <span dir="ltr" style="text-align:right;display:block">${o.customer?.phone || '-'}</span>
             </div>
             <div class="order-info-card">
-              <label>ًں“چ ط§ظ„ظ…ط­ط§ظپط¸ط©</label>
+              <label>📍 المحافظة</label>
               <span>${o.customer?.governorate || '-'}</span>
             </div>
             <div class="order-info-card">
-              <label>ًںڈ™ï¸ڈ ط§ظ„ظ…ط¯ظٹظ†ط©</label>
+              <label>🏙️ المدينة</label>
               <span>${o.customer?.city || '-'}</span>
             </div>
             <div class="order-info-card" style="grid-column:1/-1">
-              <label>ًںڈ  ط§ظ„ط¹ظ†ظˆط§ظ†</label>
+              <label>🏠 العنوان</label>
               <span>${o.customer?.address || '-'}</span>
             </div>
-            ${o.customer?.notes ? `<div class="order-info-card" style="grid-column:1/-1"><label>ًں“‌ ظ…ظ„ط§ط­ط¸ط§طھ</label><span>${o.customer.notes}</span></div>` : ''}
+            ${o.customer?.notes ? `<div class="order-info-card" style="grid-column:1/-1"><label>📝 ملاحظات</label><span>${o.customer.notes}</span></div>` : ''}
             <div class="order-info-card">
-              <label>ًں“… ط§ظ„طھط§ط±ظٹط®</label>
+              <label>📅 التاريخ</label>
               <span>${date}</span>
             </div>
             <div class="order-info-card">
-              <label>ًں”– ط§ظ„ط­ط§ظ„ط©</label>
-              <span class="order-status ${o.status === 'ط¬ط¯ظٹط¯' ? 'new' : o.status === 'ظ‚ظٹط¯ ط§ظ„طھط¬ظ‡ظٹط²' ? 'processing' : o.status === 'طھظ… ط§ظ„ط´ط­ظ†' ? 'shipped' : o.status === 'طھظ… ط§ظ„طھظˆطµظٹظ„' ? 'delivered' : 'cancelled'}">${o.status}</span>
+              <label>🔖 الحالة</label>
+              <span class="order-status ${o.status === 'جديد' ? 'new' : o.status === 'قيد التجهيز' ? 'processing' : o.status === 'تم الشحن' ? 'shipped' : o.status === 'تم التوصيل' ? 'delivered' : 'cancelled'}">${o.status}</span>
             </div>
           </div>
-          <h4 style="margin-top:0">ًں“¦ ط§ظ„ظ…ظ†طھط¬ط§طھ</h4>
+          <h4 style="margin-top:0">📦 المنتجات</h4>
           <div class="order-items-list">${itemsHtml}</div>
           <div class="order-total-row">
-            <span>ط§ظ„ظ…ط¬ظ…ظˆط¹ ط§ظ„ظپط±ط¹ظٹ: ${o.subtotal || 0} ط¬ظ†ظٹظ‡</span>
-            <span>ط§ظ„ط´ط­ظ†: ${o.shipping === 0 ? 'ظ…ط¬ط§ظ†ظٹ' : (o.shipping || 0) + ' ط¬ظ†ظٹظ‡'}</span>
-            <span style="color:var(--secondary)">ط§ظ„ط¥ط¬ظ…ط§ظ„ظٹ: ${o.total || 0} ط¬ظ†ظٹظ‡</span>
+            <span>المجموع الفرعي: ${o.subtotal || 0} جنيه</span>
+            <span>الشحن: ${o.shipping === 0 ? 'مجاني' : (o.shipping || 0) + ' جنيه'}</span>
+            <span style="color:var(--secondary)">الإجمالي: ${o.total || 0} جنيه</span>
           </div>
         `;
         document.getElementById('orderModal').style.display = 'flex';
@@ -238,14 +238,10 @@
     }
 
     function deleteOrder(id) {
-      if (confirm('ظ‡ظ„ ط£ظ†طھ ظ…طھط£ظƒط¯ ظ…ظ† ط­ط°ظپ ظ‡ط°ط§ ط§ظ„ط·ظ„ط¨طں')) {
+      if (confirm('هل أنت متأكد من حذف هذا الطلب؟')) {
         db.collection('orders').doc(id).delete();
       }
     }
   </script>
 </body>
 </html>
-
-
-
-
