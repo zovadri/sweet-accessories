@@ -792,6 +792,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   Banners.load();
   await loadSiteConfig();
 
+  document.querySelectorAll('a[href*="wa.me/"]').forEach(a => {
+    const num = SITE_CONFIG.whatsapp.replace(/[^0-9]/g, '');
+    if (num) a.href = `https://wa.me/${num}`;
+  });
+
   document.querySelector('#sortFilter')?.addEventListener('change', ProductsPage.load);
 
   document.querySelector('#checkoutGovernorate')?.addEventListener('change', () => Cart.updateSummary(true));
