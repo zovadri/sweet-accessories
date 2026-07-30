@@ -277,7 +277,7 @@ const Search = {
       }
       container.innerHTML = results.slice(0, 8).map(p => `
         <a href="/product.html?id=${p.id}" class="search-result-item" onclick="Search.close()">
-          <img src="${p.images?.[0] || '/images/placeholder.svg'}" alt="${p.name}" loading="lazy">
+            <img src="${p.images?.[0] || p.image || '/images/placeholder.svg'}" alt="${p.name}">
           <div class="info">
             <h4>${p.name}</h4>
             <div class="price">${p.price} ${SITE_CONFIG.currency}</div>
@@ -391,7 +391,7 @@ const UI = {
       <div class="product-card">
         <div class="image-wrap">
           <a href="/product.html?id=${p.id}">
-            <img src="${p.images?.[0] || '/images/placeholder.svg'}" alt="${p.name}" loading="lazy">
+          <img src="${p.images?.[0] || p.image || '/images/placeholder.svg'}" alt="${p.name}">
           </a>
           ${badges.length ? `<div class="badges">${badges.join('')}</div>` : ''}
           <button class="wishlist-btn ${Favorites.isFavorite(p.id) ? 'active' : ''}" data-id="${p.id}" onclick='Favorites.toggle({id:"${p.id}",name:"${p.name?.replace(/"/g,"\\\"")}",price:${p.price},image:"${p.images?.[0]||""}",category:"${p.category||""}",discount:${p.discount||0}})'>${Favorites.isFavorite(p.id) ? '❤️' : '🤍'}</button>
