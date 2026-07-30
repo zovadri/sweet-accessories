@@ -310,26 +310,35 @@
       const name = document.getElementById('prodName').value.trim();
       if (!name) { alert('أدخل اسم المنتج أولاً'); return; }
       btn.disabled = true; btn.textContent = '🪄 جاري التوليد...';
+
       const colors = document.getElementById('prodColors').value.trim();
       const sizes = document.getElementById('prodSizes').value.trim();
-      const cat = document.getElementById('prodCategory').selectedOptions[0]?.text || '';
-      const parts = [];
-      if (colors) parts.push(`بألوان ${colors}`);
-      if (sizes) parts.push(`مقاسات ${sizes}`);
-      const feat = parts.length ? ` (${parts.join('، ')})` : '';
-      const templates = [
-        `${name}${feat} — أنيق وعصري، هتميزي بيه في كل مناسبة`,
-        `${name}${feat} — قطعة راقية تضيف لمسة جمال لإطلالتك`,
-        `${name}${feat} — تصميم فاخر وجودة عالية، يستاهل يكون في طلتك`,
-        `${name}${feat} — شيك وناعم، هتحبيه أوي`,
-        `${name}${feat} — أناقة تستاهل، متوفر بطلبك دلوقتي`,
-        `${name}${feat} — إكسسوار لا يتجزأ من إطلالتك اليومية`,
-        `${name}${feat} — مستوحى من أحدث الصيحات، يناسب كل الأذواق`,
-        `${name}${feat} — هدية مثالية لنفسك أو لغيرك، مش هتندمي`,
-        `${name}${feat} — خامات ممتازة وشكل يجنن، يبقى أحلى إضافة`,
-        `${name}${feat} — عملي وأنيق في نفس الوقت، مش هتستغني عنه`
+
+      const adj = ['أنيق', 'عصري', 'رائع', 'فاخر', 'ناعم', 'شيك', 'مميز', 'جذاب', 'حلو', 'جميل', 'ملكي', 'كلاسيكي', 'مودرن', 'رقيق', 'مبهر'];
+      const vibe = ['بإطلالتك', 'في كل مناسبة', 'في يومك', 'في طلتك', 'في حياتك', 'في ستايلك', 'في لوكك'];
+      const feat = ['خامات فاخرة', 'تصميم عصري', 'جودة عالية', 'تفاصيل دقيقة', 'شكل أنيق', 'لون جذاب', 'خامة ممتازة', 'دقة في الصنع'];
+      const action = ['هتحبيه أوي', 'مش هتستغني عنه', 'هيبقى أحلى إضافة', 'يستاهل يكون عندك', 'هيميزك', 'هيضيف لمسة جمال', 'هيكون قطعة أساسية'];
+      const extra = [];
+      if (colors) extra.push(`متوفر بألوان ${colors}`);
+      if (sizes) extra.push(`مقاسات ${sizes}`);
+
+      const a1 = adj[Math.floor(Math.random() * adj.length)];
+      const a2 = adj[Math.floor(Math.random() * adj.length)];
+      const v = vibe[Math.floor(Math.random() * vibe.length)];
+      const f = feat[Math.floor(Math.random() * feat.length)];
+      const ac = action[Math.floor(Math.random() * action.length)];
+
+      const patterns = [
+        `${name} — ${a1} و${a2}، ${f} ${ac}`,
+        `${name} — ${a1} و${a2}، ${ac} ${v}`,
+        `${name} — ${f}، ${a1} ${ac}`,
+        `${name} — ${a1}، ${ac} ${v}`,
+        `${name} — ${a1} و${a2}، ${f} و${ac}`,
       ];
-      document.getElementById('prodDesc').value = templates[Math.floor(Math.random() * templates.length)];
+      let desc = patterns[Math.floor(Math.random() * patterns.length)];
+      if (extra.length) desc += ` (${extra.join('، ')})`;
+
+      document.getElementById('prodDesc').value = desc;
       btn.disabled = false; btn.textContent = '🪄 AI وصف';
     }
   </script>
