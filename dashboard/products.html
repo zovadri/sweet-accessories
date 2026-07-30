@@ -316,26 +316,28 @@
         let key = '';
         if (!snap.empty) key = snap.docs[0].data().geminiKey || '';
         if (!key) { alert('مفيش مفتاح Gemini! روح للإعدادات وحط المفتاح'); btn.disabled = false; btn.textContent = '🪄 AI وصف'; return; }
-        const parts = [{ text: `شوف الصورة دي واكتب جملة واحدة قصيرة بالعامية المصرية تصف المنتج. الجملة تكون مشوقة وتحفز على الشراء. خلينا في سطر واحد بس.` }];
         const files = document.getElementById('prodImage').files;
+        const parts = [];
         if (files.length > 0) {
           const img = files[0];
           const b64 = await new Promise(r => { const f = new FileReader(); f.onload = e => r(e.target.result.split(',')[1]); f.readAsDataURL(img); });
           parts.push({ inlineData: { mimeType: img.type, data: b64 } });
+          parts.push({ text: `شوف الصورة دي واكتب جملة واحدة قصيرة بالعامية المصرية تصف المنتج. تكون مشوقة وتحفز على الشراء. سطر واحد فقط.` });
         } else {
-          parts[0].text = `اكتب جملة واحدة قصيرة بالعامية المصرية تصف منتج اسمه "${name}" وسعره ${price} جنيه. تكون الجملة مشوقة وتحفز على الشراء. سطر واحد فقط.`;
+          parts.push({ text: `اكتب جملة واحدة قصيرة بالعامية المصرية تصف منتج اسمه "${name}" وسعره ${price} جنيه. تكون مشوقة وتحفز على الشراء. سطر واحد فقط.` });
         }
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${key}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ contents: [{ parts }] })
         });
         const data = await res.json();
+        if (!res.ok) { alert('خطأ من Gemini: ' + (data.error?.message || JSON.stringify(data))); btn.disabled = false; btn.textContent = '🪄 AI وصف'; return; }
         const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
         if (text) {
           document.getElementById('prodDesc').value = text.replace(/^["']|["']$/g, '').trim();
         } else {
-          alert('مفيش نتيجة من Gemini، جرب تاني');
+          alert('مفيش نتيجة من Gemini. تأكد من المفتاح وجرب تاني');
         }
       } catch(e) { alert('خطأ: ' + e.message); }
       btn.disabled = false; btn.textContent = '🪄 AI وصف';
