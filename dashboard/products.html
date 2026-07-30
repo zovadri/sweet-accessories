@@ -305,6 +305,42 @@
       btn.disabled = false; btn.textContent = 'حفظ';
     }
 
+    function analyzeImage(img) {
+      const c = document.createElement('canvas');
+      const ctx = c.getContext('2d');
+      c.width = 100; c.height = 100;
+      ctx.drawImage(img, 0, 0, 100, 100);
+      const d = ctx.getImageData(0, 0, 100, 100).data;
+      let r = 0, g = 0, b = 0, bright = 0, colorful = 0, n = 0;
+      const colors = {};
+      for (let i = 0; i < d.length; i += 16) {
+        const rv = d[i], gv = d[i+1], bv = d[i+2];
+        r += rv; g += gv; b += bv;
+        bright += (rv + gv + bv) / 3;
+        colorful += Math.abs(rv - gv) + Math.abs(gv - bv) + Math.abs(bv - rv);
+        const key = `${Math.round(rv/50)},${Math.round(gv/50)},${Math.round(bv/50)}`;
+        colors[key] = (colors[key] || 0) + 1;
+        n++;
+      }
+      r /= n; g /= n; b /= n;
+      bright /= n; colorful /= n;
+      const top = Object.entries(colors).sort((a, b) => b[1] - a[1]).slice(0, 3);
+      const names = top.map(([k]) => {
+        const [rr, gg, bb] = k.split(',').map(Number);
+        const v = (rr*50 + gg*50 + bb*50);
+        if (v < 80) return 'داكن';
+        if (v > 200) return 'فاتح';
+        if (Math.abs(rr*50 - gg*50) + Math.abs(gg*50 - bb*50) < 30) return 'نيوترال';
+        if (rr*50 > gg*50 && rr*50 > bb*50) return 'أحمر/ذهبي';
+        if (gg*50 > rr*50 && gg*50 > bb*50) return 'أخضر';
+        if (bb*50 > rr*50 && bb*50 > gg*50) return 'أزرق';
+        if (rr*50 > 120 && gg*50 < 100) return 'وردي/بنفسجي';
+        if (gg*50 > 120 && rr*50 < 100) return 'فاتح';
+        return 'مميز';
+      }).filter((v, i, a) => a.indexOf(v) === i).join(' و ');
+      return { bright, colorful, avgColor: `rgb(${r},${g},${b})`, names };
+    }
+
     async function generateAIDesc() {
       const btn = document.querySelector('button[onclick="generateAIDesc()"]');
       const name = document.getElementById('prodName').value.trim();
@@ -313,14 +349,37 @@
 
       const colors = document.getElementById('prodColors').value.trim();
       const sizes = document.getElementById('prodSizes').value.trim();
+      const files = document.getElementById('prodImage').files;
+      const extra = [];
+      if (colors) extra.push(`بألوان ${colors}`);
+      if (sizes) extra.push(`مقاسات ${sizes}`);
 
-      const adj = ['أنيق', 'عصري', 'رائع', 'فاخر', 'ناعم', 'شيك', 'مميز', 'جذاب', 'حلو', 'جميل', 'ملكي', 'كلاسيكي', 'مودرن', 'رقيق', 'مبهر'];
+      let imgInfo = '';
+      if (files.length > 0) {
+        try {
+          const img = await new Promise((r, rej) => {
+            const i = new Image();
+            i.onload = () => r(i);
+            i.onerror = rej;
+            i.src = URL.createObjectURL(files[0]);
+          });
+          const info = analyzeImage(img);
+          URL.revokeObjectURL(img.src);
+          if (info.names) {
+            const tone = info.bright < 100 ? 'داكنة و' : info.bright > 170 ? 'مشرقة و' : 'متناسقة و';
+            const colorfulness = info.colorful > 50 ? 'ألوانها زاهية' : 'ألوانها ناعمة';
+            if (info.names !== 'مميز') {
+              extra.push(` لون ${info.names}`);
+              imgInfo = `${tone}${colorfulness}`;
+            }
+          }
+        } catch(e) {}
+      }
+
+      const adj = ['أنيق', 'عصري', 'رائع', 'فاخر', 'ناعم', 'شيك', 'مميز', 'جذاب', 'حلو', 'جميل', 'ملكي', 'كلاسيكي', 'مودرن', 'رقيق', 'مبهر', 'ساحر'];
       const vibe = ['بإطلالتك', 'في كل مناسبة', 'في يومك', 'في طلتك', 'في حياتك', 'في ستايلك', 'في لوكك'];
       const feat = ['خامات فاخرة', 'تصميم عصري', 'جودة عالية', 'تفاصيل دقيقة', 'شكل أنيق', 'لون جذاب', 'خامة ممتازة', 'دقة في الصنع'];
       const action = ['هتحبيه أوي', 'مش هتستغني عنه', 'هيبقى أحلى إضافة', 'يستاهل يكون عندك', 'هيميزك', 'هيضيف لمسة جمال', 'هيكون قطعة أساسية'];
-      const extra = [];
-      if (colors) extra.push(`متوفر بألوان ${colors}`);
-      if (sizes) extra.push(`مقاسات ${sizes}`);
 
       const a1 = adj[Math.floor(Math.random() * adj.length)];
       const a2 = adj[Math.floor(Math.random() * adj.length)];
@@ -328,13 +387,22 @@
       const f = feat[Math.floor(Math.random() * feat.length)];
       const ac = action[Math.floor(Math.random() * action.length)];
 
-      const patterns = [
-        `${name} — ${a1} و${a2}، ${f} ${ac}`,
-        `${name} — ${a1} و${a2}، ${ac} ${v}`,
-        `${name} — ${f}، ${a1} ${ac}`,
-        `${name} — ${a1}، ${ac} ${v}`,
-        `${name} — ${a1} و${a2}، ${f} و${ac}`,
-      ];
+      let patterns;
+      if (imgInfo) {
+        patterns = [
+          `${name} — ${imgInfo}، ${a1} و${a2} ${ac}`,
+          `${name} — ${a1} و${a2}، ${f} ${v}`,
+          `${name} — ${imgInfo} ${ac} ${v}`,
+        ];
+      } else {
+        patterns = [
+          `${name} — ${a1} و${a2}، ${f} ${ac}`,
+          `${name} — ${a1} و${a2}، ${ac} ${v}`,
+          `${name} — ${f}، ${a1} ${ac}`,
+          `${name} — ${a1}، ${ac} ${v}`,
+          `${name} — ${a1} و${a2}، ${f} و${ac}`,
+        ];
+      }
       let desc = patterns[Math.floor(Math.random() * patterns.length)];
       if (extra.length) desc += ` (${extra.join('، ')})`;
 
