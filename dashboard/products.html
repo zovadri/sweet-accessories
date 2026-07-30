@@ -308,57 +308,28 @@
     async function generateAIDesc() {
       const btn = document.querySelector('button[onclick="generateAIDesc()"]');
       const name = document.getElementById('prodName').value.trim();
-      const price = document.getElementById('prodPrice').value;
       if (!name) { alert('أدخل اسم المنتج أولاً'); return; }
       btn.disabled = true; btn.textContent = '🪄 جاري التوليد...';
-      try {
-        const snap = await db.collection('settings').limit(1).get();
-        let key = '';
-        if (!snap.empty) key = snap.docs[0].data().geminiKey || '';
-        const colors = document.getElementById('prodColors').value.trim();
-        const sizes = document.getElementById('prodSizes').value.trim();
-        let ok = false;
-        if (key) {
-          const files = document.getElementById('prodImage').files;
-          let extra = '';
-          if (colors) extra += ` الألوان: ${colors}.`;
-          if (sizes) extra += ` المقاسات: ${sizes}.`;
-          const parts = [];
-          if (files.length > 0) {
-            const img = files[0];
-            const b64 = await new Promise(r => { const f = new FileReader(); f.onload = e => r(e.target.result.split(',')[1]); f.readAsDataURL(img); });
-            parts.push({ inlineData: { mimeType: img.type, data: b64 } });
-            parts.push({ text: `صف المنتج في الصورة بجملة واحدة بالعامية المصرية. اسمه "${name}" بسعر ${price} جنيه.${extra} تكون مشوقة وتحفز على الشراء. سطر واحد فقط.` });
-          } else {
-            parts.push({ text: `اكتب جملة واحدة قصيرة بالعامية المصرية تصف منتج اسمه "${name}" وسعره ${price} جنيه.${extra} تكون مشوقة وتحفز على الشراء. سطر واحد فقط.` });
-          }
-          try {
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${key}`, {
-              method: 'POST', headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ contents: [{ parts }] })
-            });
-            const data = await res.json();
-            if (res.ok) {
-              const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-              if (text) { document.getElementById('prodDesc').value = text.replace(/^["']|["']$/g, '').trim(); ok = true; }
-            }
-          } catch(e) {}
-        }
-        if (!ok) {
-          const features = [];
-          if (colors) features.push(`متوفر بألوان ${colors}`);
-          if (sizes) features.push(`مقاسات ${sizes}`);
-          const featStr = features.length ? ` (${features.join('، ')})` : '';
-          const descs = [
-            `${name} ${price} جنيه 💫 أنيق وعصري، مثالي لإطلالتك اليومية${featStr}`,
-            `${name} ${price} جنيه ✨ تصميم راقي وجودة عالية، هدية مثالية${featStr}`,
-            `${name} ${price} جنيه 🌸 مميز وأنيق، يضيف لمسة جمال${featStr}`,
-            `${name} ${price} جنيه 💎 خامات فاخرة وتصميم عصري، يناسب كل الأوقات${featStr}`,
-            `${name} ${price} جنيه 🎀 أناقة وجودة عالية، اطلبه الآن${featStr}`
-          ];
-          document.getElementById('prodDesc').value = descs[Math.floor(Math.random() * descs.length)];
-        }
-      } catch(e) {}
+      const colors = document.getElementById('prodColors').value.trim();
+      const sizes = document.getElementById('prodSizes').value.trim();
+      const cat = document.getElementById('prodCategory').selectedOptions[0]?.text || '';
+      const parts = [];
+      if (colors) parts.push(`بألوان ${colors}`);
+      if (sizes) parts.push(`مقاسات ${sizes}`);
+      const feat = parts.length ? ` (${parts.join('، ')})` : '';
+      const templates = [
+        `${name}${feat} — أنيق وعصري، هتميزي بيه في كل مناسبة`,
+        `${name}${feat} — قطعة راقية تضيف لمسة جمال لإطلالتك`,
+        `${name}${feat} — تصميم فاخر وجودة عالية، يستاهل يكون في طلتك`,
+        `${name}${feat} — شيك وناعم، هتحبيه أوي`,
+        `${name}${feat} — أناقة تستاهل، متوفر بطلبك دلوقتي`,
+        `${name}${feat} — إكسسوار لا يتجزأ من إطلالتك اليومية`,
+        `${name}${feat} — مستوحى من أحدث الصيحات، يناسب كل الأذواق`,
+        `${name}${feat} — هدية مثالية لنفسك أو لغيرك، مش هتندمي`,
+        `${name}${feat} — خامات ممتازة وشكل يجنن، يبقى أحلى إضافة`,
+        `${name}${feat} — عملي وأنيق في نفس الوقت، مش هتستغني عنه`
+      ];
+      document.getElementById('prodDesc').value = templates[Math.floor(Math.random() * templates.length)];
       btn.disabled = false; btn.textContent = '🪄 AI وصف';
     }
   </script>
