@@ -446,6 +446,13 @@ const ProductDetail = {
     const sizes = product.sizes && product.sizes.length ? product.sizes : null;
     const outOfStock = product.stock !== undefined && product.stock === 0;
     const hasMultiple = this.images.length > 1;
+    document.title = `${product.name} - Sweet Accessories`;
+    const desc = `${product.name} بسعر ${product.price} ${SITE_CONFIG.currency} من Sweet Accessories. ${product.description || ''}`;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', desc);
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${product.name} - Sweet Accessories`);
+    document.querySelector('meta[property="og:description"]')?.setAttribute('content', desc);
+    document.querySelector('meta[property="og:image"]')?.setAttribute('content', this.images[0]);
+    document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', this.images[0]);
     container.innerHTML = `
       <div class="product-gallery">
         <div class="gallery-slider" ${hasMultiple ? '' : ''}>
