@@ -797,6 +797,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (num) a.href = `https://wa.me/${num}`;
   });
 
+  const floatBtn = document.querySelector('.whatsapp-float');
+  if (floatBtn && SITE_CONFIG.whatsapp) floatBtn.title = SITE_CONFIG.whatsapp;
+
   document.querySelector('#sortFilter')?.addEventListener('change', ProductsPage.load);
 
   document.querySelector('#checkoutGovernorate')?.addEventListener('change', () => Cart.updateSummary(true));
