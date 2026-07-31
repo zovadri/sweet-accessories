@@ -35,7 +35,7 @@ function html(title, desc, image, body) {
 
 const productHTML = (p) => html(
   `${p.name} - Sweet Accessories`,
-  `${p.name} بسعر ${p.price} جنيه من Sweet Accessories. ${p.description || ''}`,
+  `${p.name} بسعر ${p.price} جنيه من Sweet Accessories. ${p.desc || ''}`,
   p.images?.[0] || p.image || `${SITE}/images/logo.jpeg`,
   `<a href="/" style="color:#8B0D32;font-weight:700;text-decoration:none">← Sweet Accessories</a>
    <div class="product">
@@ -44,7 +44,7 @@ const productHTML = (p) => html(
        <h1>${p.name}</h1>
        <div class="price">${p.price} جنيه</div>
        ${p.oldPrice ? `<div style="text-decoration:line-through;color:#999">${p.oldPrice} جنيه</div>` : ''}
-       <p style="margin:20px 0;line-height:1.8">${p.description || 'منتجاتنا عالية الجودة من Sweet Accessories'}</p>
+       <p style="margin:20px 0;line-height:1.8">${p.desc || 'منتجاتنا عالية الجودة من Sweet Accessories'}</p>
        <a href="${SITE}/product.html?id=${p.id}" class="btn">عرض المنتج</a>
      </div>
    </div>`

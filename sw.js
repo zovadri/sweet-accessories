@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sweet-cache-v1';
+const CACHE_NAME = 'sweet-cache-v2';
 const CORE_URLS = [
   '/',
   '/index.html',

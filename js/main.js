@@ -447,7 +447,7 @@ const ProductDetail = {
     const outOfStock = product.stock !== undefined && product.stock === 0;
     const hasMultiple = this.images.length > 1;
     document.title = `${product.name} - Sweet Accessories`;
-    const desc = `${product.name} بسعر ${product.price} ${SITE_CONFIG.currency} من Sweet Accessories. ${product.description || ''}`;
+    const desc = `${product.name} بسعر ${product.price} ${SITE_CONFIG.currency} من Sweet Accessories. ${product.desc || ''}`;
     document.querySelector('meta[name="description"]')?.setAttribute('content', desc);
     document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${product.name} - Sweet Accessories`);
     document.querySelector('meta[property="og:description"]')?.setAttribute('content', desc);
@@ -485,7 +485,7 @@ const ProductDetail = {
         </div>
         <div class="description">
           <h3>الوصف</h3>
-          <p>${product.description || 'لا يوجد وصف'}</p>
+          <p>${product.desc || 'لا يوجد وصف'}</p>
         </div>
         <div class="review-submit">
           <h3>📝 أضف تقييمك</h3>
