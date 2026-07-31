@@ -32,6 +32,20 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  const isHTML = event.request.mode === 'navigate' || (url.pathname.endsWith('.html') || url.pathname.endsWith('/'));
+
+  if (isHTML) {
+    event.respondWith(
+      fetch(event.request).then(networkResponse => {
+        const clone = networkResponse.clone();
+        caches.open(CACHE_NAME).then(cache => { cache.put(event.request, clone); });
+        return networkResponse;
+      }).catch(() => caches.match(event.request).then(cached => cached || caches.match('/images/placeholder.svg')))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {
       if (cachedResponse) {
