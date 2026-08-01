@@ -13,6 +13,7 @@ async function loadSiteConfig() {
     if (!snap.empty) {
       const s = snap.docs[0].data();
       if (s.whatsapp) SITE_CONFIG.whatsapp = s.whatsapp;
+      if (s.favicon) applyFavicon(s.favicon);
       if (s.shipping) {
         if (s.shipping.freeMin) SITE_CONFIG.freeShippingMin = s.shipping.freeMin;
         if (s.shipping.default) SITE_CONFIG.shipping = s.shipping.default;
@@ -20,6 +21,19 @@ async function loadSiteConfig() {
       }
     }
   } catch(e) { console.error('Config load error:', e); }
+}
+function applyFavicon(url) {
+  let link = document.querySelector('link[rel="icon"][sizes="192x192"]');
+  if (!link) {
+    link = document.createElement('link');
+    link.rel = 'icon';
+    link.type = 'image/png';
+    link.sizes = '192x192';
+    document.head.appendChild(link);
+  }
+  link.href = url;
+  const apple = document.querySelector('link[rel="apple-touch-icon"]');
+  if (apple) apple.href = url;
 }
 function getShippingCost(governorate) {
   if (!governorate) return SITE_CONFIG.shipping;
