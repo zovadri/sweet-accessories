@@ -4,7 +4,8 @@ const SITE_CONFIG = {
   currency: 'جنيه',
   shipping: 30,
   freeShippingMin: 500,
-  shippingByGov: {}
+  shippingByGov: {},
+  social: {}
 };
 
 async function loadSiteConfig() {
@@ -13,6 +14,9 @@ async function loadSiteConfig() {
     if (!snap.empty) {
       const s = snap.docs[0].data();
       if (s.whatsapp) SITE_CONFIG.whatsapp = s.whatsapp;
+      if (s.facebook) SITE_CONFIG.social.facebook = s.facebook;
+      if (s.instagram) SITE_CONFIG.social.instagram = s.instagram;
+      if (s.tiktok) SITE_CONFIG.social.tiktok = s.tiktok;
       if (s.favicon) applyFavicon(s.favicon);
       if (s.shipping) {
         if (s.shipping.freeMin) SITE_CONFIG.freeShippingMin = s.shipping.freeMin;
@@ -915,6 +919,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('a[href*="wa.me/"]').forEach(a => {
     const num = SITE_CONFIG.whatsapp.replace(/[^0-9]/g, '');
     if (num) a.href = `https://wa.me/${num}`;
+  });
+
+  document.querySelectorAll('a[data-social]').forEach(a => {
+    const key = a.dataset.social;
+    if (key === 'whatsapp') {
+      const num = SITE_CONFIG.whatsapp.replace(/[^0-9]/g, '');
+      if (num) a.href = `https://wa.me/${num}`;
+    } else if (SITE_CONFIG.social[key]) {
+      let url = SITE_CONFIG.social[key];
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      a.href = url;
+    }
   });
 
   const floatBtn = document.querySelector('.whatsapp-float');
