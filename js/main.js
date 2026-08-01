@@ -590,13 +590,13 @@ const ProductDetail = {
     if (!box) return;
     const list = box.querySelector('.product-reviews-list');
     try {
-      const snap = await db.collection('reviews').where('productId', '==', productId).where('approved', '==', true).orderBy('createdAt', 'desc').limit(10).get();
-      if (snap.empty) {
+      const snap = await db.collection('reviews').where('productId', '==', productId).limit(30).get();
+      const items = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(r => r.approved === true).sort((a, b) => ((b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0) - ((a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0));
+      if (!items.length) {
         box.style.display = 'none';
         return;
       }
       box.style.display = 'block';
-      const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       const avg = items.reduce((s, r) => s + (r.rating || 0), 0) / items.length;
       list.innerHTML = `
         <div class="reviews-summary">
@@ -785,12 +785,12 @@ const Reviews = {
     const dots = document.getElementById('reviewsDots');
     if (!track) return;
     try {
-      const snap = await db.collection('reviews').where('approved', '==', true).orderBy('createdAt', 'desc').limit(10).get();
-      if (snap.empty) {
+      const snap = await db.collection('reviews').orderBy('createdAt', 'desc').limit(30).get();
+      const items = snap.docs.map(d => d.data()).filter(r => r.approved === true).slice(0, 10);
+      if (!items.length) {
         track.innerHTML = '<div class="reviews-empty">لا توجد تقييمات بعد — كن أول من يشاركنا رأيه! 💕</div>';
         return;
       }
-      const items = snap.docs.map(d => d.data());
       track.innerHTML = items.map(r => {
         const stars = Array(5).fill('').map((_, i) => `<i class="${i < r.rating ? 'fas' : 'far'} fa-star"></i>`).join('');
         const imgs = (r.images && r.images.length ? r.images : (r.image ? [r.image] : [])).slice(0, 3);
@@ -845,12 +845,12 @@ const Banners = {
     const dots = document.getElementById('heroDots');
     if (!track) return;
     try {
-      const snap = await db.collection('banners').where('active', '==', true).orderBy('createdAt', 'desc').get();
-      if (snap.empty) {
+      const snap = await db.collection('banners').orderBy('createdAt', 'desc').get();
+      const items = snap.docs.map(d => d.data()).filter(b => b.active === true);
+      if (!items.length) {
         document.getElementById('heroSlider').style.display = 'none';
         return;
       }
-      const items = snap.docs.map(d => d.data());
       track.innerHTML = items.map(b => `
         <div class="hero-slide">
           <img src="${b.image || '/images/placeholder.svg'}" alt="${b.title}">
