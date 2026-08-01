@@ -498,12 +498,31 @@ const ProductDetail = {
               <span onclick="ProductDetail.setRating(1)">☆</span><span onclick="ProductDetail.setRating(2)">☆</span><span onclick="ProductDetail.setRating(3)">☆</span><span onclick="ProductDetail.setRating(4)">☆</span><span onclick="ProductDetail.setRating(5)">☆</span>
             </div>
             <div class="form-group"><textarea id="revCommentInput" rows="3" placeholder="اكتب رأيك عن المنتج" required></textarea></div>
-            <button type="submit" class="btn btn-primary">إرسال التقييم</button>
+            <div class="form-group">
+              <label class="rev-upload" for="revImagesInput">📷 أضف صوراً للمنتج</label>
+              <input type="file" id="revImagesInput" accept="image/*" multiple hidden>
+              <div class="rev-upload-preview" id="revUploadPreview"></div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="revSubmitBtn">إرسال التقييم</button>
           </form>
+        </div>
+        <div class="product-reviews" id="productReviews">
+          <h3>⭐ آراء العملاء</h3>
+          <div class="product-reviews-list"></div>
         </div>
       </div>`;
     Cart.updateBadge();
     ProductDetail.reviewRating = 0;
+    ProductDetail.loadProductReviews(product.id);
+    document.getElementById('revImagesInput')?.addEventListener('change', function() {
+      const preview = document.getElementById('revUploadPreview');
+      preview.innerHTML = '';
+      for (const file of this.files) {
+        const reader = new FileReader();
+        reader.onload = ev => { preview.innerHTML += `<img src="${ev.target.result}" alt="">`; };
+        reader.readAsDataURL(file);
+      }
+    });
     if (hasMultiple) this.startAutoSlide();
     const similarGrid = document.querySelector('.products-grid[data-type="similar"]');
     if (similarGrid && product.category) {
@@ -566,6 +585,60 @@ const ProductDetail = {
     this.reviewRating = r;
     document.querySelectorAll('#starPicker span').forEach((s, i) => s.textContent = i < r ? '★' : '☆');
   },
+  async loadProductReviews(productId) {
+    const box = document.getElementById('productReviews');
+    if (!box) return;
+    const list = box.querySelector('.product-reviews-list');
+    try {
+      const snap = await db.collection('reviews').where('productId', '==', productId).where('approved', '==', true).orderBy('createdAt', 'desc').limit(10).get();
+      if (snap.empty) {
+        box.style.display = 'none';
+        return;
+      }
+      box.style.display = 'block';
+      const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const avg = items.reduce((s, r) => s + (r.rating || 0), 0) / items.length;
+      list.innerHTML = `
+        <div class="reviews-summary">
+          <div class="avg-score">${avg.toFixed(1)}</div>
+          <div class="avg-stars">${Array(5).fill('').map((_, i) => `<i class="${i < Math.round(avg) ? 'fas' : 'far'} fa-star"></i>`).join('')}</div>
+          <div class="avg-count">(${items.length} تقييم)</div>
+        </div>
+        ${items.map(r => {
+          const stars = Array(5).fill('').map((_, i) => `<i class="${i < r.rating ? 'fas' : 'far'} fa-star"></i>`).join('');
+          const imgs = (r.images && r.images.length ? r.images : (r.image ? [r.image] : [])).map((u, i) => `<img src="${u}" alt="صورة التقييم" onclick="ProductDetail.openLightbox('${r.id}_${i}')" loading="lazy">`).join('');
+          return `<div class="product-review-item">
+            <div class="pr-header">
+              <div class="pr-avatar">${(r.name || 'زائر')[0]}</div>
+              <div>
+                <div class="pr-name">${r.name || 'زائر'}</div>
+                <div class="review-stars">${stars}</div>
+              </div>
+              <span class="pr-date">${r.createdAt && r.createdAt.toDate ? r.createdAt.toDate().toLocaleDateString('ar-EG') : ''}</span>
+            </div>
+            <p class="pr-comment">${r.comment || ''}</p>
+            ${imgs ? `<div class="pr-images" id="lightbox_${r.id}">${imgs}</div>` : ''}
+          </div>`;
+        }).join('')}
+      `;
+    } catch(e) { console.error('Product reviews error:', e); }
+  },
+  openLightbox(id) {
+    const host = document.getElementById('lightbox_' + id.split('_')[0]);
+    if (!host) return;
+    const imgs = [...host.querySelectorAll('img')];
+    const idx = Math.max(0, imgs.findIndex(i => i.getAttribute('onclick').includes(`'${id}'`)));
+    const lb = document.createElement('div');
+    lb.className = 'lightbox';
+    lb.innerHTML = `<span class="lightbox-close">&times;</span><img src="${imgs[idx].src}" alt="صورة التقييم"><button class="lightbox-prev">❮</button><button class="lightbox-next">❯</button>`;
+    let cur = idx;
+    const show = () => lb.querySelector('img').src = imgs[cur].src;
+    lb.querySelector('.lightbox-close').onclick = () => lb.remove();
+    lb.querySelector('.lightbox-prev').onclick = (e) => { e.stopPropagation(); cur = (cur - 1 + imgs.length) % imgs.length; show(); };
+    lb.querySelector('.lightbox-next').onclick = (e) => { e.stopPropagation(); cur = (cur + 1) % imgs.length; show(); };
+    lb.onclick = (e) => { if (e.target === lb) lb.remove(); };
+    document.body.appendChild(lb);
+  },
   async submitReview(e, productId) {
     e.preventDefault();
     const name = document.getElementById('revNameInput')?.value;
@@ -573,17 +646,33 @@ const ProductDetail = {
     const comment = document.getElementById('revCommentInput')?.value;
     const rating = this.reviewRating;
     if (!name || !comment || !rating) { Cart.showToast('الرجاء إكمال جميع الحقول', 'error'); return; }
+    const btn = document.getElementById('revSubmitBtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'جاري الإرسال...'; }
     try {
+      const files = document.getElementById('revImagesInput')?.files;
+      const images = [];
+      if (files && files.length > 0) {
+        Cart.showToast('جاري رفع الصور...', 'info');
+        for (let i = 0; i < files.length; i++) {
+          if (typeof uploadImage === 'function') {
+            const url = await uploadImage(files[i]);
+            if (url) images.push(url);
+          }
+        }
+      }
       await db.collection('reviews').add({
         name, email, comment, rating, productId,
         approved: false,
+        images: images.length ? images : null,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
       Cart.showToast('شكراً! تم إرسال تقييمك وسيتم نشره بعد المراجعة', 'success');
       e.target.reset();
+      document.getElementById('revUploadPreview').innerHTML = '';
       this.reviewRating = 0;
       document.querySelectorAll('#starPicker span').forEach(s => s.textContent = '☆');
     } catch(err) { Cart.showToast('حدث خطأ، حاول مرة أخرى', 'error'); }
+    if (btn) { btn.disabled = false; btn.textContent = 'إرسال التقييم'; }
   },
 
   addToCart(id) {
@@ -697,20 +786,30 @@ const Reviews = {
     if (!track) return;
     try {
       const snap = await db.collection('reviews').where('approved', '==', true).orderBy('createdAt', 'desc').limit(10).get();
-      if (snap.empty) { track.innerHTML = ''; return; }
+      if (snap.empty) {
+        track.innerHTML = '<div class="reviews-empty">لا توجد تقييمات بعد — كن أول من يشاركنا رأيه! 💕</div>';
+        return;
+      }
       const items = snap.docs.map(d => d.data());
       track.innerHTML = items.map(r => {
         const stars = Array(5).fill('').map((_, i) => `<i class="${i < r.rating ? 'fas' : 'far'} fa-star"></i>`).join('');
-        const img = r.images?.[0] || r.image;
-        const avatar = img ? `<img src="${img}" class="review-img">` : `<div class="review-img-placeholder">${r.name?.[0] || '?'}</div>`;
-        const extraImgs = r.images && r.images.length > 1 ? `<div class="review-images">${r.images.slice(1, 4).map(u => `<img src="${u}">`).join('')}</div>` : '';
+        const imgs = (r.images && r.images.length ? r.images : (r.image ? [r.image] : [])).slice(0, 3);
+        const avatar = imgs.length ? `<img src="${imgs[0]}" class="review-img" alt="صورة العميل">` : `<div class="review-img-placeholder">${r.name?.[0] || '?'}</div>`;
+        const extraImgs = imgs.length > 1 ? `<div class="review-images">${imgs.slice(1, 3).map(u => `<img src="${u}" alt="صورة التقييم">`).join('')}</div>` : '';
         return `<div class="review-slide">
           <div class="review-card">
-            ${avatar}
-            <div class="review-stars">${stars}</div>
-            <p class="review-text">"${r.comment}"</p>
-            <div class="review-name">${r.name}</div>
-            ${extraImgs}
+            <div class="review-card-inner">
+              <div class="review-quote">"</div>
+              <div class="review-top">
+                ${avatar}
+                <div class="review-meta">
+                  <div class="review-name">${r.name || 'عميل مميز'}</div>
+                  <div class="review-stars">${stars}</div>
+                </div>
+              </div>
+              <p class="review-text">"${r.comment}"</p>
+              ${extraImgs}
+            </div>
           </div>
         </div>`;
       }).join('');

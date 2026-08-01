@@ -55,6 +55,7 @@
               <tr>
                 <th>الصورة</th>
                 <th>العميل</th>
+                <th>المنتج</th>
                 <th>التقييم</th>
                 <th>التعليق</th>
                 <th>الحالة</th>
@@ -62,7 +63,7 @@
               </tr>
             </thead>
             <tbody id="reviewsTable">
-              <tr><td colspan="6" style="text-align:center;color:#999;">جاري التحميل...</td></tr>
+              <tr><td colspan="7" style="text-align:center;color:#999;">جاري التحميل...</td></tr>
             </tbody>
           </table>
         </div>
@@ -87,6 +88,10 @@
             <label>البريد الإلكتروني (اختياري)</label>
             <input type="email" id="revEmail">
           </div>
+        </div>
+        <div class="form-group">
+          <label>المنتج المرتبط</label>
+          <select id="revProduct"></select>
         </div>
         <div class="form-group">
           <label>التقييم</label>
@@ -123,10 +128,12 @@
   <script src="/dashboard/js/dashboard.js"></script>
   <script>
     let reviewRating = 5;
+    let productsMap = {};
 
     document.addEventListener('DOMContentLoaded', function() {
       checkAuth();
       loadReviews();
+      loadProductsDropdown();
       setupStarRating();
       document.getElementById('revImages').addEventListener('change', function() {
         const preview = document.getElementById('revImagePreview');
@@ -140,6 +147,19 @@
         }
       });
     });
+
+    function loadProductsDropdown() {
+      db.collection('products').orderBy('name').onSnapshot(snap => {
+        const sel = document.getElementById('revProduct');
+        sel.innerHTML = '<option value="">— بدون منتج —</option>';
+        productsMap = {};
+        snap.docs.forEach(d => {
+          const p = d.data();
+          productsMap[d.id] = p.name;
+          sel.innerHTML += `<option value="${d.id}">${p.name}</option>`;
+        });
+      });
+    }
 
     function setupStarRating() {
       const stars = document.querySelectorAll('#starRating i');
@@ -159,7 +179,7 @@
       db.collection('reviews').orderBy('createdAt', 'desc').onSnapshot(snap => {
         const tbody = document.getElementById('reviewsTable');
         if (snap.empty) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;">لا توجد تقييمات</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;">لا توجد تقييمات</td></tr>';
           return;
         }
         tbody.innerHTML = snap.docs.map(d => {
@@ -167,9 +187,11 @@
           const img = r.images?.[0] || r.image || '';
           const stars = Array(5).fill('').map((_, i) => `<i class="fas fa-star" style="color:${i < r.rating ? '#f59e0b' : '#ddd'};"></i>`).join('');
           const imgHtml = img ? `<img src="${img}" class="review-thumb">` : '<span style="color:#ccc">-</span>';
+          const productName = r.productId ? (productsMap[r.productId] || 'منتج محذوف') : '—';
           return `<tr>
             <td>${imgHtml}</td>
             <td><strong>${r.name || 'زائر'}</strong>${r.email ? `<br><small style="color:#999;">${r.email}</small>` : ''}</td>
+            <td><small>${productName}</small></td>
             <td>${stars}</td>
             <td style="max-width:250px;">${r.comment || '-'}</td>
             <td><span class="badge ${r.approved ? 'badge-active' : 'badge-inactive'}" id="status_${id}">${r.approved ? 'مقبول' : 'معلق'}</span></td>
@@ -191,6 +213,7 @@
         document.getElementById('revName').value = data.name || '';
         document.getElementById('revEmail').value = data.email || '';
         document.getElementById('revComment').value = data.comment || '';
+        document.getElementById('revProduct').value = data.productId || '';
         document.getElementById('revApproved').checked = data.approved !== false;
         reviewRating = data.rating || 5;
         const stars = document.querySelectorAll('#starRating i');
@@ -245,6 +268,7 @@
           email: document.getElementById('revEmail').value,
           rating: reviewRating,
           comment: document.getElementById('revComment').value,
+          productId: document.getElementById('revProduct').value || null,
           approved: document.getElementById('revApproved').checked,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
